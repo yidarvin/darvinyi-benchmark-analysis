@@ -1,0 +1,100 @@
+{
+  "slug": "humaneval",
+  "name": "HumanEval / HumanEval+",
+  "shortDescription": "Python function completion from docstrings, evaluated by test execution.",
+  "description": "HumanEval was created by OpenAI in 2021 alongside the Codex model. It was a landmark shift in code evaluation: instead of measuring textual similarity (BLEU score), it runs the model's code against hidden unit tests — the code either works or it doesn't. This functional-correctness approach became the standard for all subsequent coding benchmarks.\n\nThe benchmark consists of 164 hand-crafted Python programming problems. Each problem shows the model only a function signature and a docstring with examples. The model must complete the function body, which is then executed against 7.7 hidden test cases on average.\n\nHumanEval+ (EvalPlus), released at NeurIPS 2023, exposed a critical weakness: the original 7.7 tests per problem were too few, allowing many incorrect solutions to accidentally pass. EvalPlus added ~80x more test cases per problem using automated generation, revealing that 15–30% of 'passing' solutions on vanilla HumanEval were actually wrong. Even state-of-the-art models drop 8–15 percentage points on HumanEval+.\n\nHumanEval is now effectively saturated — frontier models score 91–97%, within statistical noise of each other on only 164 problems. It remains useful as a minimum baseline check but no longer discriminates between top models. LiveCodeBench, SWE-bench, and BigCodeBench have replaced it for frontier evaluation.",
+  "category": "coding",
+  "subcategory": "code-generation",
+  "tags": ["coding", "python", "function-completion", "unit-tests", "saturated"],
+  "saturationStatus": "saturated",
+  "evaluationMethod": "functional-correctness",
+  "stats": {
+    "totalTasks": 164,
+    "publicTasks": 164,
+    "year": 2021,
+    "creator": "Mark Chen et al.",
+    "institution": "OpenAI",
+    "languages": ["Python"],
+    "domains": ["Arithmetic", "String manipulation", "List processing", "Basic algorithms", "Math"],
+    "humanBaseline": null,
+    "randomBaseline": 0
+  },
+  "taskAnatomy": {
+    "input": "A Python function signature plus a docstring describing the function's behavior, with 1-3 input/output examples embedded in the docstring.",
+    "output": "The model generates the complete function body (everything after the docstring).",
+    "evaluation": "The generated code is executed in a sandbox against hidden unit tests. Pass/fail is binary per problem. Score = pass@k, the probability that at least one of k generated samples passes all tests.",
+    "metric": "pass@1 (single-shot success rate)"
+  },
+  "examples": [
+    {
+      "title": "HumanEval/0 — has_close_elements",
+      "difficulty": "Easy",
+      "input": "from typing import List\n\ndef has_close_elements(numbers: List[float], threshold: float) -> bool:\n    \"\"\" Check if in given list of numbers, are any two numbers closer to each\n    other than given threshold.\n    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)\n    False\n    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)\n    True\n    \"\"\"",
+      "solution": "for i, x in enumerate(numbers):\n    for j in range(i + 1, len(numbers)):\n        if abs(x - numbers[j]) < threshold:\n            return True\nreturn False",
+      "answer": "True or False depending on whether any two numbers are closer than the threshold.",
+      "notes": "The canonical first problem. Simple nested loop, tests basic iteration logic."
+    },
+    {
+      "title": "HumanEval/2 — triangle_area",
+      "difficulty": "Easy",
+      "input": "def triangle_area(a, h):\n    \"\"\"Given length of a side and high return area for a triangle.\n    >>> triangle_area(5, 3)\n    7.5\n    \"\"\"",
+      "solution": "return a * h / 2.0",
+      "answer": "7.5 for triangle_area(5, 3)",
+      "notes": "The simplest possible problem — a one-line solution. Tests that models don't overthink trivial tasks."
+    },
+    {
+      "title": "HumanEval/32 — find_zero",
+      "difficulty": "Hard",
+      "input": "import math\n\ndef poly(xs: list, x: float):\n    \"\"\"\n    Evaluates polynomial with coefficients xs at point x.\n    return xs[0] + xs[1] * x + xs[1] * x^2 + .... xs[n] * x^n\n    \"\"\"\n    return sum([coeff * math.pow(x, i) for i, coeff in enumerate(xs)])\n\ndef find_zero(xs: list):\n    \"\"\" xs are coefficients of a polynomial.\n    find_zero finds x such that poly(x) = 0.\n    find_zero returns only one zero point, even if there are many.\n    Moreover, find_zero only takes list xs having even number of coefficients\n    and largest non zero coefficient as it guarantees a solution.\n    >>> round(find_zero([1, 2]), 2) # f(x) = 1 + 2x\n    -0.5\n    >>> round(find_zero([-6, 11, -6, 1]), 2) # (x-1)(x-2)(x-3) = -6 + 11x - 6x^2 + x^3\n    1.0\n    \"\"\"",
+      "solution": "begin, end = -1., 1.\nwhile poly(xs, begin) * poly(xs, end) > 0:\n    begin *= 2.0\n    end *= 2.0\nfor _ in range(100):\n    center = (begin + end) / 2.0\n    if poly(xs, center) * poly(xs, begin) > 0:\n        begin = center\n    else:\n        end = center\nreturn begin",
+      "answer": "-0.5 for [1, 2] (solving 1 + 2x = 0)",
+      "notes": "Requires implementing numerical root-finding (bisection method). One of the harder problems in the set."
+    }
+  ],
+  "results": [
+    { "modelId": "gpt-5", "score": 96.9, "scoreLabel": "96.9%", "scoreType": "pass@1", "date": "2025-08", "isVendorReported": true, "setup": "HumanEval" },
+    { "modelId": "claude-opus-4-5", "score": 95.7, "scoreLabel": "95.7%", "scoreType": "pass@1", "date": "2025-11", "isVendorReported": true, "setup": "HumanEval" },
+    { "modelId": "o4-mini", "score": 97.6, "scoreLabel": "97.6%", "scoreType": "pass@1", "date": "2025-04", "isVendorReported": true, "setup": "HumanEval" },
+    { "modelId": "gemini-2-5-pro", "score": 94.2, "scoreLabel": "94.2%", "scoreType": "pass@1", "date": "2025-03", "isVendorReported": true, "setup": "HumanEval" },
+    { "modelId": "deepseek-v3", "score": 90.2, "scoreLabel": "90.2%", "scoreType": "pass@1", "date": "2024-12", "isVendorReported": true, "setup": "HumanEval" },
+    { "modelId": "llama-4-maverick", "score": 88.5, "scoreLabel": "88.5%", "scoreType": "pass@1", "date": "2025-04", "isVendorReported": true, "setup": "HumanEval" },
+    { "modelId": "qwen-3-72b", "score": 92.7, "scoreLabel": "92.7%", "scoreType": "pass@1", "date": "2025-05", "isVendorReported": true, "setup": "HumanEval" }
+  ],
+  "variants": [
+    {
+      "name": "HumanEval+",
+      "slug": "humaneval-plus",
+      "description": "Same 164 problems with ~80x more test cases per problem (EvalPlus). Catches solutions that pass the sparse original tests but fail edge cases. Models drop 8–15 percentage points vs vanilla HumanEval.",
+      "taskCount": 164,
+      "year": 2023,
+      "saturationStatus": "nearing-saturation"
+    },
+    {
+      "name": "HumanEval-XL",
+      "slug": "humaneval-xl",
+      "description": "Extended to 23 natural languages (NL) and multiple programming languages. Tests multilingual instruction following for code generation.",
+      "taskCount": 3741,
+      "year": 2024,
+      "saturationStatus": "active"
+    }
+  ],
+  "controversies": [
+    "Severe contamination: HumanEval problems and solutions circulate widely on the internet and appear in most training datasets. HumanEval-T (template variants with same logic, different surface form) shows all tested models drop 5–14 percentage points — direct evidence of memorization.",
+    "With only 164 problems, the 95% confidence interval at p=0.9 is approximately ±2.3 percentage points. Two models at 87% and 90% are statistically indistinguishable on HumanEval alone.",
+    "Narrow scope: Python only, isolated single-function generation, no multi-file context, no imports to manage, no interaction with external state. Does not reflect real software engineering.",
+    "HumanEval+ revealed that 15–30% of 'passing' solutions under vanilla HumanEval are actually incorrect when tested more rigorously. High HumanEval scores are artificially inflated."
+  ],
+  "keyFindings": [
+    "HumanEval scores have gone from 28.8% (Codex, 2021) to 97%+ (frontier models, 2025) — a nearly complete saturation arc in 4 years.",
+    "The benchmark that launched the functional-correctness paradigm in code evaluation is now most useful as a minimum floor check, not a frontier discriminator.",
+    "HumanEval+ exposed that models were 'getting lucky' on sparse tests: Claude 3.5 Sonnet drops from 92.1% to 81.7% on HumanEval+ — a 10-point gap that reveals how much sparse testing inflates scores.",
+    "The pass@k metric introduced by the paper became the standard for all subsequent code generation evaluation, influencing SWE-bench and LiveCodeBench design."
+  ],
+  "links": {
+    "paper": "Evaluating Large Language Models Trained on Code",
+    "arxiv": "https://arxiv.org/abs/2107.03374",
+    "dataset": "https://huggingface.co/datasets/openai/openai_humaneval",
+    "leaderboard": "https://evalplus.github.io/leaderboard.html",
+    "github": "https://github.com/evalplus/evalplus"
+  }
+}

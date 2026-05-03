@@ -1,0 +1,104 @@
+{
+  "slug": "mmlu",
+  "name": "MMLU / MMLU-Pro",
+  "shortDescription": "Broad academic knowledge across 57 subjects — the standard knowledge benchmark.",
+  "description": "MMLU (Massive Multitask Language Understanding) was created by Dan Hendrycks and colleagues at UC Berkeley and published at ICLR 2021. It tests the breadth of factual and reasoning knowledge across 57 academic subjects spanning STEM, humanities, social sciences, law, medicine, and professional fields. Questions were sourced from real exams: academic textbooks, practice tests, licensing exams (USMLE, bar exam), and online educational platforms.\n\nWith 14,042 multiple-choice questions across 57 subjects, MMLU was the first benchmark to systematically evaluate AI across the full breadth of human academic knowledge. When introduced, GPT-3 scored only 43.9% — barely above random chance (25%). The benchmark became the standard 'broad capability' evaluation for LLMs throughout 2021-2024.\n\nHowever, MMLU is now effectively saturated at the frontier. Top models score 90-92%, exceeding estimated human expert performance (~89.8%). Differences between the top models correspond to fewer than 30 questions on the 14,042-question test. The benchmark also has known quality issues: ~6.5% of questions contain errors or ambiguities.\n\nMMLU-Pro, released at NeurIPS 2024, extends MMLU with 10 answer choices instead of 4 (reducing random chance from 25% to 10%), more reasoning-focused questions, and greater prompt-variation stability. Models drop 16-26 percentage points moving from MMLU to MMLU-Pro, providing renewed discrimination. However, MMLU-Pro is itself approaching saturation for frontier models, with top scores reaching 87-90%.",
+  "category": "knowledge",
+  "subcategory": "broad-knowledge",
+  "tags": ["knowledge", "reasoning", "multiple-choice", "academic", "57-subjects", "nearing-saturation"],
+  "saturationStatus": "saturated",
+  "evaluationMethod": "exact-match",
+  "stats": {
+    "totalTasks": 14042,
+    "publicTasks": 14042,
+    "year": 2020,
+    "creator": "Dan Hendrycks, Collin Burns, Steven Basart, et al.",
+    "institution": "UC Berkeley",
+    "languages": [],
+    "domains": ["STEM", "Humanities", "Social Sciences", "Law", "Medicine", "Professional"],
+    "humanBaseline": 89.8,
+    "randomBaseline": 25.0
+  },
+  "taskAnatomy": {
+    "input": "A multiple-choice question with 4 options (MMLU) or 10 options (MMLU-Pro) from one of 57 academic subjects. Evaluated with 5-shot prompting: 5 solved examples from the same subject are prepended.",
+    "output": "Model selects one answer choice.",
+    "evaluation": "Accuracy (% correct). Standard 5-shot evaluation. Random chance = 25% (MMLU) or 10% (MMLU-Pro).",
+    "metric": "Accuracy"
+  },
+  "examples": [
+    {
+      "title": "High School Mathematics",
+      "difficulty": "Medium",
+      "input": "If f(x) = x² - 3x + 2, what is f(5)?\n\nA) 8\nB) 10\nC) 12\nD) 16",
+      "solution": "f(5) = 5² - 3(5) + 2 = 25 - 15 + 2 = 12",
+      "answer": "C) 12",
+      "notes": "Representative STEM question. Tests basic algebraic function evaluation."
+    },
+    {
+      "title": "Professional Medicine",
+      "difficulty": "Hard",
+      "input": "A 45-year-old man presents with progressive weakness of proximal muscles, difficulty rising from a chair, and a heliotrope rash around the eyes. The most likely diagnosis is:\n\nA) Systemic lupus erythematosus\nB) Dermatomyositis\nC) Polymyalgia rheumatica\nD) Rheumatoid arthritis",
+      "solution": "Heliotrope rash (violaceous discoloration around the eyes) combined with proximal muscle weakness is pathognomonic for dermatomyositis — an inflammatory myopathy. SLE presents with butterfly rash, not heliotrope. Polymyalgia rheumatica causes proximal pain without rash. RA is a joint disease.",
+      "answer": "B) Dermatomyositis",
+      "notes": "Medical knowledge requiring pattern recognition of a specific clinical presentation. These questions are sourced from USMLE-style practice exams."
+    },
+    {
+      "title": "International Law",
+      "difficulty": "Hard",
+      "input": "Under Article 38 of the Statute of the International Court of Justice, which of the following is NOT a primary source of international law?\n\nA) International conventions\nB) International custom\nC) Judicial decisions\nD) General principles of law",
+      "solution": "Article 38 of the ICJ Statute lists three primary sources: (1) international conventions, (2) international custom, (3) general principles of law. Judicial decisions and the teachings of publicists are listed as 'subsidiary means for the determination of rules of law' — not primary sources.",
+      "answer": "C) Judicial decisions",
+      "notes": "Legal knowledge requiring memorization of a specific treaty provision and its correct interpretation."
+    }
+  ],
+  "results": [
+    { "modelId": "gpt-5", "score": 91.4, "scoreLabel": "91.4%", "scoreType": "Accuracy (5-shot)", "date": "2025-08", "isVendorReported": true },
+    { "modelId": "claude-opus-4-5", "score": 91.8, "scoreLabel": "91.8%", "scoreType": "Accuracy (5-shot)", "date": "2025-11", "isVendorReported": true },
+    { "modelId": "gemini-2-5-pro", "score": 90.0, "scoreLabel": "~90%", "scoreType": "Accuracy (5-shot)", "date": "2025-03", "isVendorReported": true },
+    { "modelId": "grok-4", "score": 92.7, "scoreLabel": "92.7%", "scoreType": "Accuracy (5-shot)", "date": "2025-07", "isVendorReported": true },
+    { "modelId": "deepseek-v3", "score": 88.2, "scoreLabel": "88.2%", "scoreType": "Accuracy (5-shot)", "date": "2024-12", "isVendorReported": true },
+    { "modelId": "llama-4-maverick", "score": 87.8, "scoreLabel": "87.8%", "scoreType": "Accuracy (5-shot)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "qwen-3-72b", "score": 88.7, "scoreLabel": "88.7%", "scoreType": "Accuracy (5-shot)", "date": "2025-05", "isVendorReported": true },
+    { "modelId": "mistral-large-3", "score": 87.1, "scoreLabel": "87.1%", "scoreType": "Accuracy (5-shot)", "date": "2025-06", "isVendorReported": true },
+    { "modelId": "deepseek-r1", "score": 90.8, "scoreLabel": "90.8%", "scoreType": "Accuracy (5-shot)", "date": "2025-01", "isVendorReported": true },
+    { "modelId": "gpt-4o", "score": 88.7, "scoreLabel": "88.7%", "scoreType": "Accuracy (5-shot)", "date": "2024-11", "isVendorReported": true },
+    { "modelId": "kimi-k2-6", "score": 86.0, "scoreLabel": "~86%", "scoreType": "Accuracy (5-shot)", "date": "2026-04", "isVendorReported": true },
+    { "modelId": "minimax-m2-5", "score": 86.5, "scoreLabel": "~86.5%", "scoreType": "Accuracy (5-shot)", "date": "2026-02", "isVendorReported": true }
+  ],
+  "variants": [
+    {
+      "name": "MMLU-Pro",
+      "slug": "mmlu-pro",
+      "description": "10 answer choices instead of 4; more reasoning-focused questions; greater stability under prompt variation. Models drop 16-26 percentage points from MMLU to MMLU-Pro. Top score: Gemini 3 Pro at ~89.8%.",
+      "taskCount": 12000,
+      "year": 2024,
+      "saturationStatus": "nearing-saturation"
+    },
+    {
+      "name": "Global-MMLU",
+      "slug": "global-mmlu",
+      "description": "Extended to 42 languages. Tests whether multilingual models maintain performance across non-English languages on the same academic knowledge tasks.",
+      "taskCount": 420000,
+      "year": 2024,
+      "saturationStatus": "active"
+    }
+  ],
+  "controversies": [
+    "~6.5% of MMLU questions contain identifiable errors or ambiguities. The virology subject alone has 57% of questions with identified problems, setting a realistic ceiling around 93-94% rather than 100%.",
+    "The standard 5-shot evaluation is sensitive to which 5 examples are selected; different implementations give ±2% score differences for the same model.",
+    "Some subjects (global facts, miscellaneous) have contested 'correct' answers that reflect US-centric or culturally specific norms, disadvantaging models with different training distributions.",
+    "Severe contamination: with 14,042 questions publicly available since 2020, most training corpora contain MMLU questions and answers. High scores may reflect memorization."
+  ],
+  "keyFindings": [
+    "Score progression from GPT-3 (43.9%) to GPT-5 (91.4%) over 4 years is one of AI's clearest demonstrations of scaling — from barely above random to exceeding human expert performance.",
+    "MMLU-Pro's 10-answer format revealed that most MMLU improvements were inflated: models that drop 18-26% points moving to 10 choices weren't as knowledgeable as their MMLU scores suggested.",
+    "The benchmark established that breadth of academic knowledge scales with model size — a counterintuitive finding in 2020 when memorization at scale was not taken seriously.",
+    "Human expert performance estimate (~89.8%) is now exceeded by multiple frontier models, making human comparison no longer meaningful for this benchmark."
+  ],
+  "links": {
+    "paper": "Measuring Massive Multitask Language Understanding",
+    "arxiv": "https://arxiv.org/abs/2009.03300",
+    "dataset": "https://huggingface.co/datasets/cais/mmlu",
+    "leaderboard": "https://paperswithcode.com/sota/multi-task-language-understanding-on-mmlu"
+  }
+}

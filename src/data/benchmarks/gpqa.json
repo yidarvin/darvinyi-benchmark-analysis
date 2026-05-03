@@ -1,0 +1,87 @@
+{
+  "slug": "gpqa",
+  "name": "GPQA Diamond",
+  "shortDescription": "PhD-level science questions so hard that even experts with Google still struggle.",
+  "description": "GPQA (Graduate-Level Google-Proof Q&A) was designed for a specific research problem: scalable oversight. If AI systems eventually exceed human expertise, how can human overseers verify their outputs? GPQA creates exactly the experimental condition needed — questions that domain experts can answer but non-experts cannot verify even with 30+ minutes of unrestricted internet access.\n\nCreated by David Rein and colleagues at NYU and Anthropic, published at COLM 2024, GPQA consists of 546 multiple-choice questions written and validated by PhD-level domain experts in biology, physics, and chemistry. The 'Google-proof' designation is empirically backed: non-expert PhD students searching the web for 30+ minutes averaged only 34% accuracy (random chance is 25%).\n\nThe Diamond subset (198 questions) is the most carefully filtered: a question enters only if two independent expert validators both answered correctly AND fewer than 1 in 3 non-expert validators answered correctly. These 198 questions represent the benchmark's gold standard.\n\nThe performance jump on GPQA has been dramatic: GPT-4 scored 38.8% in 2023 — barely above non-expert web-searching humans. Extended reasoning models (o1, o3) broke through expert-level performance in 2024-2025. Gemini 3.1 Pro Preview now scores 94.3% — far above the original expert validator accuracy of 65-81%. GPQA remains one of the best frontier model discriminators, with scores ranging from ~35% (weaker models) to ~94% across the full population.",
+  "category": "reasoning",
+  "subcategory": "expert-science",
+  "tags": ["science", "reasoning", "chemistry", "physics", "biology", "expert-level", "google-proof"],
+  "saturationStatus": "active",
+  "evaluationMethod": "exact-match",
+  "stats": {
+    "totalTasks": 198,
+    "publicTasks": 198,
+    "year": 2023,
+    "creator": "David Rein, Betty Li Hou, Asa Cooper Stickland, et al.",
+    "institution": "NYU / Anthropic",
+    "languages": [],
+    "domains": ["Organic Chemistry", "General Chemistry", "Biology", "Physics", "Quantum Mechanics", "Genetics"],
+    "humanBaseline": 81.3,
+    "randomBaseline": 25.0
+  },
+  "taskAnatomy": {
+    "input": "A multiple-choice question (4 options) requiring PhD-level domain expertise. Questions are written by PhD experts and designed so that the correct answer requires genuine understanding — not web search skills.",
+    "output": "Model selects one of 4 answer choices (A, B, C, or D).",
+    "evaluation": "Accuracy: % of 198 questions answered correctly. Typically evaluated with chain-of-thought prompting (0-shot or few-shot CoT). Random chance = 25%. Non-expert humans with web access = 34%.",
+    "metric": "Accuracy"
+  },
+  "examples": [
+    {
+      "title": "Organic Chemistry — Diels-Alder reaction",
+      "difficulty": "Hard",
+      "input": "Methylcyclopentadiene (which exists as a fluxional mixture of isomers) was allowed to react with methyl isoamyl ketone and a catalytic amount of pyrrolidine. A bright yellow, cross-conjugated polyalkenyl hydrocarbon product formed (as a mixture of isomers), with water as a side product. These products are derivatives of fulvene. This product was then allowed to react with ethyl acrylate in a 1:1 ratio. Upon completion of the reaction, the bright yellow color had disappeared.\n\nHow many chemically distinct isomers make up the final product (not counting stereoisomers)?\n\nA) 2\nB) 16\nC) 8\nD) 4",
+      "solution": "The first reaction is a Knoevenagel condensation forming fulvene derivatives. Methylcyclopentadiene has 3 distinct isomers that interconvert (fluxional). Each reacts with the ketone to give a fulvene derivative — 3 possible dienes from methylcyclopentadiene isomers × up to 2 rotamers of the resulting fulvene = up to 4 distinct diene isomers acting as Diels-Alder partners with ethyl acrylate. The dienophile (ethyl acrylate) can approach from two faces × 4 diene isomers = up to 8 regiochemical and facial combinations... The answer requires tracking all distinct structural isomers through two reaction steps.",
+      "answer": "B) 16",
+      "notes": "Requires understanding Diels-Alder reactions, fluxional isomerism, and systematic counting of structural isomers across 4 diene isomers × 4 reaction geometries. This is why non-experts with web access only get 34% — the question requires integrating multiple advanced chemistry concepts."
+    },
+    {
+      "title": "General Chemistry — Industrial catalysis",
+      "difficulty": "Hard",
+      "input": "A reaction of a liquid organic compound (molecules consisting only of C and H) is performed at 80°C and 20 bar for 24 hours. In the proton NMR spectrum, the signals with the highest chemical shift of the reactant are replaced by a signal about 3-4 units downfield in the product.\n\nCompounds from which position in the periodic table (also used in the corresponding large-scale industrial process) were most likely initially added in small amounts?\n\nA) A metal compound from the fifth period.\nB) A metal compound from the fifth period and a non-metal compound from the third period.\nC) A metal compound from the fourth period.\nD) A metal compound from the fourth period and a non-metal compound from the second period.",
+      "solution": "The NMR downfield shift from alkyl/alkenyl to aldehyde region, combined with the conditions (80°C, 20 bar, liquid C/H compound), identifies this as a hydroformylation (oxo synthesis) or Wacker oxidation. The downfield shift of 3-4 ppm moves alkene protons (δ 4-6) to aldehyde protons (δ 9-10). The Wacker process uses Pd (period 4 metal) as catalyst and ethylene ligand chemistry — but Wacker converts alkenes to aldehydes using Pd(II)/Cu co-catalyst system. Pd = period 5, not 4. Hydroformylation uses Rh (period 5) or Co (period 4) catalysts with CO (C = period 2)... Correct answer identifies the industrial catalyst system.",
+      "answer": "D) A metal compound from the fourth period and a non-metal compound from the second period.",
+      "notes": "Requires recognizing the reaction type from NMR data + conditions, then mapping to the industrial catalyst system (Co = period 4 metal, CO = period 2 non-metal for oxo synthesis)."
+    },
+    {
+      "title": "Quantum Mechanics — Energy uncertainty",
+      "difficulty": "Hard",
+      "input": "Two quantum states with energies E₁ and E₂ have lifetimes of τ₁ = 10⁻⁹ s and τ₂ = 10⁻⁸ s respectively. Which of the following energy differences ΔE = E₂ - E₁ could NOT be clearly resolved experimentally?\n\nA) 10⁻²⁵ J\nB) 10⁻²⁶ J\nC) 10⁻²⁷ J\nD) 10⁻²⁸ J",
+      "solution": "Apply the energy-time uncertainty principle: ΔE · Δt ≥ ħ/2\nNatural linewidth for state 1: ΔE₁ = ħ/τ₁ = (1.055×10⁻³⁴)/(10⁻⁹) ≈ 10⁻²⁵ J\nNatural linewidth for state 2: ΔE₂ = ħ/τ₂ = (1.055×10⁻³⁴)/(10⁻⁸) ≈ 10⁻²⁶ J\nTotal linewidth ≈ ΔE₁ + ΔE₂ ≈ 10⁻²⁵ J\nAny ΔE smaller than the combined linewidth cannot be resolved. Options C and D are below this threshold.",
+      "answer": "D) 10⁻²⁸ J",
+      "notes": "Requires correctly applying the energy-time uncertainty principle quantitatively, not just qualitatively. The calculation must be done correctly with the right form of the Heisenberg relation."
+    }
+  ],
+  "results": [
+    { "modelId": "gemini-3-pro", "score": 94.3, "scoreLabel": "94.3%", "scoreType": "Accuracy (Diamond)", "date": "2026-02", "isVendorReported": false, "setup": "Gemini 3.1 Pro Preview, 0-shot CoT" },
+    { "modelId": "claude-opus-4-6", "score": 88.0, "scoreLabel": "~88%", "scoreType": "Accuracy (Diamond)", "date": "2026-02", "isVendorReported": true },
+    { "modelId": "o3", "score": 87.7, "scoreLabel": "87.7%", "scoreType": "Accuracy (Diamond)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "grok-4", "score": 85.0, "scoreLabel": "~85%", "scoreType": "Accuracy (Diamond)", "date": "2025-07", "isVendorReported": true },
+    { "modelId": "gemini-2-5-pro", "score": 83.0, "scoreLabel": "~83%", "scoreType": "Accuracy (Diamond)", "date": "2025-03", "isVendorReported": true },
+    { "modelId": "o4-mini", "score": 81.4, "scoreLabel": "81.4%", "scoreType": "Accuracy (Diamond)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "gpt-5", "score": 75.0, "scoreLabel": "~75%", "scoreType": "Accuracy (Diamond)", "date": "2025-08", "isVendorReported": true },
+    { "modelId": "deepseek-r1", "score": 71.0, "scoreLabel": "~71%", "scoreType": "Accuracy (Diamond)", "date": "2025-01", "isVendorReported": true },
+    { "modelId": "claude-sonnet-4", "score": 68.0, "scoreLabel": "~68%", "scoreType": "Accuracy (Diamond)", "date": "2025-08", "isVendorReported": true },
+    { "modelId": "llama-4-maverick", "score": 60.0, "scoreLabel": "~60%", "scoreType": "Accuracy (Diamond)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "gpt-4o", "score": 53.0, "scoreLabel": "~53%", "scoreType": "Accuracy (Diamond)", "date": "2024-11", "isVendorReported": true }
+  ],
+  "controversies": [
+    "The dataset is password-protected to limit contamination (password: 'deserted-untie-orchid') but is published openly enough that contamination is possible for models trained after mid-2024.",
+    "With only 198 questions, a 5-question difference = ~2.5% — confidence intervals are wide. Model rankings can shift with small measurement noise.",
+    "Chemistry is overrepresented (~36% organic chemistry) — this may favor models with disproportionate chemistry training data.",
+    "Expert accuracy figures (65-81%) are for PhD-level validators working in their own subfield with no time pressure. AI systems now clearly surpass this, but the comparison is imperfect since human experts had no computational assistance.",
+    "Anthropic contributed to the benchmark's creation, raising concerns about whether the benchmark might favor Claude models — though empirical results show Gemini leading."
+  ],
+  "keyFindings": [
+    "The most dramatic single-year AI progress story: GPT-4 scored 38.8% in 2023 (barely above 34% non-expert web search). o3 scored 87.7% in 2025. Frontier models went from sub-expert to expert-surpassing in 2 years.",
+    "GPQA Diamond is currently the best frontier model discriminator among science benchmarks, with 56 percentage points of spread between GPT-4-era models (~38%) and Gemini 3.1 Pro (~94%).",
+    "Extended reasoning is essential: o1-preview jumped ~24 percentage points over GPT-4o by using internal chain-of-thought — demonstrating that the bottleneck was reasoning process, not knowledge.",
+    "The benchmark validates the scalable oversight concern it was designed to study: if AI systems score 94% on questions non-experts can't verify, human oversight of AI science work becomes fundamentally difficult."
+  ],
+  "links": {
+    "paper": "GPQA: A Graduate-Level Google-Proof Q&A Benchmark",
+    "arxiv": "https://arxiv.org/abs/2311.12022",
+    "dataset": "https://huggingface.co/datasets/idavidrein/gpqa",
+    "leaderboard": "https://epoch.ai/benchmarks/gpqa-diamond",
+    "github": "https://github.com/idavidrein/gpqa"
+  }
+}

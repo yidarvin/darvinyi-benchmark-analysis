@@ -1,0 +1,125 @@
+{
+  "slug": "swe-bench",
+  "name": "SWE-bench",
+  "shortDescription": "Can AI resolve real GitHub issues on production codebases?",
+  "description": "SWE-bench tests whether AI systems can act as autonomous software engineers on real production codebases. Given a GitHub issue description and the full repository at a specific commit, the model must produce a code patch that makes failing tests pass without breaking passing ones. Tasks are sourced from merged pull requests across 12 popular Python repositories (Django, Flask, SymPy, scikit-learn, and others), ensuring every task has a verifiable ground truth.\n\nCreated by Carlos Jimenez, John Yang, and colleagues at Princeton NLP and published at ICLR 2024, SWE-bench was a landmark shift in AI evaluation: from abstract reasoning questions to real engineering work. The benchmark revealed a huge gap between models that score well on coding trivia and models that can actually fix software — early results showed GPT-4 solving under 2% of tasks.\n\nThe benchmark family now has six variants: Full (2,294 tasks), Lite (300 tasks), Verified (500 quality-filtered tasks — now deprecated due to contamination), Pro (1,865 harder multi-file tasks, current gold standard), Multilingual (300 tasks across 9 languages), and Multimodal (517 tasks with visual elements). In February 2026, OpenAI formally announced that SWE-bench Verified was contaminated — frontier models were reproducing verbatim gold patches from memory — and endorsed SWE-bench Pro as the new standard.",
+  "category": "coding",
+  "subcategory": "software-engineering",
+  "tags": ["coding", "software-engineering", "agent", "python", "github", "patch-generation"],
+  "saturationStatus": "contaminated",
+  "evaluationMethod": "functional-correctness",
+  "stats": {
+    "totalTasks": 2294,
+    "publicTasks": 2294,
+    "year": 2023,
+    "creator": "Carlos Jimenez, John Yang, et al.",
+    "institution": "Princeton NLP",
+    "languages": ["Python"],
+    "domains": ["Django", "Flask", "SymPy", "scikit-learn", "Astropy", "Requests", "Matplotlib", "pytest", "SQLAlchemy", "Mypy", "Xarray", "Sphinx"],
+    "humanBaseline": null,
+    "randomBaseline": 0
+  },
+  "taskAnatomy": {
+    "input": "A GitHub issue title + body describing a bug or feature request, plus the full repository at the commit before the fix was merged.",
+    "output": "A unified diff (code patch) that modifies one or more files in the repository.",
+    "evaluation": "A Docker container runs the repository at the base commit, applies the model's patch, then executes two test sets: FAIL_TO_PASS tests (which must now pass) and PASS_TO_PASS tests (which must not regress). A task is resolved only if both conditions hold.",
+    "metric": "% Resolved"
+  },
+  "examples": [
+    {
+      "title": "Astropy: WCS convergence warning",
+      "difficulty": "Medium",
+      "input": "Instance: astropy__astropy-11693\nRepo: astropy/astropy\n\nIssue: WCS.all_world2pix failed to converge when plotting WCS with non-linear distortion. The method raises ConvergenceWarning but there is no test for this specific behavior, and the exception should be a warning not a hard raise.\n\nFAIL_TO_PASS: [\"astropy/wcs/wcsapi/tests/test_fitswcs.py::test_non_convergence_warning\"]",
+      "solution": "The fix changes the behavior from raising a hard exception to emitting a Python warning. The key change in fitswcs.py:\n\n-    raise ConvergenceWarning(...)\n+    warnings.warn(ConvergenceWarning(...))\n\nThis requires both modifying the source code and adding the test that was missing.",
+      "answer": "Patch changes raise to warnings.warn in the WCS convergence code path, then adds a test asserting the warning is emitted rather than raised.",
+      "notes": "Illustrates a common SWE-bench pattern: the issue describes missing test coverage alongside a behavioral bug, requiring both a fix and a new test."
+    },
+    {
+      "title": "SymPy: Contains.as_set() raises NotImplementedError",
+      "difficulty": "Medium",
+      "input": "Instance: sympy__sympy-23950\nRepo: sympy/sympy\n\nIssue: Contains(x, FiniteSet(y)).as_set() raises NotImplementedError instead of returning the appropriate set expression.\n\nExpected: Contains(x, FiniteSet(y)).as_set() should return FiniteSet(y)\n\nFAIL_TO_PASS: [\"sympy/sets/tests/test_contains.py::test_as_set\"]",
+      "solution": "Add an as_set() method to the Contains class that returns the set argument directly when the condition holds for all members, rather than raising NotImplementedError.",
+      "answer": "New method added to sympy/sets/sets.py in the Contains class. Test verifies Contains(x, FiniteSet(y)).as_set() == FiniteSet(y) and Contains(x, S.Integers).as_set() == S.Integers.",
+      "notes": "A common class of SWE-bench tasks: a method that should be implemented simply raises NotImplementedError as a placeholder."
+    },
+    {
+      "title": "Sphinx: Napoleon extension ignores Attributes section",
+      "difficulty": "Hard",
+      "input": "Instance: sphinx-doc__sphinx-8713\nRepo: sphinx-doc/sphinx\n\nIssue: The Napoleon extension for Google-style docstrings does not render attributes listed under an 'Attributes' section in the output HTML. The attributes section is parsed but the output is empty.\n\nFAIL_TO_PASS: [\"tests/test_ext_napoleon.py::test_attributes\"]",
+      "solution": "Trace the Napoleon docstring parsing pipeline to find where Attributes sections are dropped. The fix modifies napoleon/docstring.py to correctly yield attribute items during parsing rather than silently skipping them.",
+      "answer": "Bug in _parse_attributes_section method — attributes were being collected but not appended to the output list. One-line fix plus updated test assertions.",
+      "notes": "Harder because the bug is in a multi-stage text transformation pipeline where intermediate states are not easily inspected."
+    }
+  ],
+  "results": [
+    { "modelId": "claude-opus-4-6", "score": 80.8, "scoreLabel": "80.8%", "scoreType": "% Resolved", "date": "2026-02", "isVendorReported": false, "setup": "SWE-bench Verified (now deprecated)", "notes": "Leaderboard result before contamination declaration" },
+    { "modelId": "claude-opus-4-5", "score": 80.9, "scoreLabel": "80.9%", "scoreType": "% Resolved", "date": "2025-11", "isVendorReported": false, "setup": "SWE-bench Verified (now deprecated)", "notes": "First model to break 80%" },
+    { "modelId": "minimax-m2-5", "score": 80.2, "scoreLabel": "80.2%", "scoreType": "% Resolved", "date": "2026-02", "isVendorReported": true, "setup": "SWE-bench Verified" },
+    { "modelId": "gemini-2-5-pro", "score": 78.0, "scoreLabel": "78.0%", "scoreType": "% Resolved", "date": "2025-11", "isVendorReported": false, "setup": "SWE-bench Verified" },
+    { "modelId": "gpt-5", "score": 74.9, "scoreLabel": "74.9%", "scoreType": "% Resolved", "date": "2025-08", "isVendorReported": true, "setup": "SWE-bench Verified" },
+    { "modelId": "deepseek-r1", "score": 73.3, "scoreLabel": "73.3%", "scoreType": "% Resolved", "date": "2025-06", "isVendorReported": false, "setup": "SWE-bench Verified" },
+    { "modelId": "kimi-k2-6", "score": 80.2, "scoreLabel": "80.2%", "scoreType": "% Resolved", "date": "2026-04", "isVendorReported": true, "setup": "SWE-bench Verified" }
+  ],
+  "variants": [
+    {
+      "name": "SWE-bench Lite",
+      "slug": "swe-bench-lite",
+      "description": "300 self-contained, single-file tasks. Designed for cost-effective evaluation. Top score: Claude Opus 4.6 at 62.7%.",
+      "taskCount": 300,
+      "year": 2024,
+      "saturationStatus": "nearing-saturation"
+    },
+    {
+      "name": "SWE-bench Verified",
+      "slug": "swe-bench-verified",
+      "description": "500 tasks human-verified by 93 professional developers. Deprecated February 2026 after OpenAI found frontier models reproducing verbatim gold patches from training memory.",
+      "taskCount": 500,
+      "year": 2024,
+      "saturationStatus": "contaminated"
+    },
+    {
+      "name": "SWE-bench Pro",
+      "slug": "swe-bench-pro",
+      "description": "1,865 multi-file, multi-hour tasks using GPL-licensed repos. Current gold standard endorsed by OpenAI. Top score: GPT-5.4 at 57.7%.",
+      "taskCount": 1865,
+      "year": 2025,
+      "saturationStatus": "active"
+    },
+    {
+      "name": "SWE-bench Multilingual",
+      "slug": "swe-bench-multilingual",
+      "description": "300 tasks across C, C++, Go, Java, JavaScript, PHP, Ruby, Rust. Top score: Claude Opus 4.6 at 77.8%.",
+      "taskCount": 300,
+      "year": 2025,
+      "saturationStatus": "active"
+    },
+    {
+      "name": "SWE-bench Multimodal",
+      "slug": "swe-bench-multimodal",
+      "description": "517 tasks where issues include screenshots, UI mockups, or design diagrams. Barely populated leaderboard — frontier models have not widely evaluated here yet.",
+      "taskCount": 517,
+      "year": 2024,
+      "saturationStatus": "active"
+    }
+  ],
+  "controversies": [
+    "February 23, 2026: OpenAI announced SWE-bench Verified is contaminated. Using GPT-5 as a red-teaming agent, they found that GPT-5.2, Claude Opus 4.5, and Gemini 3 Flash could reproduce verbatim gold patches given only minimal task hints — including exact variable names and inline comments from human-written diffs they had never been shown in the prompt.",
+    "A February 2025 paper (LessLeak-Bench) independently confirmed 10.6% direct data leakage in SWE-bench Verified against StarCoder's training corpus — predating OpenAI's announcement.",
+    "OpenAI endorsing SWE-bench Pro (Scale AI) while leading its leaderboard was noted by some researchers as a potential conflict of interest.",
+    "SWE-bench Pro uses GPL-licensed repositories as a legal deterrent against training inclusion. Critics predict the contamination cycle will repeat within 6–12 months as Pro repos are crawled."
+  ],
+  "keyFindings": [
+    "In 2023, GPT-4 solved under 2% of tasks. By 2025, frontier models exceeded 80% on the Verified split — a 40x improvement in two years.",
+    "The gap between SWE-bench Verified scores (~80%) and SWE-bench Pro scores (~58%) directly quantifies the contamination effect — models 'know' the test answers on Verified.",
+    "The benchmark revealed that models excellent at abstract code generation (HumanEval ~97%) fail catastrophically at real engineering: reading issue descriptions, navigating large codebases, and making targeted multi-file changes.",
+    "Multi-language performance is substantially lower than Python: Claude Opus 4.6 scores 80.8% on Python (Verified) but only 77.8% on the multilingual mix — with C/C++ being hardest.",
+    "SWE-bench Pro's commercial (private) subset shows a further drop: Claude Opus 4.1 falls from 23.1% (public GPL) to 17.8% (proprietary codebases), confirming that open-source familiarity contributes to performance."
+  ],
+  "links": {
+    "paper": "Can Language Models Resolve Real-world Github Issues?",
+    "arxiv": "https://arxiv.org/abs/2310.06770",
+    "dataset": "https://huggingface.co/datasets/princeton-nlp/SWE-bench",
+    "leaderboard": "https://www.swebench.com/",
+    "github": "https://github.com/princeton-nlp/SWE-bench"
+  }
+}

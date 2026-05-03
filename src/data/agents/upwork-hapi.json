@@ -1,0 +1,93 @@
+{
+  "slug": "upwork-hapi",
+  "name": "Upwork HAPI",
+  "shortDescription": "The first benchmark measuring how human expertise amplifies AI agent performance.",
+  "description": "HAPI (Human+Agent Productivity Index) is unique among all AI benchmarks: it explicitly measures the value that human expertise adds when working alongside AI agents, rather than measuring agents in isolation. Created by Upwork Inc. and announced November 13, 2025, it was accepted to NeurIPS 2025 Workshop as 'UpBench: A Dynamically Evolving Real-World Labor-Market Agentic Benchmark Framework Built for Human-Centric AI.'\n\nUpwork used 322 real fixed-price jobs previously posted by actual clients and completed by verified freelancers on their platform. Expert evaluators with 100% Job Success Scores (Upwork's highest rating) and 96,000+ collective hours on the platform created 5-20 pass/fail rubric criteria per job based on the original project description. AI agents first attempted each job autonomously, then expert freelancers provided structured feedback, and agents made additional attempts.\n\nThe core finding: human+agent collaboration increased project completion rates by up to 70% compared to agents working alone. A single ~20-minute expert review cycle produced dramatic improvements. Data Science & Analytics: 64% (agent alone) → 93% (with human). Engineering & Architecture: 30% → 50%. Sales & Marketing: 17% → 31%.\n\nHAPI is strategically tied to Upwork's Uma platform — a meta-orchestration agent that pairs AI systems with expert freelancers. The benchmark validates Upwork's thesis that human-AI pairs, not AI alone, are the future of professional work.",
+  "creator": "Upwork Inc.",
+  "institution": "Upwork Inc.",
+  "year": 2025,
+  "tags": ["human-ai-collaboration", "real-work", "freelance", "hitl", "upwork", "agent", "productivity"],
+  "isRequired": true,
+  "stats": {
+    "totalTasks": 322,
+    "publicTasks": 322,
+    "domains": ["Accounting & Consulting", "Admin Support", "Data Science & Analytics", "Design & Creative", "Engineering & Architecture", "Sales & Marketing", "Translation", "Web/Mobile/Software Dev", "Writing"],
+    "avgHumanTime": "Varies by job (9 hours to 100+ days per original completion)",
+    "totalEconomicValue": "90% of jobs priced $10-$200; all under $500",
+    "evaluationMethod": "Expert freelancers with 100% JSS create 5-20 pass/fail rubric criteria per job; grade AI output before and after providing feedback.",
+    "primaryMetric": "Completion rate (% of jobs where 100% of rubric criteria met); Human+Agent delta vs. Agent alone"
+  },
+  "taskAnatomy": {
+    "setup": "Real fixed-price jobs from Upwork marketplace. Expert freelancer with 100% Job Success Score creates job-specific rubric (5-20 criteria). AI agent attempts job autonomously. Expert provides structured feedback. Agent attempts again with feedback. Process measures standalone performance AND value of human guidance.",
+    "input": "Original Upwork job posting (as written by the real client) plus any files the client provided. Expert freelancer creates rubric based on the job description.",
+    "output": "Complete job deliverable — varies by category: code, designs, written content, translations, data analysis reports, spreadsheets, marketing materials.",
+    "evaluation": "Expert grader checks each criterion: pass/fail. Completion = 100% of criteria met. Score before human feedback = standalone agent performance. Score after feedback = human+agent performance. Delta = value of human expertise.",
+    "metric": "Completion rate (% of criteria met); Human+Agent improvement over Agent alone"
+  },
+  "examples": [
+    {
+      "title": "Data Science — Customer Churn Analysis",
+      "jobType": "Data Science & Analytics",
+      "economicValue": "$150",
+      "humanTime": "8-12 hours (original human completion)",
+      "description": "Analyze a CSV dataset of customer transactions, identify churn patterns, build a classification model, and produce a report with visualizations.",
+      "input": "CSV dataset (customer_id, transaction_history, demographic_data), job description specifying required model type and visualization format.",
+      "output": "Jupyter notebook or Python script with exploratory analysis, trained classification model, confusion matrix, ROC curve, and written report.",
+      "evaluation": "Criteria: (1) Correct data preprocessing with missing value handling, (2) Appropriate model chosen with justification, (3) Model accuracy reported with validation, (4) ROC/AUC visualizations included, (5) Written interpretation addresses key churn drivers. Agent alone: 64% completion. With expert feedback on methodology: 93%."
+    },
+    {
+      "title": "Engineering — Structural Load Calculation",
+      "jobType": "Engineering & Architecture",
+      "economicValue": "$120",
+      "humanTime": "6-10 hours (original human completion)",
+      "description": "Create a structural load calculation spreadsheet for a single-story residential addition based on given dimensions and local building codes.",
+      "input": "Residential addition floor plan dimensions, local building codes (IBC 2021 relevant sections), load requirements.",
+      "output": "Excel spreadsheet with dead load, live load, wind load, and seismic load calculations per code section, with formulas showing work.",
+      "evaluation": "Criteria: (1) Correct dead load calculation per material specifications, (2) Live load per IBC table values, (3) Wind load per ASCE 7, (4) All formulas traceable to code sections, (5) Totals correct. Agent alone: ~30%. With expert engineering review: ~50%."
+    },
+    {
+      "title": "Writing — SEO Blog Posts",
+      "jobType": "Writing",
+      "economicValue": "$75",
+      "humanTime": "5-8 hours (original human completion)",
+      "description": "Write 5 SEO-optimized blog posts for a dental practice targeting specific keywords with a professional but approachable tone.",
+      "input": "Target keywords list, brand voice guide, topic briefs for each post, competitor blog examples.",
+      "output": "5 blog posts (~800 words each) with proper header structure, keyword integration, internal link suggestions, and meta descriptions.",
+      "evaluation": "Criteria: (1) Each post targets specified keyword naturally, (2) Professional yet approachable tone consistent across all 5, (3) H1/H2/H3 structure present, (4) No keyword stuffing, (5) Meta descriptions under 160 chars. With editorial feedback on tone: +17pp completion."
+    }
+  ],
+  "results": [
+    { "modelId": "claude-sonnet-4", "score": 93.0, "scoreLabel": "93% (with human)", "scoreType": "Completion rate (Data Science + human feedback)", "date": "2025-11", "isVendorReported": true, "domain": "Data Science & Analytics" },
+    { "modelId": "claude-sonnet-4", "score": 64.0, "scoreLabel": "64% (alone)", "scoreType": "Completion rate (Data Science, standalone)", "date": "2025-11", "isVendorReported": true, "domain": "Data Science & Analytics", "notes": "64% without human, 93% with — +29pp from human" },
+    { "modelId": "gpt-5", "score": 50.0, "scoreLabel": "~50% (with human)", "scoreType": "Completion rate (Engineering + human)", "date": "2025-08", "isVendorReported": true, "domain": "Engineering & Architecture" },
+    { "modelId": "gpt-5", "score": 30.0, "scoreLabel": "~30% (alone)", "scoreType": "Completion rate (Engineering, standalone)", "date": "2025-08", "isVendorReported": true, "domain": "Engineering & Architecture", "notes": "+20pp from human feedback" },
+    { "modelId": "gemini-2-5-pro", "score": 31.0, "scoreLabel": "~31% (with human)", "scoreType": "Completion rate (Sales/Marketing + human)", "date": "2025-03", "isVendorReported": true, "domain": "Sales & Marketing" },
+    { "modelId": "gemini-2-5-pro", "score": 17.0, "scoreLabel": "17% (alone)", "scoreType": "Completion rate (Sales/Marketing, standalone)", "date": "2025-03", "isVendorReported": true, "domain": "Sales & Marketing", "notes": "+14pp from human feedback" }
+  ],
+  "keyFindings": [
+    "Human+agent collaboration increased project completion by up to 70% vs. agent alone — the single largest documented amplification of AI performance through human guidance.",
+    "The 20-minute human review insight: even a brief, focused expert review cycle (~20 minutes) dramatically elevated completion rates — validating the economic viability of human-in-the-loop workflows.",
+    "The collaboration benefit is uneven across categories: Data Science benefited most (+29pp), suggesting that domain-specific judgment (choosing the right model, validating statistical assumptions) is where human expertise amplifies AI most.",
+    "Design & Creative tasks showed the most variance — some creative jobs benefited enormously from human aesthetic feedback while others showed less improvement.",
+    "The benchmark validates Upwork's business thesis: human+agent pairs outperform agents alone on the very tasks AI is supposed to be replacing humans on."
+  ],
+  "whatMakesItUnique": [
+    "The only benchmark that measures human+agent collaboration as its primary signal, not agent performance in isolation.",
+    "Dynamic benchmark: will be refreshed regularly with new real Upwork jobs to prevent overfitting — addressing a key weakness of static benchmarks.",
+    "Two-stage evaluation: grades before AND after human feedback, directly quantifying the 'value of human oversight' per feedback iteration.",
+    "Real economics: jobs were previously paid for by real clients at real market rates.",
+    "NeurIPS 2025 Workshop acceptance gives academic credibility alongside commercial platform scale."
+  ],
+  "controversies": [
+    "Jobs were explicitly selected for being simple (the bottom 6% of Upwork's gross services volume by complexity). Results don't generalize to typical Upwork project complexity.",
+    "Upwork has financial incentive to show human-in-the-loop superiority — it preserves their human talent marketplace against pure-AI alternatives.",
+    "Only 3 models were tested in the initial release — limited model comparisons versus APEX or METR.",
+    "Rubrics are created by the same people who evaluate — potential for unconscious bias in choosing criteria that AI can/cannot meet.",
+    "100% JSS evaluators are extreme outliers among Upwork freelancers — may not represent typical client quality expectations."
+  ],
+  "links": {
+    "arxiv": "https://arxiv.org/abs/2511.12306",
+    "leaderboard": "https://www.upwork.com/human-agent-productivity-index",
+    "website": "https://www.upwork.com/human-agent-productivity-index"
+  }
+}

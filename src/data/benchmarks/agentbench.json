@@ -1,0 +1,79 @@
+{
+  "slug": "agentbench",
+  "name": "AgentBench",
+  "shortDescription": "LLM agents across 8 interactive environments: OS, databases, web, games, and more.",
+  "description": "AgentBench evaluates LLMs as autonomous agents across 8 distinct interactive environments, testing multi-turn decision-making, tool use, and planning. Created by Xiao Liu and colleagues at Tsinghua University and published at ICLR 2024, AgentBench was among the first systematic evaluations of LLMs as agents across diverse practical domains.\n\nThe 8 environments span: Operating System (bash command execution), Database (SQL queries and management), Knowledge Graph (SPARQL traversal), Digital Card Game (strategic gameplay), Lateral Thinking Puzzles (multi-turn deduction), House-Holding (ALFWorld simulated household tasks), Web Shopping (product navigation), and Web Browsing (Mind2Web browser tasks).\n\nA key finding was the dramatic performance gap between commercial and open-source models. GPT-4 scored 4.27 on the composite scale while the best open-source model (Llama-2-13B-chat) scored only 1.01. Most open-source models were essentially unusable as agents. This gap has narrowed significantly since 2023 as open-source models improved.\n\nAgentBench FC (Function Calling) was released in 2025 to test standardized tool-calling interfaces — the modern way agents interact with external systems.",
+  "category": "agent",
+  "subcategory": "multi-environment",
+  "tags": ["agent", "multi-turn", "tool-use", "os", "database", "web", "planning"],
+  "saturationStatus": "active",
+  "evaluationMethod": "functional-correctness",
+  "stats": {
+    "totalTasks": 1091,
+    "publicTasks": 1091,
+    "year": 2023,
+    "creator": "Xiao Liu, Hao Yu, Hanchen Zhang, et al.",
+    "institution": "Tsinghua University",
+    "languages": [],
+    "domains": ["Operating System", "Database", "Knowledge Graph", "Card Games", "Puzzles", "Household", "Web Shopping", "Web Browsing"],
+    "humanBaseline": null,
+    "randomBaseline": null
+  },
+  "taskAnatomy": {
+    "input": "An environment-specific task description. The agent interacts in a multi-turn dialogue loop: observe environment state → choose action → receive feedback → repeat until task is complete or maximum steps reached.",
+    "output": "A sequence of actions in the environment-specific format (bash commands, SQL queries, SPARQL queries, card game moves, etc.).",
+    "evaluation": "Task success rate per environment. Composite score across all 8 environments. OS: script output correctness. DB: query result accuracy. KG: SPARQL answer correctness. Card Game: win rate. Web: task completion.",
+    "metric": "Composite score (weighted average across environments)"
+  },
+  "examples": [
+    {
+      "title": "OS — Bash task execution",
+      "difficulty": "Medium",
+      "input": "Find all Python files in /home/user that are larger than 1MB and have been modified in the last 7 days. Print their names and sizes.",
+      "solution": "find /home/user -name '*.py' -size +1M -mtime -7 -exec ls -lh {} \\;",
+      "answer": "Correct file list with sizes",
+      "notes": "OS tasks test whether agents can navigate a bash environment to accomplish file system, process management, and scripting tasks. Requires understanding Unix command syntax and flags."
+    },
+    {
+      "title": "Database — SQL query",
+      "difficulty": "Hard",
+      "input": "In the company database, find all employees who report to managers who were hired before 2010 and whose department's average salary is above $80,000. Return their names and salaries.",
+      "solution": "SELECT e.name, e.salary\nFROM employees e\nJOIN employees m ON e.manager_id = m.id\nJOIN departments d ON e.department_id = d.id\nWHERE m.hire_date < '2010-01-01'\nAND (\n  SELECT AVG(salary) FROM employees\n  WHERE department_id = e.department_id\n) > 80000",
+      "answer": "Employee names and salaries matching all three criteria",
+      "notes": "Multi-table joins with subqueries require understanding relational database structure and SQL syntax. Many open-source models fail on complex multi-condition queries."
+    },
+    {
+      "title": "Web Shopping — Product selection",
+      "difficulty": "Medium",
+      "input": "Find a wireless mechanical keyboard under $100 with Cherry MX switches and RGB backlighting. It should have at least 50 customer reviews. Add it to the cart.",
+      "solution": "1. Search for 'wireless mechanical keyboard Cherry MX RGB'\n2. Filter by price ≤ $100\n3. Read each result's specifications\n4. Verify review count ≥ 50\n5. Add qualifying product to cart",
+      "answer": "Cart contains a qualifying product",
+      "notes": "Web shopping tasks require multi-step navigation with complex multi-criteria filtering across an e-commerce site."
+    }
+  ],
+  "results": [
+    { "modelId": "gpt-5", "score": 6.8, "scoreLabel": "6.8", "scoreType": "Composite score (8 envs)", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "claude-opus-4-5", "score": 6.2, "scoreLabel": "~6.2", "scoreType": "Composite score (8 envs)", "date": "2025-11", "isVendorReported": false },
+    { "modelId": "gpt-4o", "score": 4.27, "scoreLabel": "4.27", "scoreType": "Composite score (8 envs)", "date": "2024-11", "isVendorReported": false, "notes": "Original paper baseline for GPT-4" },
+    { "modelId": "deepseek-v3", "score": 4.5, "scoreLabel": "~4.5", "scoreType": "Composite score (8 envs)", "date": "2024-12", "isVendorReported": false },
+    { "modelId": "claude-sonnet-4", "score": 5.2, "scoreLabel": "~5.2", "scoreType": "Composite score (8 envs)", "date": "2025-08", "isVendorReported": false }
+  ],
+  "controversies": [
+    "The composite score weights 8 environments differently — the choice of weights significantly affects rankings, and different weighting schemes could change which model appears best.",
+    "The performance gap between commercial and open-source models documented in 2023 has substantially narrowed by 2025, making the benchmark's original key finding less relevant.",
+    "AgentBench FC (2025) uses a different evaluation protocol than the original, making cross-version comparisons invalid."
+  ],
+  "keyFindings": [
+    "The original paper's most striking finding: GPT-4 (4.27) vs. best open-source model Llama-2-13B-chat (~1.0) — a 4x+ gap on agent tasks that wasn't present on standard benchmarks like MMLU.",
+    "Agent performance is not predicted by standard benchmark scores: models that score similarly on MMLU can differ dramatically on AgentBench, suggesting agent ability is a distinct capability.",
+    "Multi-turn failure modes: agents frequently fail by losing context over 10+ turns, forgetting environment state, or getting stuck in loops rather than making individual wrong decisions.",
+    "The OS environment proved particularly diagnostic: bash command execution exposed whether models had genuine systems understanding or were just pattern-matching keywords."
+  ],
+  "links": {
+    "paper": "AgentBench: Evaluating LLMs as Agents",
+    "arxiv": "https://arxiv.org/abs/2308.03688",
+    "dataset": "https://github.com/THUDM/AgentBench",
+    "leaderboard": "https://llmbench.ai/agent/data",
+    "github": "https://github.com/THUDM/AgentBench"
+  }
+}

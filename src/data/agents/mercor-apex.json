@@ -1,0 +1,93 @@
+{
+  "slug": "mercor-apex",
+  "name": "Mercor APEX + APEX-Agents",
+  "shortDescription": "Professional knowledge work benchmark across investment banking, consulting, law, and medicine.",
+  "description": "APEX (AI Productivity Index) is a family of benchmarks from Mercor — an AI recruiting and expert-data company — designed to measure AI performance on economically valuable professional knowledge work. The benchmark explicitly connects AI performance to the question: 'Can these models autonomously complete tasks that would otherwise require expensive human professionals?'\n\nAPEX (non-agentic) provides long-form professional tasks to models without tool access: a prompt, supporting documents, and a grading rubric created by industry experts with 7+ years of experience at top firms (Goldman Sachs, McKinsey, Cravath, UPenn Medicine). Models generate deliverables evaluated by a panel of LLM judges against per-criteria rubrics.\n\nAPEX-Agents (launched January 2026) is the agentic extension: AI agents are deployed into fully simulated workplace environments ('worlds') containing hundreds of realistic files in Google Workspace, Box, email, calendar, and code execution — created by VPs and MDs who spent 5-10 days building each world. Agents must navigate these environments autonomously to complete multi-hour professional tasks.\n\nThe benchmark includes a striking post-training result: Applied Compute trained GLM-4.7 on fewer than 2,000 Mercor-labeled expert tasks and achieved a 20-percentage-point improvement across all domains, jumping from 17th to 4th place overall — near-doubling the base model's performance. The gains generalized to benchmarks the model was never trained on, including GDPval and Toolathalon.",
+  "creator": "Mercor",
+  "institution": "Mercor (San Francisco)",
+  "year": 2025,
+  "tags": ["professional-work", "investment-banking", "consulting", "law", "medicine", "agent", "agentic", "economic-value"],
+  "isRequired": true,
+  "stats": {
+    "totalTasks": 880,
+    "publicTasks": 580,
+    "domains": ["Investment Banking", "Management Consulting", "Corporate Law", "Medicine (APEX only)"],
+    "avgHumanTime": "1.82-3.5 hours per task",
+    "totalEconomicValue": null,
+    "evaluationMethod": "LLM judge panel voting against expert-written rubrics (APEX); binary pass/fail per rubric criterion (APEX-Agents)",
+    "primaryMetric": "% criteria satisfied (APEX) / Pass@1 (APEX-Agents)"
+  },
+  "taskAnatomy": {
+    "setup": "APEX: Model receives a task prompt plus ~5.83 source documents (~26,676 tokens average). No tool access. APEX-Agents: Agent is deployed into one of 33 'worlds' — simulated workplace environments with ~166 files, 9 applications (Google Docs, Sheets, Slides, Calendar, Gmail, Drive, PDFs, RocketChat, Code execution). Web search disabled.",
+    "input": "APEX: Task description + supporting documents (e.g., 'Prepare a pitch book comparing three acquisition targets. Source files attached.'). APEX-Agents: Same type of task, but all source files exist within the world environment the agent must navigate.",
+    "output": "APEX: Long-form document deliverable (pitch book, legal memo, patient diagnosis, consulting deck). APEX-Agents: Completed files and actions within the workspace environment.",
+    "evaluation": "APEX: LLM judge panel grades each rubric criterion (majority vote across 8 runs). APEX-Agents: Automated script checks binary pass/fail for each of 1-10 rubric criteria per task.",
+    "metric": "APEX: Mean % criteria satisfied. APEX-Agents: Pass@1 (% tasks where all criteria pass on first attempt), also Pass@8 and Mean Score."
+  },
+  "examples": [
+    {
+      "title": "Investment Banking — M&A DCF Update",
+      "jobType": "Investment Banking",
+      "humanTime": "2-4 hours",
+      "description": "Agent is embedded in a 172-file M&A dataroom for a fictitious European energy company acquisition. Must find the comparable companies spreadsheet, update the DCF model with new EBITDA figures found in a client email, and produce a revised valuation summary deck.",
+      "input": "World contains: Deal room with 172 files across Google Drive folders. Emails from client with updated financial projections. Existing DCF model in Google Sheets. Comparable company analysis.",
+      "output": "Updated DCF model with correct EBITDA figures; revised one-pager summary deck showing new valuation range.",
+      "evaluation": "Criteria: (1) Correct EBITDA figures pulled from email (not old model), (2) DCF formula preserved and correct, (3) Summary deck shows updated valuation range, (4) No formatting errors in output deck."
+    },
+    {
+      "title": "Management Consulting — Cost Reduction Deck",
+      "jobType": "Management Consulting",
+      "humanTime": "2-3 hours",
+      "description": "Week-long consulting project for a European oil & gas company. Agent must review client documents, synthesize research PDFs, draft a slide deck with cost-cutting recommendations, and update the project timeline in the calendar.",
+      "input": "World contains: Client briefing documents, industry research PDFs, blank slide deck template, project calendar, team chat channels.",
+      "output": "5-10 slide deck with structured cost-cutting recommendations; updated project calendar with revised milestones.",
+      "evaluation": "Criteria: (1) At least 3 specific cost-cutting recommendations with supporting data, (2) Each recommendation cited to source documents, (3) Calendar updated with correct dates, (4) Deck follows provided template format."
+    },
+    {
+      "title": "Corporate Law — Risk Memo",
+      "jobType": "Corporate Law",
+      "humanTime": "1.5-3 hours",
+      "description": "Agent reviews a share purchase agreement, cross-references regulatory guidance PDFs, drafts a risk memo identifying compliance gaps, and sends a summary email to the partner.",
+      "input": "World contains: 120-page Share Purchase Agreement, regulatory guidance PDFs from 3 jurisdictions, prior deal memos for reference, partner email thread.",
+      "output": "3-5 page risk memo with specific clause references; summary email to partner with key findings.",
+      "evaluation": "Criteria: (1) At least 4 material risk items identified with specific clause references, (2) Each risk rated high/medium/low, (3) Regulatory citation accuracy, (4) Email sent to correct recipient."
+    }
+  ],
+  "results": [
+    { "modelId": "gpt-5", "score": 67.2, "scoreLabel": "67.2% ± 2.4%", "scoreType": "Mean criteria % (APEX)", "date": "2026-04", "isVendorReported": false },
+    { "modelId": "claude-opus-4-6", "score": 65.7, "scoreLabel": "65.7% ± 2.6%", "scoreType": "Mean criteria % (APEX)", "date": "2026-02", "isVendorReported": false },
+    { "modelId": "gemini-3-pro", "score": 65.1, "scoreLabel": "65.1% ± 2.4%", "scoreType": "Mean criteria % (APEX)", "date": "2026-02", "isVendorReported": false },
+    { "modelId": "grok-4", "score": 63.5, "scoreLabel": "63.5%", "scoreType": "Mean criteria % (APEX)", "date": "2025-07", "isVendorReported": true },
+    { "modelId": "gpt-5", "score": 38.4, "scoreLabel": "38.4% ± 3.9%", "scoreType": "Pass@1 (APEX-Agents)", "date": "2026-04", "isVendorReported": false, "domain": "Overall", "notes": "GPT 5.5 (xHigh)" },
+    { "modelId": "claude-opus-4-6", "score": 30.0, "scoreLabel": "~30%", "scoreType": "Pass@1 (APEX-Agents)", "date": "2026-02", "isVendorReported": false, "domain": "Overall" },
+    { "modelId": "gemini-3-pro", "score": 33.5, "scoreLabel": "33.5% ± 3.6%", "scoreType": "Pass@1 (APEX-Agents)", "date": "2026-02", "isVendorReported": false, "domain": "Overall" },
+    { "modelId": "claude-opus-4-5", "score": 18.4, "scoreLabel": "18.4%", "scoreType": "Pass@1 (APEX-Agents)", "date": "2025-11", "isVendorReported": false, "domain": "Overall" }
+  ],
+  "keyFindings": [
+    "No model currently meets production bar for autonomous task completion — even the best models satisfy only ~67% of rubric criteria on APEX and complete only ~38% of APEX-Agents tasks on the first attempt.",
+    "Post-training on fewer than 2,000 expert-labeled tasks doubled GLM-4.7's performance on APEX-Agents (17th → 4th place), with gains generalizing to other benchmarks — the strongest evidence that expert data fine-tuning transfers.",
+    "Corporate law tasks are consistently hardest across both APEX and APEX-Agents (law scores ~5-10 points below consulting and banking) — suggesting legal reasoning requires particularly specialized training.",
+    "Pass@8 (best of 8 attempts) is ~15-20 points higher than Pass@1 for top models, showing that agents are capable of getting tasks right but inconsistently — a key reliability problem for production deployment.",
+    "The Applied Compute experiment showed that improved performance came from better process (preserving details, sanity-checking, revising) rather than domain knowledge — suggesting these skills transfer across job categories."
+  ],
+  "whatMakesItUnique": [
+    "World-building infrastructure: 33 environments containing ~166 real files each in authentic Google Workspace + email + calendar + file storage — no other benchmark deploys this level of workplace fidelity.",
+    "Economic alignment: task distributions explicitly mirror how professionals spend their time (e.g., 30% of IB tasks are DCF modeling because IB analysts spend 30% on DCF modeling).",
+    "Expert pedigree: tasks created by VPs and MDs with 5-10 years at Goldman Sachs, McKinsey, Latham & Watkins — not junior annotators or crowdworkers.",
+    "Fully open-source: all 480 APEX-Agents tasks and the Archipelago evaluation infrastructure are CC-BY 4.0. No other professional-services benchmark is this open.",
+    "Training signal validation: the Applied Compute result proves the benchmark's data teaches generalizable professional skills, not benchmark-specific patterns."
+  ],
+  "controversies": [
+    "Mercor is a data company that sells expert training data — the benchmark validates their commercial product, creating a potential conflict of interest.",
+    "Web search disabled for reproducibility, which limits real-world validity (real professionals search constantly). Performance with web access would likely be higher.",
+    "Fictional entities used in most worlds; some researchers question whether fictional scenarios fully replicate the cognitive complexity of real client engagements.",
+    "The fully open-source devset (480 APEX-Agents tasks) can be trained on — Applied Compute's result demonstrates this works, but it means the devset scores are not reliable for untrained models."
+  ],
+  "links": {
+    "arxiv": "https://arxiv.org/abs/2509.25721",
+    "leaderboard": "https://www.mercor.com/apex/apex-agents-leaderboard/",
+    "dataset": "https://huggingface.co/datasets/mercor/apex-agents",
+    "github": "https://github.com/Mercor-Intelligence/archipelago",
+    "website": "https://www.mercor.com/apex/"
+  }
+}

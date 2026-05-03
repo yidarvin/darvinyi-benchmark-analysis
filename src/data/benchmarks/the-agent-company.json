@@ -1,0 +1,79 @@
+{
+  "slug": "the-agent-company",
+  "name": "TheAgentCompany",
+  "shortDescription": "A simulated software company with 16 AI colleagues testing real office work tasks.",
+  "description": "TheAgentCompany is a benchmark that simulates a complete software company environment with 16 AI-simulated colleagues. Created by researchers at CMU (Frank F. Xu, Yufan Song, Boxuan Li, et al.) and presented at NeurIPS 2024/2025, it tests AI agents on professional tasks across software engineering, project management, HR, finance, administration, and data analysis.\n\nThe benchmark uses Docker-hosted instances of real office software: GitLab (code repositories), Plane (project management, like Linear), ownCloud (file storage, like Google Drive), and RocketChat (messaging, like Slack). Agents can interact with all of these tools and communicate with 16 simulated AI colleagues who have distinct personas, backstories, and knowledge — adding social complexity to task completion.\n\nTasks range from 'commit a bugfix to the main branch' (technical) to 'process the quarterly payroll spreadsheet' (administrative) to 'send a project status update to all stakeholders' (communications). This breadth tests whether agents can navigate the full spectrum of white-collar knowledge work, not just coding.\n\nTop scores: Gemini 2.5 Pro via OpenHands reaches 30.3% on full task completion (39.3% partial). Community-submitted results have pushed to 42.9% with specialized agent systems. The benchmark costs approximately $4 per run for frontier models.",
+  "category": "agent",
+  "subcategory": "office-work",
+  "tags": ["agent", "office-work", "software-company", "multi-tool", "social", "coding", "hr", "finance"],
+  "saturationStatus": "active",
+  "evaluationMethod": "functional-correctness",
+  "stats": {
+    "totalTasks": 175,
+    "publicTasks": 175,
+    "year": 2024,
+    "creator": "Frank F. Xu, Yufan Song, Boxuan Li, et al.",
+    "institution": "Carnegie Mellon University",
+    "languages": [],
+    "domains": ["Software Engineering", "Project Management", "HR", "Finance", "Administration", "Data Analysis"],
+    "humanBaseline": null,
+    "randomBaseline": null
+  },
+  "taskAnatomy": {
+    "input": "A task description from a 'manager' or 'colleague' perspective. The agent has access to GitLab, Plane, ownCloud, RocketChat, and can communicate with 16 AI-simulated colleagues who may have relevant information.",
+    "output": "Completion of the specified task across one or more applications (committed code, filed document, sent message, updated project status, etc.).",
+    "evaluation": "Automated scripts check whether specific state changes were made correctly: commit exists in the correct branch, file has correct content, message was sent to correct recipients, expense report has correct figures, etc.",
+    "metric": "Task completion rate (binary) and partial completion score"
+  },
+  "examples": [
+    {
+      "title": "Software Engineering — Bug triage",
+      "difficulty": "Medium",
+      "input": "There's a bug reported in the checkout module (GitLab issue #347). Look at the issue, find the relevant code, implement a fix, and create a pull request. Tag the issue as 'in-progress' and notify the backend team on RocketChat.",
+      "solution": "1. Read GitLab issue #347\n2. Browse the checkout module code\n3. Identify the bug\n4. Create a new branch\n5. Implement fix and commit\n6. Open pull request linking to the issue\n7. Update issue status to 'in-progress' on GitLab\n8. Send message to #backend-team on RocketChat",
+      "answer": "Pull request open, issue tagged, RocketChat message sent",
+      "notes": "Requires coordinating 3 different tools. Partial credit is given for completing subsets of steps."
+    },
+    {
+      "title": "HR — Onboarding coordination",
+      "difficulty": "Hard",
+      "input": "New hire Alex starts Monday. Create their accounts on all internal systems, add them to the engineering team in Plane, share the onboarding documents from ownCloud with them, and send a welcome message on RocketChat. Get their GitHub handle from Sarah in HR.",
+      "solution": "1. Message Sarah on RocketChat to get Alex's GitHub handle\n2. Create GitLab account for Alex with correct permissions\n3. Add Alex to the engineering team in Plane\n4. Share onboarding folder from ownCloud with Alex's account\n5. Send welcome message to Alex on RocketChat with key links",
+      "answer": "All accounts created, team membership added, documents shared, welcome sent",
+      "notes": "Requires gathering information from a colleague (social task), then executing 4 separate tool operations. This 'social + tool' combination is a distinctive feature of TheAgentCompany."
+    },
+    {
+      "title": "Finance — Expense processing",
+      "difficulty": "Medium",
+      "input": "Process the Q3 expense reports in the Finance folder on ownCloud. For each employee who spent over $500, create a Plane task assigned to their manager for approval. Send a summary to the CFO on RocketChat.",
+      "solution": "1. Open ownCloud Finance folder\n2. Download and read each expense report\n3. Calculate totals per employee\n4. For employees >$500: find their manager (may require RocketChat query to HR)\n5. Create Plane task for each, assigned to manager\n6. Compile summary statistics\n7. Send summary to CFO on RocketChat",
+      "answer": "Plane tasks created, RocketChat message sent with correct summary",
+      "notes": "ownCloud UI navigation is consistently the hardest part for agents — the web-based office suite has complex navigation that models struggle with more than CLI tools."
+    }
+  ],
+  "results": [
+    { "modelId": "gemini-2-5-pro", "score": 30.3, "scoreLabel": "30.3%", "scoreType": "Full task completion", "date": "2025-03", "isVendorReported": false, "setup": "OpenHands agent framework", "notes": "39.3% partial score" },
+    { "modelId": "claude-sonnet-4", "score": 26.3, "scoreLabel": "26.3%", "scoreType": "Full task completion", "date": "2025-08", "isVendorReported": false, "setup": "OpenHands; Claude 3.7 Sonnet in original paper" },
+    { "modelId": "gpt-5", "score": 24.0, "scoreLabel": "~24%", "scoreType": "Full task completion", "date": "2025-08", "isVendorReported": false, "setup": "OpenHands framework" },
+    { "modelId": "gpt-4o", "score": 8.6, "scoreLabel": "8.6%", "scoreType": "Full task completion", "date": "2024-11", "isVendorReported": false, "setup": "Original paper baseline; 16.7% partial" },
+    { "modelId": "llama-4-maverick", "score": 7.4, "scoreLabel": "~7.4%", "scoreType": "Full task completion", "date": "2025-04", "isVendorReported": false }
+  ],
+  "controversies": [
+    "The 16 AI colleagues simulate social complexity, but real office work involves much richer social dynamics, organizational politics, and ambiguous communication that the simulated colleagues don't capture.",
+    "ownCloud (web file storage) is disproportionately hard for agents compared to CLI tools — potentially making the benchmark less about agent intelligence and more about UI navigation ability.",
+    "At $4 per run for frontier models, the benchmark is relatively expensive to evaluate. Community results use cheaper models that may not reflect true capability."
+  ],
+  "keyFindings": [
+    "Agents perform substantially better on technical tasks (software engineering: ~42% completion) than on social/administrative tasks (HR: ~18%, Finance: ~22%) — a gap that doesn't appear in coding-only benchmarks.",
+    "The social coordination requirement (messaging colleagues for information) adds meaningful difficulty: tasks requiring inter-agent information gathering fail significantly more often than single-tool tasks.",
+    "Cost per run ($4 for Gemini 2.5 Pro, <$1 for Gemini 2.0 Flash) makes this benchmark tractable for production evaluation — an important practical consideration.",
+    "Community leaderboard submissions (TTE-MatrixAgent at 42.9%) substantially exceed the original paper baselines, suggesting specialized agent scaffolding on top of base models matters more than the base model itself for this benchmark."
+  ],
+  "links": {
+    "paper": "TheAgentCompany: Benchmarking LLM Agents on Consequential Real World Tasks",
+    "arxiv": "https://arxiv.org/abs/2412.14161",
+    "dataset": "https://github.com/TheAgentCompany/TheAgentCompany",
+    "leaderboard": "https://the-agent-company.com/#leaderboard",
+    "website": "https://the-agent-company.com"
+  }
+}

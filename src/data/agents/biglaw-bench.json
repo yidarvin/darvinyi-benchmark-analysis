@@ -1,0 +1,85 @@
+{
+  "slug": "biglaw-bench",
+  "name": "BigLaw Bench",
+  "shortDescription": "Real legal work quality — what percent of a lawyer-quality deliverable does AI produce?",
+  "description": "BigLaw Bench was created by Harvey AI, a legal AI startup serving top BigLaw firms and Fortune 500 legal departments. The benchmark directly answers: 'What percentage of a lawyer-quality work product does the model complete for the user?' — a question tied directly to commercial AI value in legal practice.\n\nUnlike academic benchmarks (LegalBench, bar exam questions) that test narrow legal reasoning in structured formats, BigLaw Bench evaluates open-ended, long-form professional legal work: drafting contracts, analyzing litigation filings, researching case law, reviewing due diligence documents. Tasks are derived from actual billable work performed by lawyers and evaluated against rubrics with both positive criteria (requirements met) and negative criteria (errors, hallucinations, omissions).\n\nThe scoring formula is novel: (positive points earned − negative points for errors) ÷ total positive points = quality score. This penalizes confident hallucinations — a model that produces fluent but wrong legal citations scores lower than one that acknowledges uncertainty.\n\nBigLaw Bench has expanded significantly since launch. BLB: Global (early 2026) added UK, Australia, and Spain law in collaboration with Mercor. BLB: Research added hard agentic legal research problems requiring real search tools. BLB: Arena (November 2025) provides an Elo-based leaderboard where practicing lawyers choose between AI outputs. A 5x+ expansion is planned throughout 2026.",
+  "creator": "Harvey AI",
+  "institution": "Harvey AI",
+  "year": 2024,
+  "tags": ["legal", "professional-work", "law", "drafting", "research", "hallucination", "long-form"],
+  "isRequired": false,
+  "stats": {
+    "totalTasks": null,
+    "publicTasks": null,
+    "domains": ["Corporate Strategy & Advising", "Drafting", "Legal Research", "Due Diligence", "Risk Assessment & Compliance", "Analysis of Litigation Filings", "Case Management", "Document Review"],
+    "avgHumanTime": "1-8 hours depending on task type",
+    "totalEconomicValue": null,
+    "evaluationMethod": "Custom rubrics with positive criteria (requirements met) and negative criteria (errors/hallucinations/omissions). Score = (positive earned − negative penalties) ÷ total positive.",
+    "primaryMetric": "Quality score (% of lawyer-quality work product completed)"
+  },
+  "taskAnatomy": {
+    "setup": "Tasks derived from actual billable legal work. Each task has a custom rubric built from real legal work product standards. Two scoring components: Answer Score (completeness/accuracy of legal response) and Source Score (verifiability and accuracy of citations).",
+    "input": "Legal task description plus relevant documents: contracts to review, case materials, regulatory guidance, due diligence files, client communications.",
+    "output": "Legal work product: memo, draft contract clause, case analysis, research summary, compliance assessment, litigation brief.",
+    "evaluation": "Rubric evaluation: each positive criterion earns points; each error/hallucination/omission loses points. Net score normalized by maximum possible positive points. Higher penalties for confident wrong citations vs. acknowledged uncertainty.",
+    "metric": "Quality score (% of lawyer-quality work product); Source accuracy score; BLB: Arena Elo from lawyer preference votes"
+  },
+  "examples": [
+    {
+      "title": "Transactional — Risk Assessment",
+      "jobType": "Corporate Law",
+      "humanTime": "3-5 hours",
+      "description": "Review a 120-page Software Licensing Agreement and identify the top five contractual risk areas for the licensee.",
+      "input": "Full Software Licensing Agreement (120 pages), client's business description and priorities, jurisdiction (Delaware law).",
+      "output": "Risk memo with: (1) Top 5 risk areas with specific clause references, (2) Risk rating (high/medium/low) for each, (3) Recommended negotiation positions, (4) Citations to relevant case law where applicable.",
+      "evaluation": "Positive criteria: each identified risk has specific clause reference (+2 pts), risk rating provided (+1 pt), negotiation recommendation provided (+2 pts). Negative: incorrect clause reference (−3 pts), hallucinated case citation (−4 pts), missed material risk (−2 pts)."
+    },
+    {
+      "title": "Litigation — Opposition Brief Outline",
+      "jobType": "Litigation",
+      "humanTime": "2-4 hours",
+      "description": "Review a motion for summary judgment in a securities fraud case and draft a 3-page opposition outline.",
+      "input": "Motion for Summary Judgment (32 pages), underlying complaint, key deposition excerpts, relevant securities law precedents.",
+      "output": "3-page opposition outline: strongest/weakest opponent arguments identified, unsupported factual claims flagged, rebuttal points for each major argument, specific case citations.",
+      "evaluation": "Positive: correct identification of all major MSJ arguments (+3 pts), valid rebuttals with citations (+2 pts each). Negative: missed key argument (−3 pts), wrong citation (−4 pts), mischaracterized legal standard (−3 pts)."
+    },
+    {
+      "title": "Research — BLB: Research (agentic)",
+      "jobType": "Legal Research",
+      "humanTime": "2-4 hours",
+      "description": "Find the controlling 9th Circuit precedent on attorney-client privilege for in-house counsel communications. Identify the standard, key cases, and circuit splits.",
+      "input": "Research question. Agent has access to Westlaw/legal search tools.",
+      "output": "2-page memo with: controlling standard, 3+ key cases with proper Bluebook citations, any relevant circuit splits, practical implications.",
+      "evaluation": "Positive: correct controlling case identified (+3 pts), accurate statement of standard (+2 pts), proper citations (+1 pt each). Negative: wrong case cited as controlling (−5 pts), hallucinated citation (−4 pts), missed circuit split (−2 pts)."
+    }
+  ],
+  "results": [
+    { "modelId": "gpt-5", "score": 89.22, "scoreLabel": "89.22%", "scoreType": "BigLaw Bench score", "date": "2025-08", "isVendorReported": true },
+    { "modelId": "gemini-2-5-pro", "score": 85.02, "scoreLabel": "85.02%", "scoreType": "BigLaw Bench score", "date": "2025-03", "isVendorReported": true },
+    { "modelId": "o3", "score": 84.13, "scoreLabel": "84.13%", "scoreType": "BigLaw Bench score", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "claude-opus-4-5", "score": 87.0, "scoreLabel": "~87%", "scoreType": "BigLaw Bench score", "date": "2025-11", "isVendorReported": true },
+    { "modelId": "gpt-4o", "score": 62.0, "scoreLabel": "~62%", "scoreType": "BigLaw Bench score", "date": "2024-11", "isVendorReported": true, "notes": "2024 baseline; significant jump from GPT-4o to GPT-5 generation" }
+  ],
+  "keyFindings": [
+    "The jump from ~62% (GPT-4o era, 2024) to ~87-89% (GPT-5 era, 2025) is one of the fastest improvements documented on any professional work benchmark — suggesting legal drafting and analysis was a particularly high-leverage capability area.",
+    "Harvey AI's proprietary systems (trained on legal data and RLHF from lawyer feedback) outperform base GPT-5 by 10-15 percentage points on BigLaw Bench, demonstrating that domain-specific fine-tuning on legal data significantly improves professional quality.",
+    "Source Score is the most discriminating metric: models that hallucinate legal citations score dramatically lower than models that produce accurate citations or acknowledge uncertainty — a particularly important distinction in legal practice.",
+    "BLB: Arena (Elo from lawyer preference votes) shows Harvey's proprietary model is preferred over baseline GPT-5 70% of the time and over Claude 4.5 59%+ of the time — validating that domain-specific training provides perceivable quality improvements to expert practitioners."
+  ],
+  "whatMakesItUnique": [
+    "Negative-point scoring: hallucinating legal citations actively hurts your score — unlike most benchmarks where wrong answers simply fail to earn points.",
+    "Source accuracy as distinct metric: legal work requires citations that are real, correctly quoted, and applicable. Separating 'answer quality' from 'citation accuracy' reveals model failure modes invisible on other benchmarks.",
+    "Created by practitioners: Harvey AI serves actual BigLaw firms and Fortune 500 legal departments — tasks reflect what paying clients actually need, not what researchers think is legally interesting.",
+    "International expansion via Mercor: BLB: Global adding UK, Australian, and Spanish law in collaboration with Mercor demonstrates how domain benchmarks can scale through expert data partnerships."
+  ],
+  "controversies": [
+    "Harvey AI has a commercial incentive to benchmark legal AI — the benchmark validates their product category and serves as marketing for Harvey's own services.",
+    "Limited public access to the actual benchmark tasks — methodology is described but tasks are not publicly released, limiting independent verification.",
+    "Rubric scoring can vary by evaluator — legal quality judgments have inherent subjectivity, especially in complex transactional analysis.",
+    "Harvey's own proprietary models are included in BLB: Arena evaluations, creating a conflict of interest in the evaluation that validates their commercial product."
+  ],
+  "links": {
+    "website": "https://harvey.ai/research/biglaw-bench",
+    "leaderboard": "https://harvey.ai/research/biglaw-bench#leaderboard"
+  }
+}

@@ -1,0 +1,1559 @@
+{
+  "meta": {
+    "generated": "2026-05-02",
+    "description": "Comprehensive benchmark research data for AI evaluation website. Covers 8 major benchmarks with full descriptions, task anatomy, examples, statistics, leaderboards, saturation status, and controversies.",
+    "version": "1.0"
+  },
+  "benchmarks": [
+    {
+      "id": "gaia",
+      "name": "GAIA",
+      "full_name": "General AI Assistants",
+      "slug": "gaia",
+      "category": "agentic",
+      "tags": ["agent", "multi-step", "tool-use", "web-browsing", "multi-modal"],
+      "description": {
+        "short": "Real-world tasks requiring multi-step reasoning, web browsing, file reading, and tool use — simple for humans (~92%) but hard for AI agents.",
+        "full": "GAIA (General AI Assistants) is a benchmark designed to measure whether AI systems can reliably handle everyday multi-step tasks that humans find trivial but current AI systems consistently fail at. Rather than testing specialist expertise (like law or chemistry, where LLMs already exceed humans), GAIA tests 'mundane' tasks that require combining reasoning, web browsing, file handling, code execution, and multi-modal understanding in the right sequence over many steps. The central thesis is that robust, general-purpose AI competence — not narrow expert performance — is the real milestone. A system that can solve GAIA at human levels would qualify as 't-AGI' under the benchmark authors' framing.",
+        "motivation": "LLMs were outperforming humans on professional-expertise benchmarks (bar exams, medical questions) while failing at simple tasks like 'look up the population of the capital of the country that hosted the 2024 Olympics.' GAIA was created to address this inversion — to benchmark the kind of reliable, grounded, step-by-step competence that makes an AI genuinely useful as a general assistant.",
+        "creators": "Grégoire Mialon, Clémentine Fourrier, Craig Swift, Thomas Wolf, Yann LeCun, Thomas Scialom — from Meta AI, Hugging Face, and HEC Paris. Published at ICLR 2024.",
+        "year": 2023
+      },
+      "task_anatomy": {
+        "format": "A natural-language question with an unambiguous, short, exact-match answer. Some questions include an attached file (PDF, Excel, image, audio, video). The agent has access to a configurable set of tools including web search, file reader, code interpreter, calculator, and browser.",
+        "evaluation": "Exact-match string comparison against ground-truth answers. Answers are designed to be short (a number, a name, a date, a word) to avoid ambiguity. There is no partial credit.",
+        "splits": {
+          "validation_set": "166 questions (fully public, with answers and annotator metadata)",
+          "test_set": "300 questions (public questions, private answers — powers the leaderboard)"
+        },
+        "levels": {
+          "level_1": {
+            "description": "Requires no tools OR at most one tool with fewer than 5 steps. A capable LLM agent should break 70-80% of these.",
+            "typical_steps": "1–5",
+            "example_skills": ["Single web search", "Direct file read", "Simple arithmetic"]
+          },
+          "level_2": {
+            "description": "Requires multiple tools and roughly 5–10 sequential steps. Demands planning and information synthesis across sources.",
+            "typical_steps": "5–10",
+            "example_skills": ["Multi-hop web lookup", "Spreadsheet analysis", "Cross-source fact reconciliation", "Code execution"]
+          },
+          "level_3": {
+            "description": "Near-perfect general assistant required. Arbitrarily long action sequences, any number of tools, complex planning and error recovery. Designed to indicate a major capability jump.",
+            "typical_steps": "10–50+",
+            "example_skills": ["Multi-file analysis", "Multi-modal reasoning", "Long-horizon planning", "Nested multi-hop reasoning"]
+          }
+        },
+        "tools_typically_available": ["Web search", "Web browser / link follower", "File reader (PDF, Excel, image, audio, video)", "Python code interpreter", "Calculator"]
+      },
+      "example_tasks": [
+        {
+          "level": 1,
+          "question": "What is the population of the capital city of the country that hosted the 2024 Summer Olympics? Give your answer to the nearest million.",
+          "expected_answer": "2 million",
+          "steps": ["Identify 2024 Summer Olympics host country (France)", "Identify capital city (Paris)", "Look up Paris population (~2.1 million)", "Round to nearest million"],
+          "notes": "A single web search plus basic extraction. Requires no multi-hop reasoning."
+        },
+        {
+          "level": 2,
+          "question": "What is the total population of all countries that border France that are NOT in the G7?",
+          "expected_answer": "67456000",
+          "steps": ["Look up countries bordering France (Andorra, Belgium, Germany, Italy, Luxembourg, Monaco, Spain, Switzerland)", "Identify which are in G7 (Germany, Italy)", "Look up populations of remaining 6", "Sum populations"],
+          "notes": "Requires multi-hop lookup, set operations, and arithmetic. Typical Level 2 pattern."
+        },
+        {
+          "level": 3,
+          "question": "Which of the fruits shown in the 2008 painting 'Embroidery from Uzbekistan' were served as part of the October 1949 breakfast menu for the ocean liner that was later used as a floating prop for the film 'The Last Voyage'? Give the items as a comma-separated list, ordering them in clockwise order based on their arrangement in the painting starting from the 12 o'clock position. Use the plural form of each fruit.",
+          "expected_answer": "grapes, pears, apples",
+          "steps": ["Find image of painting 'Embroidery from Uzbekistan' (2008)", "Identify fruits in painting and their positions", "Identify ocean liner used as prop in 'The Last Voyage' (SS Ile de France)", "Find October 1949 breakfast menu for SS Ile de France", "Cross-reference fruits in menu with fruits in painting", "Order by clockwise position starting at 12 o'clock"],
+          "notes": "Requires visual understanding, historical research, multi-hop reasoning across 3 separate knowledge sources, spatial reasoning, and exact formatting. This is a canonical Level 3 example from the original paper."
+        }
+      ],
+      "statistics": {
+        "total_questions": 466,
+        "public_validation": 166,
+        "private_test": 300,
+        "has_attached_files": "~40% of questions include attached files (PDFs, spreadsheets, images, audio)",
+        "human_baseline": "92% average across all levels",
+        "human_time_to_answer": "6–17 minutes depending on level",
+        "domains": "General world knowledge — history, science, geography, pop culture, mathematics, current events",
+        "evaluation_method": "Exact string match (with normalization for numbers, capitalization, and common abbreviations)"
+      },
+      "leaderboard": {
+        "source": "HAL (Princeton), HuggingFace GAIA Leaderboard",
+        "date": "2025–2026",
+        "note": "HAL leaderboard uses the public 165-question validation set; HF leaderboard uses the private 300-question test set. Top test set scores now exceed 91% (ensemble systems). The HAL validation leaderboard was closed as no longer informative.",
+        "entries": [
+          {
+            "rank": 1,
+            "name": "JD Enterprise Intelligence (EI)",
+            "model": "GPT-5, o3 (hints/summary), Gemini-2.5-Pro, Claude (as tools)",
+            "organization": "JD.com",
+            "score_avg": 91.69,
+            "score_l1": 98.92,
+            "score_l2": 88.68,
+            "score_l3": 87.76,
+            "date": "2026-02-09",
+            "type": "Ensemble/Agent",
+            "notes": "Top test set score; multi-model ensemble agent"
+          },
+          {
+            "rank": 2,
+            "name": "openJiuwen-deepagent",
+            "model": "GPT-5, Gemini-3-Pro",
+            "organization": "openJiuwen",
+            "score_avg": 91.69,
+            "score_l1": 98.92,
+            "score_l2": 88.68,
+            "score_l3": 87.76,
+            "date": "2026-02-09",
+            "type": "Agent"
+          },
+          {
+            "rank": 3,
+            "name": "LR AILab agent",
+            "model": "GPT-5, Gemini-3-Pro, o3",
+            "organization": "Lenovo CTO Org",
+            "score_avg": 91.36,
+            "score_l1": 96.77,
+            "score_l2": 89.31,
+            "score_l3": 87.76,
+            "date": "2026-02-06",
+            "type": "Agent"
+          },
+          {
+            "rank": 4,
+            "name": "Nemotron-ToolOrchestra-0106",
+            "model": "Nemotron-ToolOrchestrator-8B, GPT-5, Claude Opus 4.1, Qwen2.5-Math-72B",
+            "organization": "NVIDIA",
+            "score_avg": 90.37,
+            "score_l1": 96.77,
+            "score_l2": 86.79,
+            "score_l3": 89.8,
+            "date": "2026-01-06",
+            "type": "Agent"
+          },
+          {
+            "rank": 5,
+            "name": "Claude Sonnet 4.5 (HAL scaffold)",
+            "model": "Claude Sonnet 4.5",
+            "organization": "Anthropic / HAL",
+            "score_avg": 74.55,
+            "score_l1": 82.07,
+            "score_l2": 72.68,
+            "score_l3": 65.39,
+            "date": "2025-09",
+            "type": "Agent",
+            "notes": "Validation set. #1 on HAL single-model leaderboard. Cost: $178.20 per run."
+          },
+          {
+            "rank": 6,
+            "name": "Claude Sonnet 4.5 High",
+            "model": "Claude Sonnet 4.5 (extended thinking)",
+            "organization": "Anthropic / HAL",
+            "score_avg": 70.91,
+            "score_l1": 77.36,
+            "score_l2": 74.42,
+            "score_l3": 46.15,
+            "date": "2025-09",
+            "type": "Agent"
+          },
+          {
+            "rank": 7,
+            "name": "Claude Opus 4.1 High",
+            "model": "Claude Opus 4.1 (extended thinking)",
+            "organization": "Anthropic / HAL",
+            "score_avg": 68.48,
+            "score_l1": 71.70,
+            "score_l2": 70.93,
+            "score_l3": 53.85,
+            "date": "2025-08",
+            "type": "Agent",
+            "notes": "Cost: $562.24 per run"
+          },
+          {
+            "rank": 8,
+            "name": "Claude Opus 4 High",
+            "model": "Claude Opus 4 (extended thinking)",
+            "organization": "Anthropic / HAL",
+            "score_avg": 64.85,
+            "score_l1": 71.70,
+            "score_l2": 67.44,
+            "score_l3": 42.31,
+            "date": "2025-05",
+            "type": "Agent",
+            "notes": "Cost: $665.89 per run"
+          },
+          {
+            "rank": 9,
+            "name": "Claude 3.7 Sonnet High",
+            "model": "Claude 3.7 Sonnet (extended thinking)",
+            "organization": "Anthropic / HAL",
+            "score_avg": 64.24,
+            "score_l1": 67.92,
+            "score_l2": 63.95,
+            "score_l3": 57.69,
+            "date": "2025-02",
+            "type": "Agent"
+          },
+          {
+            "rank": 10,
+            "name": "GPT-5 Medium",
+            "model": "GPT-5",
+            "organization": "OpenAI / HAL",
+            "score_avg": 62.80,
+            "score_l1": 73.58,
+            "score_l2": 62.79,
+            "score_l3": 38.46,
+            "date": "2025-08",
+            "type": "Agent"
+          },
+          {
+            "rank": 11,
+            "name": "o4-mini Low",
+            "model": "o4-mini",
+            "organization": "OpenAI / HAL",
+            "score_avg": 58.18,
+            "score_l1": 71.70,
+            "score_l2": 51.16,
+            "score_l3": 53.85,
+            "date": "2025-04",
+            "type": "Agent",
+            "notes": "Cost: $73.26 per run — highly cost-efficient"
+          },
+          {
+            "rank": 12,
+            "name": "Claude Opus 4",
+            "model": "Claude Opus 4",
+            "organization": "Anthropic / HAL",
+            "score_avg": 57.58,
+            "score_l1": 66.04,
+            "score_l2": 56.98,
+            "score_l3": 42.31,
+            "date": "2025-05",
+            "type": "Agent",
+            "notes": "Cost: $1686.07 per run — highest cost in dataset"
+          },
+          {
+            "rank": 13,
+            "name": "Claude 3.7 Sonnet",
+            "model": "Claude 3.7 Sonnet",
+            "organization": "Anthropic / HAL",
+            "score_avg": 56.36,
+            "score_l1": 62.26,
+            "score_l2": 55.81,
+            "score_l3": 46.15,
+            "date": "2025-02",
+            "type": "Agent"
+          },
+          {
+            "rank": 14,
+            "name": "o4-mini High",
+            "model": "o4-mini (high reasoning effort)",
+            "organization": "OpenAI / HAL",
+            "score_avg": 55.76,
+            "score_l1": 69.81,
+            "score_l2": 51.16,
+            "score_l3": 42.31,
+            "date": "2025-04",
+            "type": "Agent"
+          },
+          {
+            "rank": 15,
+            "name": "GPT-4.1",
+            "model": "GPT-4.1",
+            "organization": "OpenAI / HAL",
+            "score_avg": 50.30,
+            "score_l1": 58.49,
+            "score_l2": 50.00,
+            "score_l3": 34.62,
+            "date": "2025-04",
+            "type": "Agent"
+          },
+          {
+            "rank": 16,
+            "name": "DeepSeek R1",
+            "model": "DeepSeek R1",
+            "organization": "DeepSeek / HAL",
+            "score_avg": 30.30,
+            "score_l1": 43.40,
+            "score_l2": 27.91,
+            "score_l3": 11.54,
+            "date": "2025-01",
+            "type": "Agent"
+          },
+          {
+            "rank": 17,
+            "name": "GPT-4 + plugins (original paper baseline)",
+            "model": "GPT-4 with plugins",
+            "organization": "OpenAI",
+            "score_avg": 15,
+            "score_l1": null,
+            "score_l2": null,
+            "score_l3": 0,
+            "date": "2023",
+            "type": "Baseline",
+            "notes": "Original paper result. L3 = 0%. Humans = 92%."
+          }
+        ]
+      },
+      "saturation": {
+        "status": "active",
+        "discriminating": true,
+        "notes": "The test leaderboard now shows ensemble/agent systems at 91%+ — approaching human baseline of 92%. However, single-model agent results on the validation set range from ~31% to ~75%, meaning the benchmark is still actively discriminating for individual models. The HAL validation leaderboard was closed as 'no longer informative' in late 2025 due to rapid improvement. Level 3 remains hard for all single-model systems (top ~65%). The benchmark continues to be extended with new questions."
+      },
+      "controversies": [
+        "Ensemble/multi-model agent systems now score above the stated 92% human baseline, raising questions about whether these should be separately categorized from single-model agents.",
+        "Agent frameworks matter as much as the underlying model — the same model can score very differently depending on scaffolding. This makes pure model comparisons difficult.",
+        "Run cost varies enormously ($7–$1,700 per run), making fair comparison across models that differ in inference cost problematic.",
+        "The private test set relies on trust that answer submitters are running the benchmark honestly. There is no automated verification of agent trajectories.",
+        "Some questions' answers become outdated over time (e.g., population figures from Wikipedia that change). The benchmark team updates occasionally but this is not systematic."
+      ],
+      "links": {
+        "paper": "https://arxiv.org/abs/2311.12983",
+        "huggingface_leaderboard": "https://huggingface.co/spaces/gaia-benchmark/leaderboard",
+        "hal_leaderboard": "https://hal.cs.princeton.edu/gaia",
+        "dataset": "https://huggingface.co/datasets/gaia-benchmark/GAIA",
+        "iclr_2024": "https://openreview.net/forum?id=fibxvahvs3"
+      }
+    },
+
+    {
+      "id": "webarena",
+      "name": "WebArena",
+      "full_name": "WebArena + VisualWebArena",
+      "slug": "webarena",
+      "category": "agentic",
+      "tags": ["web-agent", "multi-step", "browser", "self-hosted", "agentic"],
+      "description": {
+        "short": "Self-hostable sandboxed web environment with 812 tasks across e-commerce, forum, GitLab, CMS, and map domains. Tests agents on realistic, long-horizon web tasks. Human baseline: 78%.",
+        "full": "WebArena is a standalone, self-hostable benchmark that provides fully functional replicas of four common website types — populated with realistic organic data — and evaluates autonomous agents on 812 natural-language tasks. Unlike benchmarks that use simplified or synthetic environments, WebArena creates real sites (a real e-commerce store with browseable products, a real Reddit-like forum with posts, a real GitLab instance with repos, a real CMS) and gives agents real browser access to complete tasks. Evaluation is execution-based: the environment programmatically checks whether the task was actually accomplished, not just whether the agent's text output looks correct.",
+        "motivation": "Prior web agent benchmarks used synthetic, simplified environments or relied on evaluating against expected UI actions rather than actual task outcomes. WebArena was designed to be the first web agent benchmark that (1) uses realistic, self-hosted websites with real content, (2) evaluates functional task completion rather than action sequence matching, and (3) is fully reproducible because everything is containerized.",
+        "creators": "Shuyan Zhou, Frank F. Xu, Hao Zhu, Xuhui Zhou, Robert Lo, Abishek Sridhar, Xianyi Cheng, Tianyue Ou, Yonatan Bisk, Daniel Fried, Uri Alon, Graham Neubig — Carnegie Mellon University. Released July 2023.",
+        "year": 2023
+      },
+      "task_anatomy": {
+        "format": "A natural-language instruction given to an agent with browser access to one or more self-hosted websites. The agent can click, type, scroll, navigate, and fill forms. Each task has an execution-based validation function that checks the actual state of the website after the agent finishes.",
+        "environment": "Four self-hosted Docker applications: (1) OneStopShop (e-commerce, based on Magento), (2) Reddit (forum, based on Postmill), (3) GitLab (collaborative code development), (4) CMS (content management, based on WordPress/Docuwiki). Utility tools include an OpenStreetMap instance and an English Wikipedia mirror. Cross-site tasks can require navigating multiple domains.",
+        "observation_modes": ["Accessibility Tree (DOM-based text representation)", "Screenshot (for visual agents)", "Combined (both)"],
+        "action_space": "Click, type, select, scroll, navigate, hover, press key, tab management",
+        "max_steps": "~30 actions per task (agents tend to get stuck or loop beyond this)",
+        "evaluation": "Programmatic validators check whether the goal was achieved (e.g., was the item actually added to cart? Was the forum post actually created? Was the code pushed?). No LLM judge.",
+        "task_count": 812,
+        "domains": {
+          "shopping": "e-commerce tasks — product search, cart management, order history, checkout flows, admin dashboard (~162 tasks)",
+          "social_forum": "Reddit-like forum — post creation, voting, commenting, moderation (~267 tasks)",
+          "gitlab": "Code repository — issue tracking, PRs, wiki editing, CI/CD config (~158 tasks)",
+          "cms": "Content management — page editing, user management, blog posts (~100 tasks)",
+          "map": "OpenStreetMap — directions, location lookup, route comparison (~125 tasks)"
+        }
+      },
+      "example_tasks": [
+        {
+          "domain": "Shopping",
+          "task": "Find the cheapest red jacket in women's size M and add one to my cart.",
+          "complexity": "Medium — requires navigation through categories, filtering by color and size, price comparison, then cart action.",
+          "evaluation": "Check cart state: contains correct item at correct price"
+        },
+        {
+          "domain": "GitLab",
+          "task": "Create a new issue titled 'Performance regression in v2.3' in the 'flask' repository, assign it to user 'byteblaze', and add the label 'bug'.",
+          "complexity": "High — requires navigating to correct repo, creating issue with specific fields, assigning and labeling.",
+          "evaluation": "Check GitLab API: issue exists with correct title, assignee, and label"
+        },
+        {
+          "domain": "Reddit (forum)",
+          "task": "Find the most recent post in r/dogs that has at least 10 upvotes and save it.",
+          "complexity": "Medium — requires filtering by subreddit, sorting by recent, checking upvote thresholds, and taking a bookmark action.",
+          "evaluation": "Check saved posts state for the user account"
+        }
+      ],
+      "statistics": {
+        "total_tasks": 812,
+        "domain_count": 5,
+        "human_baseline": "78.24%",
+        "original_gpt4_baseline": "14.41%",
+        "evaluation_method": "Programmatic execution-based validators",
+        "environment": "Self-hosted Docker containers (Gym-style API)"
+      },
+      "leaderboard": {
+        "source": "Multiple: Official WebArena leaderboard, arXiv papers, benchmark.space tracker",
+        "date": "2025–2026",
+        "note": "Top agents now exceed the 78.24% human baseline. Human performance was measured on a representative subset of ~170 tasks.",
+        "entries": [
+          {
+            "rank": 1,
+            "name": "OpAgent",
+            "model": "Qwen3-VL-32B + Reinforcement Learning",
+            "organization": "CodeFuse AI",
+            "score": 71.6,
+            "date": "2026-01",
+            "type": "Open-source + RL fine-tuning",
+            "notes": "Planner-Grounder-Reflector-Summarizer pipeline; RL trained on live web environments. Scores: Reddit 86.0%, Shopping 59.2%"
+          },
+          {
+            "rank": 2,
+            "name": "ColorBrowserAgent",
+            "model": "GPT-5",
+            "organization": "Unknown",
+            "score": 71.2,
+            "date": "2026-01",
+            "type": "Proprietary"
+          },
+          {
+            "rank": 3,
+            "name": "GBOX AI",
+            "model": "Claude Code",
+            "organization": "GBOX",
+            "score": 68.0,
+            "date": "2025-12",
+            "type": "Agent"
+          },
+          {
+            "rank": 4,
+            "name": "Surfer 2",
+            "model": "Undisclosed",
+            "organization": "H Company",
+            "score": 69.6,
+            "date": "2025-10",
+            "type": "Agent"
+          },
+          {
+            "rank": 5,
+            "name": "GPT-5.4 agent",
+            "model": "GPT-5.4",
+            "organization": "OpenAI",
+            "score": 67.3,
+            "date": "2026-03",
+            "type": "Proprietary"
+          },
+          {
+            "rank": 6,
+            "name": "DeepSky Agent",
+            "model": "Proprietary",
+            "organization": "DeepSky",
+            "score": 66.9,
+            "date": "2025-11",
+            "type": "Proprietary"
+          },
+          {
+            "rank": 7,
+            "name": "Narada AI",
+            "model": "Proprietary",
+            "organization": "Narada",
+            "score": 64.2,
+            "date": "2025-10",
+            "type": "Proprietary"
+          },
+          {
+            "rank": 8,
+            "name": "IBM CUGA",
+            "model": "Proprietary",
+            "organization": "IBM",
+            "score": 61.7,
+            "date": "2025-09",
+            "type": "Proprietary"
+          },
+          {
+            "rank": 9,
+            "name": "WebOperator",
+            "model": "GPT-4o",
+            "organization": "Unknown",
+            "score": 54.6,
+            "date": "2025-07",
+            "type": "Agent"
+          },
+          {
+            "rank": 10,
+            "name": "Jace.AI (2024 leaderboard)",
+            "model": "Undisclosed",
+            "organization": "Jace.AI",
+            "score": 57.1,
+            "date": "2024-04",
+            "type": "Proprietary",
+            "notes": "Historical reference point"
+          },
+          {
+            "rank": 11,
+            "name": "GPT-4 agent (original paper)",
+            "model": "GPT-4",
+            "organization": "OpenAI",
+            "score": 14.41,
+            "date": "2023",
+            "type": "Baseline",
+            "notes": "Original paper baseline at benchmark launch"
+          },
+          {
+            "rank": 12,
+            "name": "Human Performance",
+            "model": "Human",
+            "organization": "N/A",
+            "score": 78.24,
+            "date": "2023",
+            "type": "Human baseline"
+          }
+        ]
+      },
+      "visual_web_arena": {
+        "description": "VisualWebArena (VWA) extends WebArena with 910 tasks that require agents to use screenshots and visual reasoning rather than (or in addition to) the DOM/accessibility tree. Tasks involve images embedded in pages, visual layouts, and instructions that reference visual content. Introduced by Koh et al. (CMU), published at ACL 2024.",
+        "task_count": 910,
+        "environments": ["Classifieds", "Shopping", "Reddit (forum)"],
+        "human_baseline": "88.70%",
+        "evaluation": "Same execution-based programmatic validators as WebArena.",
+        "key_difference": "Agents must process both visual (screenshot) and textual (accessibility tree/captions) inputs. Set-of-Marks (SoM) annotation — overlaying coordinate labels on the screenshot — provides the best visual grounding.",
+        "leaderboard": [
+          {"rank": 1, "name": "Gemini 2.5 Flash agent", "score": 54.0, "date": "2025-2026", "notes": "Top score as of mid-2025"},
+          {"rank": 2, "name": "GPT-5.4 agent", "score": 52.9, "date": "2026"},
+          {"rank": 3, "name": "GPT-4o + SoM", "score": 19.78, "date": "2024", "notes": "Best baseline from original VWA paper"},
+          {"rank": 4, "name": "GPT-4V + SoM", "score": 16.37, "date": "2024", "notes": "Original paper SOTA"},
+          {"rank": 5, "name": "GPT-4 (text-only)", "score": 7.25, "date": "2024"},
+          {"rank": 6, "name": "Gemini-Pro-1.5 + SoM", "score": 11.98, "date": "2024"},
+          {"rank": 7, "name": "Human Performance", "score": 88.70, "date": "2024"}
+        ],
+        "links": {
+          "paper": "https://arxiv.org/abs/2401.13649",
+          "website": "http://jykoh.com/vwa",
+          "github": "https://github.com/web-arena-x/visualwebarena"
+        }
+      },
+      "saturation": {
+        "status": "active",
+        "discriminating": true,
+        "notes": "Top agents (71.6%) are now approaching the human baseline (78.24%), but there is still meaningful spread across agent architectures and models. Domain-specific saturation is uneven: forum tasks score much higher (~86%) than shopping tasks (~59%). The benchmark is less saturated than QA benchmarks. However, RL fine-tuning on web environments creates concerns about overfitting to WebArena-specific site structures."
+      },
+      "controversies": [
+        "The human baseline (78.24%) was measured on a subset of ~170 tasks and may not represent the full 812-task difficulty distribution.",
+        "Recent top scores come from agents RL-fine-tuned on live web environments structurally similar to WebArena sites, raising overfitting concerns.",
+        "The benchmark uses fixed Docker environments — site content doesn't change, creating memorization risk for agents trained specifically on WebArena.",
+        "Cross-site tasks (requiring navigation across multiple domains) are rare in the task set but likely more representative of real use.",
+        "VisualWebArena vs. WebArena scores are not directly comparable because VWA uses different sites (Classifieds, Shopping, Reddit vs. WebArena's full set)."
+      ],
+      "links": {
+        "paper": "https://arxiv.org/abs/2307.13854",
+        "website": "https://webarena.dev",
+        "github": "https://github.com/web-arena-x/webarena",
+        "leaderboard": "https://docs.google.com/spreadsheets/d/1M801lEpBbKSNwP-vDBkC_pF7LdyGU1f_ufZb_NWNBZQ/edit"
+      }
+    },
+
+    {
+      "id": "agentbench",
+      "name": "AgentBench",
+      "full_name": "AgentBench: Evaluating LLMs as Agents",
+      "slug": "agentbench",
+      "category": "agentic",
+      "tags": ["agent", "multi-environment", "OS", "database", "knowledge-graph", "self-hosted"],
+      "description": {
+        "short": "First multi-environment LLM agent benchmark spanning 8 interactive domains including Linux shell, SQL databases, knowledge graphs, card games, and web tasks. Published ICLR 2024.",
+        "full": "AgentBench is the first benchmark designed to evaluate LLMs-as-agents across a diverse spectrum of different interactive environments. It encompasses 8 distinct environments to provide comprehensive coverage of the abilities required for autonomous agents: reasoning, planning, multi-turn interaction, tool use, and adaptive decision-making. The environments span code tasks (OS, DB, KG), game environments (DCG, LTP), and re-compiled web/household tasks. The benchmark exposed a stark performance gap between top commercial models and open-source alternatives that was 2–5x in most environments at release.",
+        "motivation": "Existing benchmarks evaluated LLMs in single-turn, static settings. AgentBench was created to fill the gap of multi-turn, interactive evaluation where agents must take sequences of actions in dynamic environments and recover from errors.",
+        "creators": "Xiao Liu, Hao Yu, Hanchen Zhang, Yifan Xu, et al. — Tsinghua University (THUDM lab). Published at ICLR 2024.",
+        "year": 2023
+      },
+      "task_anatomy": {
+        "format": "Multi-turn interactive tasks where the agent receives an observation from the environment, generates an action (bash command, SQL query, Cypher query, natural language, etc.), and receives feedback. Continues until task completion or step limit.",
+        "environments": {
+          "OS": {
+            "description": "Linux bash shell interactions on Ubuntu Docker. Agent answers questions or performs file operations, process management, system queries.",
+            "metric": "Success Rate (SR)",
+            "max_turns": 8,
+            "example": "Recursively set all directory files to read-only, excluding your own home directory files."
+          },
+          "DB": {
+            "description": "SQLite/MySQL database queries. Agent translates natural-language questions into multi-step SQL queries on real databases.",
+            "metric": "Success Rate (SR)",
+            "max_turns": 5,
+            "example": "Find the top 3 customers by total spending in Q3 2022 and show their names and total amounts."
+          },
+          "KG": {
+            "description": "Freebase knowledge graph (45M+ entities, 3B+ facts) via Cypher/SPARQL. Agent must chain multiple API calls to answer multi-hop questions.",
+            "metric": "F1 Score",
+            "max_turns": 15,
+            "tool_calls_typical": "≥5",
+            "example": "Which films were directed by the same person who directed the movie featuring the actor born in the same city as [person X]?"
+          },
+          "DCG": {
+            "description": "Digital Card Game (based on a simplified Hearthstone-like game). Agent plays cards, makes combat decisions, and manages resources to win.",
+            "metric": "Overall Reward (0.7 × WinRate + 0.3 × DamageRate)"
+          },
+          "LTP": {
+            "description": "Lateral Thinking Puzzles. Agent asks yes/no questions to reconstruct a hidden scenario from a cryptic clue.",
+            "metric": "Game Progress (fraction of key story points uncovered)"
+          },
+          "ALFWorld": {
+            "description": "Household task environment (re-compiled from published dataset). Agent navigates rooms and manipulates objects to achieve goals (e.g., 'heat the egg and put it in the fridge').",
+            "metric": "Success Rate (SR)"
+          },
+          "WebShop": {
+            "description": "Web shopping environment (re-compiled). Agent searches and navigates a product catalog to purchase the correct item matching a description.",
+            "metric": "WebShop Reward (normalized attribute/option overlap)"
+          },
+          "Mind2Web": {
+            "description": "Web browsing benchmark (re-compiled). Agent navigates real web pages to complete tasks.",
+            "metric": "Step Success Rate (StepSR)"
+          }
+        },
+        "overall_score": "Harmonic mean of per-environment scores (normalized), weighting all environments equally. This mitigates scale differences between environments."
+      },
+      "example_tasks": [
+        {
+          "environment": "OS",
+          "task": "How many users on this system have a home directory NOT under /home? (Answer with a number.)",
+          "steps": ["Run 'getent passwd' to list all users", "Parse home directory field", "Count users where home dir does not start with /home"],
+          "expected_answer": "3"
+        },
+        {
+          "environment": "DB",
+          "task": "List the product names and total quantities sold for all products in the 'Electronics' category that had more than 500 units sold in 2022.",
+          "steps": ["Write SQL JOIN across products, categories, order_items tables", "Apply category filter", "Apply date filter", "Aggregate by product", "Apply HAVING clause"],
+          "expected_answer": "SQL query execution result set"
+        },
+        {
+          "environment": "KG",
+          "task": "Which country was the birthplace of the director of [specific film]?",
+          "steps": ["Call get_relations(film_entity)", "Identify director relation", "Call get_entity(director)", "Call get_relations(director_entity)", "Identify birthplace relation", "Call get_entity(birthplace)", "Return country"]
+        }
+      ],
+      "statistics": {
+        "total_tasks": 1091,
+        "environments": 8,
+        "original_dev_set_actions": "~4,000",
+        "original_test_set_actions": "~13,000",
+        "evaluation_method": "Task-specific (SR, F1, or reward functions per environment)",
+        "infrastructure": "Docker containers (MySQL for DB, Neo4j for KG, Ubuntu for OS, etc.)"
+      },
+      "leaderboard": {
+        "source": "Official AgentBench leaderboard (llmbench.ai/agent), GitHub repo",
+        "date": "2023–2025",
+        "note": "Original leaderboard covers 2023 models. AgentBench FC (function-calling version) launched October 2025 with updated methodology. The original benchmark showed GPT-4 dominating open-source models by 2–5x.",
+        "original_results": [
+          {
+            "rank": 1,
+            "model": "GPT-4 (0613)",
+            "type": "Commercial",
+            "overall_score": 4.27,
+            "notes": "Highest in 6/8 environments. 78% SR on Household, 74.5% win rate on DCG."
+          },
+          {
+            "rank": 2,
+            "model": "Claude-2",
+            "type": "Commercial",
+            "overall_score": 2.49
+          },
+          {
+            "rank": 3,
+            "model": "GPT-3.5-turbo",
+            "type": "Commercial",
+            "overall_score": 2.32
+          },
+          {
+            "rank": 4,
+            "model": "CodeLlama-34B",
+            "type": "Open-source",
+            "overall_score": 0.96,
+            "notes": "Best open-source at launch; less than half of GPT-3.5-turbo"
+          },
+          {
+            "rank": 5,
+            "model": "Vicuna-13B",
+            "type": "Open-source",
+            "overall_score": 0.22
+          },
+          {
+            "rank": 6,
+            "model": "LLaMA-2-70B",
+            "type": "Open-source",
+            "overall_score": 0.18,
+            "notes": "Near-zero on KG, DCG, and web environments"
+          }
+        ],
+        "gap_analysis": "GPT-4 outperformed the best open-source model (CodeLlama-34B) by 4.4x on overall score. Open-source models clustered between 0.2–0.8, with especially poor performance (<10% SR) on KG, DCG, and web browsing. Commercial models showed strong instruction following and multi-turn consistency; open-source models failed most often due to invalid actions and exceeding step limits."
+      },
+      "saturation": {
+        "status": "partially_active",
+        "discriminating": true,
+        "notes": "The original 2023 benchmark has been partially superseded — modern frontier models have closed the gap significantly on simpler environments like OS and DB. The DCG, KG, and web tasks remain challenging. AgentBench FC (2025) provides a refreshed evaluation with function-calling methodology, and the codebase is actively maintained. The original benchmark's primary value is now historical: it documented the commercial/open-source gap at a key inflection point."
+      },
+      "controversies": [
+        "The KG environment relies on Freebase (a Google-shutdown knowledge graph). The online SPARQL service has been unstable, and self-hosting requires significant setup.",
+        "The Digital Card Game (DCG) environment requires running a Hearthstone-like simulator that is memory-intensive and slow.",
+        "The harmonic-mean aggregation weights all environments equally — OS (short, deterministic) and KG (long, fuzzy F1) have very different characteristics.",
+        "The Lateral Thinking Puzzle (LTP) environment has been criticized for being too reliant on creativity/narrative reasoning rather than agentic tool use.",
+        "AgentBench v1 used prompted LLMs without native function calling. The newer FC version (2025) uses function-calling APIs, which may not be directly comparable to original scores."
+      ],
+      "links": {
+        "paper": "https://arxiv.org/abs/2308.03688",
+        "github": "https://github.com/THUDM/AgentBench",
+        "leaderboard": "https://llmbench.ai/agent",
+        "iclr_2024": "https://openreview.net/forum?id=zAdUB0aCTQ"
+      }
+    },
+
+    {
+      "id": "tau-bench",
+      "name": "τ-bench",
+      "full_name": "tau-bench: Tool-Agent-User Interaction Benchmark",
+      "slug": "tau-bench",
+      "category": "agentic",
+      "tags": ["agent", "customer-service", "tool-use", "reliability", "consistency", "multi-turn"],
+      "description": {
+        "short": "Customer service agent benchmark with simulated users, domain-specific tools, and policy documents. Tests reliability via Pass^k metric — does the agent succeed on ALL k trials of the same task?",
+        "full": "τ-bench (tau-bench) simulates the three-way interaction between tools, an AI agent, and a (simulated) user in realistic customer service scenarios. Unlike benchmarks that evaluate capability in isolation, τ-bench tests all three simultaneously: the agent must gather information through multi-turn conversation, follow domain-specific policy rules, and execute correct API calls against a stateful database — all at the same time. The defining innovation is the Pass^k metric: rather than asking 'can the agent solve this task?' it asks 'can the agent solve this task reliably every time?' A Pass^1 score of 60% sounds acceptable; a Pass^8 score of <25% reveals that the agent isn't reliably deployable.",
+        "motivation": "Production AI agents face millions of conversations. An agent that solves 60% of tasks is useless if the 40% failure rate is unpredictable and inconsistent. τ-bench was designed to expose this reliability gap that one-shot benchmarks miss entirely.",
+        "creators": "Victor Barres, Shunyu Yao, Karthik Narasimhan (Princeton University) and Sierra AI Research. Released June 2024. Successor versions: τ²-bench (2025), τ³-bench (2025, with banking domain and voice mode).",
+        "year": 2024
+      },
+      "task_anatomy": {
+        "format": "Multi-turn conversational simulation. The LLM-under-test plays the customer service agent. A separate LLM plays the user, given a 'user scenario' (task instructions hidden from the agent). The agent has access to a set of API tools and a domain policy document.",
+        "components": {
+          "agent": "The model being evaluated. Receives the policy document, available tool schemas, and the conversation history.",
+          "user_simulator": "A second LLM given the task scenario. Simulates a realistic (sometimes vague, sometimes demanding) customer. Does NOT have access to the policy.",
+          "environment": "Stateful database (Python dict/JSON). Tools read and write to this database. Database state after conversation is checked against ground-truth.",
+          "policy": "A multi-page document (like an actual employee handbook) specifying what actions are allowed, under what conditions, and what information the agent can share."
+        },
+        "evaluation": "The database state after the conversation is compared to the expected final state (ground truth). Additional checks verify that the agent communicated required information to the user. Pass^k is computed by running the same task k times independently and checking whether ALL k runs succeed.",
+        "domains": {
+          "retail": {
+            "description": "E-commerce customer support. Order lookups, cancellations, returns, refund processing, policy-constrained exchanges.",
+            "task_count": 115,
+            "tools": ["get_order", "cancel_order", "return_item", "apply_refund", "search_products", "update_address"],
+            "difficulty": "Moderate — policies are relatively straightforward"
+          },
+          "airline": {
+            "description": "Airline booking agent. Flight search, reservation modification, seat upgrades, cancellations, baggage changes, fare rule compliance.",
+            "task_count": 50,
+            "tools": ["search_flights", "book_reservation", "cancel_reservation", "update_reservation_flights", "update_reservation_baggages", "upgrade_cabin"],
+            "difficulty": "Hard — policies are complex (fare classes, overbooking rules, multi-leg trips)"
+          },
+          "telecom": {
+            "description": "Added in τ²-bench. Telecom support where users have their own phone-side tools and the agent must guide troubleshooting steps.",
+            "task_count": "~100",
+            "notes": "Introduced in τ²-bench (2025) as a 'dual-control' domain"
+          },
+          "banking": {
+            "description": "Added in τ³-bench (2025). Banking customer service with knowledge retrieval component.",
+            "task_count": "~100"
+          }
+        },
+        "pass_k_metric": {
+          "definition": "Pass^k = fraction of tasks where ALL k independent runs succeed. E.g., Pass^4 = P(run1 success AND run2 success AND run3 success AND run4 success) for a given task.",
+          "interpretation": "Pass^1 = 'can the agent ever solve this?' Pass^4 = 'can the agent reliably solve this?' Pass^8 = 'is the agent production-ready for this task type?'",
+          "why_it_matters": "Real customer service deployments handle millions of conversations. A 60% Pass^1 agent will fail 40% of customers once. That same agent may have Pass^8 < 25%, meaning it can only reliably handle ~25% of tasks across consistent use."
+        }
+      },
+      "example_tasks": [
+        {
+          "domain": "airline",
+          "user_scenario": "Your user id is sofia_kim_7287. You want to change your Houston to Denver trip to the fastest return trip possible on the same day as the departure trip (May 27). You want to stay in economy. You also want to add one checked bag. Use your gift card with the smallest balance to pay.",
+          "expected_actions": ["look up reservation", "search for fastest same-day return flight options", "calculate total travel time including stopovers", "confirm change with user", "update_reservation_flights(...)", "update_reservation_baggages(...)"],
+          "complexity": "Hard — requires mathematical reasoning about travel times, finding minimum among multi-option flights, policy compliance (economy constraint), and payment method selection"
+        },
+        {
+          "domain": "retail",
+          "user_scenario": "You ordered laptop stand (order #4821). You want to exchange it for the same model in black instead of silver. Your order was placed 12 days ago.",
+          "expected_actions": ["get_order(4821)", "check return policy (14-day window)", "verify exchange eligibility", "confirm new item availability", "process exchange with user confirmation"],
+          "complexity": "Medium — policy check is the main challenge (is 12 days within the 14-day window?)"
+        },
+        {
+          "domain": "airline",
+          "user_conversation_excerpt": [
+            {"user": "Hi, I need to cancel my upcoming flight."},
+            {"agent": "I'd be happy to help with that. Can I have your reservation ID?"},
+            {"user": "I don't remember it exactly. My name is John Smith."},
+            {"agent": "[calls search_reservations(name='John Smith')]"},
+            {"agent": "I found two reservations. One is a flight from LAX to JFK on June 15, and another from SFO to ORD on June 22. Which one would you like to cancel?"},
+            {"user": "The LAX to JFK one."},
+            {"agent": "[calls get_reservation(id='ABC123')]"},
+            {"agent": "This is a non-refundable Basic Economy ticket. Cancellation will result in a travel credit of $180, valid for 12 months. Shall I proceed?"},
+            {"user": "Yes, please."},
+            {"agent": "[calls cancel_reservation(id='ABC123', issue_credit=True)]"},
+            {"agent": "Done. A travel credit of $180 has been issued to your account, valid through June 15, 2026."}
+          ]
+        }
+      ],
+      "statistics": {
+        "original_task_count": 164,
+        "tau2_task_count": "~1,266",
+        "domains_v1": "retail (115 tasks), airline (50 tasks)",
+        "evaluation_method": "Stateful database comparison + required information checks",
+        "run_cost": "~$40 for a full trial across all v1 domains",
+        "tau3_additions": "banking domain, voice mode (real-time audio APIs), 75+ bug fixes to original tasks"
+      },
+      "leaderboard": {
+        "source": "taubench.com leaderboard, sierra-research GitHub, ai-stats.phaseo.app",
+        "date": "2024–2025",
+        "note": "Scores shown are Pass^1 unless otherwise noted. τ³-bench fixed 50+ tasks; scores improved significantly (especially airline: +14–20 points for top models). 'TC' = Tool-Calling strategy (best-performing strategy in paper).",
+        "entries": [
+          {
+            "rank": 1,
+            "model": "Gemini 3 Pro",
+            "organization": "Google DeepMind / Sierra",
+            "retail_pass1": 85.4,
+            "airline_pass1": null,
+            "date": "2025-11",
+            "notes": "Highest overall τ-bench score"
+          },
+          {
+            "rank": 2,
+            "model": "Claude Sonnet 4.5",
+            "organization": "Anthropic",
+            "retail_pass1": 84.7,
+            "airline_pass1": null,
+            "date": "2025-09"
+          },
+          {
+            "rank": 3,
+            "model": "Claude Opus 4.1",
+            "organization": "Anthropic",
+            "retail_pass1": 82.4,
+            "airline_pass1": null,
+            "date": "2025-08",
+            "notes": "Retail leader as of Aug 2025"
+          },
+          {
+            "rank": 4,
+            "model": "GLM 4.5",
+            "organization": "z.AI",
+            "retail_pass1": 79.7,
+            "airline_pass1": null,
+            "date": "2025-07"
+          },
+          {
+            "rank": 5,
+            "model": "DeepSeek-V3.2",
+            "organization": "DeepSeek",
+            "retail_pass1": null,
+            "overall_pass1": 80.4,
+            "date": "2025-12"
+          },
+          {
+            "rank": 6,
+            "model": "GPT-5",
+            "organization": "OpenAI / Sierra",
+            "overall_pass1": 80.0,
+            "retail_pass4": 73,
+            "airline_pass4": null,
+            "date": "2025-08"
+          },
+          {
+            "rank": 7,
+            "model": "Qwen3-Max",
+            "organization": "Alibaba",
+            "overall_pass1": 72.0,
+            "retail_pass4": 66.7,
+            "date": "2025-09"
+          },
+          {
+            "rank": 8,
+            "model": "Claude 3.7 Sonnet (with think tool)",
+            "organization": "Anthropic",
+            "retail_pass1": 81.2,
+            "airline_pass1": 58.4,
+            "date": "2025-04",
+            "notes": "Strong domain separation: retail much easier than airline"
+          },
+          {
+            "rank": 9,
+            "model": "Claude 3.5 Sonnet (updated)",
+            "organization": "Anthropic",
+            "retail_pass1": 69.2,
+            "airline_pass1": 46.0,
+            "retail_pass4": 0.462,
+            "airline_pass4": 0.225,
+            "date": "2024-10",
+            "notes": "Original paper top performer. Note the large gap between retail and airline."
+          },
+          {
+            "rank": 10,
+            "model": "GPT-4o",
+            "organization": "OpenAI",
+            "retail_pass1": 60.4,
+            "airline_pass1": 42.0,
+            "retail_pass4": 0.491,
+            "airline_pass8": "< 0.25",
+            "date": "2024",
+            "notes": "Paper baseline. Drops from 60.4% retail Pass^1 to <25% Pass^8."
+          },
+          {
+            "rank": 11,
+            "model": "Kimi K2",
+            "organization": "Moonshot AI",
+            "overall_pass1": 64.3,
+            "date": "2025-07"
+          },
+          {
+            "rank": 12,
+            "model": "o4-mini",
+            "organization": "OpenAI",
+            "overall_pass1": 56.9,
+            "retail_pass4": 48.3,
+            "date": "2025-04"
+          },
+          {
+            "rank": 13,
+            "model": "GPT-4.1",
+            "organization": "OpenAI",
+            "overall_pass1": 54.7,
+            "retail_pass4": 46.5,
+            "date": "2025-04"
+          },
+          {
+            "rank": 14,
+            "model": "GPT-4o-mini",
+            "organization": "OpenAI",
+            "airline_pass1": 22.5,
+            "airline_pass4": 0.100,
+            "date": "2024",
+            "notes": "Significantly weaker; small model struggles with complex policy"
+          }
+        ]
+      },
+      "saturation": {
+        "status": "active",
+        "discriminating": true,
+        "notes": "Pass^1 scores for top models have risen substantially (85%+ on retail). However, the Pass^k metric continues to discriminate — even top models see significant degradation from Pass^1 to Pass^4. The airline domain (complex policies) remains hard for all models. The τ³-bench expansion adds banking and voice modes, providing fresh headroom. Not saturated."
+      },
+      "controversies": [
+        "The original τ-bench had 50+ annotation errors that made correct agent behavior penalized as wrong. The τ³-bench task fixes (+14–20 points on airline for top models) raise questions about historical leaderboard validity.",
+        "User simulator quality varies: results depend heavily on which LLM plays the user. Scores are not comparable across papers that use different user simulators.",
+        "The Pass^k metric, while intuitive, has high variance for small task sets (50 airline tasks = very high CI).",
+        "Policy following is tested indirectly via outcome — the agent can sometimes get the right database state through the wrong policy path, or fail due to ambiguous policy language.",
+        "The benchmark's customer service scope may not generalize to other agent deployment contexts (coding, research, etc.)."
+      ],
+      "links": {
+        "paper_v1": "https://arxiv.org/abs/2406.12045",
+        "paper_tau2": "https://arxiv.org/abs/2506.07982",
+        "github_v1": "https://github.com/sierra-research/tau-bench",
+        "github_tau3": "https://github.com/sierra-research/tau2-bench",
+        "website": "https://taubench.com"
+      }
+    },
+
+    {
+      "id": "theagentcompany",
+      "name": "TheAgentCompany",
+      "full_name": "TheAgentCompany: Benchmarking LLM Agents on Consequential Real World Tasks",
+      "slug": "theagentcompany",
+      "category": "agentic",
+      "tags": ["agent", "workplace", "multi-tool", "social-interaction", "professional-tasks", "long-horizon"],
+      "description": {
+        "short": "175 professional workplace tasks in a simulated software company environment with 16 AI colleagues, 4 integrated platforms, and 6 job role domains. Best agent: ~43%. Published NeurIPS 2025.",
+        "full": "TheAgentCompany simulates a small software company and tasks LLM agents with completing realistic professional work: writing code, managing projects, analyzing data, conducting HR interviews, processing financial reports, and coordinating with colleagues via chat. Unlike most agent benchmarks, TheAgentCompany includes mandatory social interaction — agents must message, ask clarifying questions, and negotiate with 16 AI-simulated coworkers. The environment runs entirely in Docker and includes four integrated platforms (GitLab, RocketChat, Plane, ownCloud) that are actually functional, not mocked.",
+        "motivation": "The economic stakes of AI agent deployment are highest in professional/workplace contexts. The benchmark was designed to answer: 'How much actual office work can an AI agent autonomously complete today?' The emphasis on long-horizon, multi-tool, socially-grounded tasks distinguishes it from web agent benchmarks that typically test shorter interaction sequences.",
+        "creators": "Frank F. Xu, Yufan Song, Boxuan Li, Yuxuan Tang, et al. — Carnegie Mellon University + Duke University + independent researchers. Published NeurIPS 2025 (December 2024 preprint).",
+        "year": 2024
+      },
+      "task_anatomy": {
+        "format": "Each task gives the agent a natural-language instruction representing a real workplace request. The agent uses a browser, terminal, code editor, and chat platform to complete the task across potentially many steps and platforms.",
+        "environment": {
+          "platforms": {
+            "GitLab": "Code repositories, issue tracking, merge requests, CI/CD config (71 tasks touch GitLab)",
+            "RocketChat": "Internal messaging — agent messages with 16 simulated colleagues (79 task touchpoints)",
+            "Plane": "Project management — sprints, tasks, milestones (17 tasks)",
+            "ownCloud": "Document storage and collaborative editing (70 task touchpoints)"
+          },
+          "colleagues": "16 LLM-simulated AI coworkers, each with defined roles, names, and knowledge domains. Agents must know when to ask which colleague for what information.",
+          "deployment": "Self-contained Docker environment — fully reproducible, no external internet required"
+        },
+        "scoring": {
+          "primary": "Binary task completion (did the agent achieve the stated outcome?)",
+          "secondary": "Subcheckpoint score: partial credit for completing intermediate steps. Formula: 0.5 × (sub-checkpoints resolved / total sub-checkpoints) + 0.5 × binary_completion",
+          "evaluators": "Mix of deterministic evaluators (check file contents, API state, etc.) and LLM-based evaluators for subjective outputs"
+        },
+        "professional_domains": [
+          {
+            "domain": "Software Engineering",
+            "examples": ["Add unit tests to a module", "Fix a failing CI job", "Review and merge a pull request", "Set up a new service endpoint"],
+            "percentage": "~35% of tasks",
+            "agent_performance": "Strongest domain (coding data is abundant)"
+          },
+          {
+            "domain": "Project Management",
+            "examples": ["Create a sprint plan for Q2", "Update issue priorities based on stakeholder feedback", "Generate a project status report"],
+            "percentage": "~15%"
+          },
+          {
+            "domain": "Data Science",
+            "examples": ["Analyze CSV data and produce summary statistics", "Create a visualization from a dataset", "Run a regression model and interpret results"],
+            "percentage": "~15%"
+          },
+          {
+            "domain": "Human Resources",
+            "examples": ["Screen resumes for a software engineer role", "Schedule an interview and send calendar invites", "Draft an offer letter"],
+            "percentage": "~15%"
+          },
+          {
+            "domain": "Finance",
+            "examples": ["Fill in a tax form from provided documents", "Reconcile expenses against a budget spreadsheet", "Generate a financial summary report"],
+            "percentage": "~10%",
+            "agent_performance": "Weakest domain — spreadsheet navigation and form filling are hard"
+          },
+          {
+            "domain": "Administration",
+            "examples": ["Update company documentation", "Set up user accounts on internal tools", "Answer a policy question via company wiki"],
+            "percentage": "~10%"
+          }
+        ]
+      },
+      "example_tasks": [
+        {
+          "domain": "Software Engineering",
+          "task": "The team has been experiencing slow test suite runs. Please analyze the GitLab CI configuration for the 'backend-api' repository and implement parallel test execution. Create an issue documenting the change and assign it to @sarah_chen.",
+          "required_actions": ["Navigate to GitLab", "Read CI config", "Modify .gitlab-ci.yml for parallelism", "Push commit", "Create issue", "Assign to colleague via RocketChat or GitLab"],
+          "tools": ["Browser", "Terminal", "GitLab API"]
+        },
+        {
+          "domain": "Human Resources",
+          "task": "We have three resumes uploaded to ownCloud in the 'Engineering Candidates' folder for the Senior Backend Engineer role. Please screen them against our requirements document in the same folder and message @hiring_manager with a ranked recommendation.",
+          "required_actions": ["Open ownCloud", "Read 3 resumes and requirements doc", "Apply screening criteria", "Rank candidates", "Send RocketChat message to @hiring_manager with recommendation"],
+          "tools": ["Browser", "ownCloud", "RocketChat"]
+        },
+        {
+          "domain": "Finance",
+          "task": "The Q3 expense report spreadsheet is in ownCloud under /Finance/2024/. Cross-reference it with the approved budget document in the same folder and flag any line items that exceed budget by more than 15%. Post the flagged items to the #finance Slack channel.",
+          "required_actions": ["Open spreadsheet in ownCloud", "Open budget document", "Cross-reference row by row", "Identify items >15% over budget", "Post to RocketChat #finance channel"],
+          "tools": ["Browser", "ownCloud", "RocketChat"]
+        }
+      ],
+      "statistics": {
+        "total_tasks": 175,
+        "platforms": 4,
+        "simulated_colleagues": 16,
+        "professional_domains": 6,
+        "evaluation_method": "Deterministic + LLM-based evaluators with binary and subcheckpoint scores",
+        "environment": "Self-contained Docker"
+      },
+      "leaderboard": {
+        "source": "the-agent-company.com, alphaXiv, GitHub experiments repo",
+        "date": "2024–2025",
+        "note": "Scores are task completion rate (% of 175 tasks fully completed). Partial credit scores (subcheckpoints) are ~10 points higher. Cost per run = cost of API calls for one full 175-task evaluation.",
+        "entries": [
+          {
+            "rank": 1,
+            "name": "TTE-MatrixAgent + DeepSeek-V3.2",
+            "model": "DeepSeek-V3.2",
+            "framework": "TTE-MatrixAgent",
+            "completion_rate": 42.9,
+            "date": "2025",
+            "notes": "Current SOTA"
+          },
+          {
+            "rank": 2,
+            "name": "MUSE + Gemini 2.5 Flash",
+            "model": "Gemini 2.5 Flash",
+            "framework": "MUSE",
+            "completion_rate": 41.1,
+            "date": "2025"
+          },
+          {
+            "rank": 3,
+            "name": "OpenHands + Gemini 2.5 Pro",
+            "model": "Gemini 2.5 Pro",
+            "framework": "OpenHands",
+            "completion_rate": 30.3,
+            "date": "2025-06",
+            "notes": "Best single-model result at time of CMU paper update. Cost: ~$4+ per task."
+          },
+          {
+            "rank": 4,
+            "name": "OpenHands + Claude 3.5 Sonnet",
+            "model": "Claude 3.5 Sonnet",
+            "framework": "OpenHands",
+            "completion_rate": 24.0,
+            "partial_credit": 34.4,
+            "date": "2024-12",
+            "cost_per_task": "$6.34",
+            "avg_steps": 29,
+            "notes": "Best result in original paper; steps=29 per task"
+          },
+          {
+            "rank": 5,
+            "name": "OpenHands + Gemini 2.0 Flash",
+            "model": "Gemini 2.0 Flash",
+            "framework": "OpenHands",
+            "completion_rate": 11.4,
+            "cost_per_task": "$0.79",
+            "date": "2024-12",
+            "notes": "Most cost-efficient in original evaluation"
+          },
+          {
+            "rank": 6,
+            "name": "OpenHands + GPT-4o",
+            "model": "GPT-4o",
+            "framework": "OpenHands",
+            "completion_rate": 8.6,
+            "date": "2024-12"
+          },
+          {
+            "rank": 7,
+            "name": "OpenHands + Llama 3.1 70B",
+            "model": "Llama 3.1 70B",
+            "framework": "OpenHands",
+            "completion_rate": 3.3,
+            "date": "2024-12"
+          },
+          {
+            "rank": 8,
+            "name": "OpenHands + Qwen2-72B",
+            "model": "Qwen2-72B",
+            "framework": "OpenHands",
+            "completion_rate": 1.1,
+            "partial_credit": 4.2,
+            "date": "2024-12",
+            "notes": "Last place in original evaluation"
+          }
+        ]
+      },
+      "saturation": {
+        "status": "active",
+        "discriminating": true,
+        "notes": "Even with top ensemble agents achieving ~43%, the benchmark is far from saturated. The large majority of long-horizon, multi-tool, socially-grounded tasks remain beyond current AI capabilities. Finance and HR tasks remain particularly hard. The benchmark is actively maintained and new versions are planned."
+      },
+      "controversies": [
+        "Agent framework choice (OpenHands, MUSE, TTE-MatrixAgent) may account for as much performance variance as the underlying model, making model-to-model comparisons misleading.",
+        "Simulated colleague quality: the 16 AI 'coworkers' are also LLM instances. Their behavior varies, introducing variance into task scores.",
+        "LLM-based evaluators for subjective tasks introduce their own biases — if the evaluator LLM disagrees with a correct but unusual solution, the task fails.",
+        "The original paper used Claude 3.5 Sonnet as top performer (24%); the 30.3% Gemini 2.5 Pro result came from a later community evaluation with a different framework.",
+        "Tasks require Docker access and 16 simultaneous LLM API calls — running a full evaluation is expensive (~$4–$6 per task × 175 tasks = ~$700–$1,000+ for a full run with frontier models)."
+      ],
+      "links": {
+        "paper": "https://arxiv.org/abs/2412.14161",
+        "website": "https://the-agent-company.com",
+        "github": "https://github.com/TheAgentCompany/TheAgentCompany",
+        "experiments": "https://github.com/TheAgentCompany/experiments"
+      }
+    },
+
+    {
+      "id": "chatbot-arena",
+      "name": "LMSYS Chatbot Arena",
+      "full_name": "LMSYS Chatbot Arena (LMArena)",
+      "slug": "chatbot-arena",
+      "category": "preference",
+      "tags": ["human-preference", "Elo", "blind-comparison", "crowdsourced", "chat"],
+      "description": {
+        "short": "Largest crowdsourced LLM evaluation platform with 6M+ human votes. Users compare two anonymous models side-by-side; scores computed via Bradley-Terry model. Measures what humans actually prefer, not benchmark accuracy.",
+        "full": "LMSYS Chatbot Arena (rebranded LMArena in 2025) is an open platform where users are shown responses from two anonymous LLMs side-by-side and vote for whichever they prefer. The models are completely anonymous during evaluation to remove brand bias. Over millions of battles, the Bradley-Terry model (a statistical variant of chess Elo) produces stable relative capability rankings that reflect genuine human preference for chat quality. The platform supports multiple specialized sub-arenas: coding, math, creative writing, instruction following, multilingual, and hard prompts.",
+        "motivation": "Static benchmarks like MMLU test narrow capabilities that labs can optimize for. Human preference on open-ended prompts is harder to game — a model that gives a bad answer to a real user question will lose battles regardless of its MMLU score. The arena was designed to provide a complementary, preference-driven signal.",
+        "creators": "LMSYS (Large Model Systems) Organization — founded by researchers at UC Berkeley, UCSD, and CMU including Wei-Lin Chiang, Lianmin Zheng, Ying Sheng, Joseph E. Gonzalez, Ion Stoica. Launched May 2023.",
+        "year": 2023
+      },
+      "methodology": {
+        "process": "User submits a prompt. Two random anonymous models respond. User votes for the better response (or marks it a tie). Models are then revealed. Votes are logged.",
+        "statistical_model": "Bradley-Terry (BT) model: P(model_i beats model_j) = π_i / (π_i + π_j), where π represents model strength. BT is fit via Maximum Likelihood Estimation over all battles. Bootstrapped 1,000 times for confidence intervals.",
+        "tie_handling": "Ties count as 0.5 win and 0.5 loss for each model.",
+        "elo_display": "Scores are displayed on an Elo scale (anchored ~1000 for baseline models). A 100-point gap means the higher-rated model wins ~64% of head-to-head battles.",
+        "style_control": "A separate Bradley-Terry fit that statistically regresses out the effects of response length, markdown formatting, bullet points, and emoji. Style-controlled scores are closer to pure capability, removing the 'longer = better' heuristic bias.",
+        "minimum_battles": "~500 battles needed for a narrow confidence interval. New models have wide CIs.",
+        "sub_leaderboards": ["Overall", "Coding", "Math/Reasoning", "Creative Writing", "Instruction Following", "Multilingual", "Hard Prompts", "Vision/Multimodal"]
+      },
+      "leaderboard": {
+        "source": "LMArena (chat.lmsys.org), awesomeagents.ai, promptt.dev, aidevdayindia.org",
+        "date": "Early 2026",
+        "note": "Elo scores shown are approximate as of early 2026. Confidence intervals are typically ±4–12 for well-sampled models. Models within each other's CI should be considered statistically tied. 'Style Control' Elo adjusts for length/formatting bias.",
+        "scale_note": "As of 2026, top models sit in the 1380–1510 range. Scores below 1200 are now considered weak.",
+        "entries": [
+          {
+            "rank": 1,
+            "model": "GPT-5.2 Pro",
+            "organization": "OpenAI",
+            "elo": 1402,
+            "style_control_elo": 1388,
+            "ci": "±4",
+            "date": "2026-02",
+            "strengths": ["Creative writing", "Math/Reasoning"]
+          },
+          {
+            "rank": 2,
+            "model": "Claude Opus 4.6",
+            "organization": "Anthropic",
+            "elo": 1398,
+            "style_control_elo": 1391,
+            "ci": "±4",
+            "date": "2026-02",
+            "strengths": ["Coding (leads coding sub-leaderboard)", "Logic"]
+          },
+          {
+            "rank": 3,
+            "model": "Gemini 3 Pro",
+            "organization": "Google DeepMind",
+            "elo": 1389,
+            "style_control_elo": 1382,
+            "ci": "±5",
+            "date": "2026-02",
+            "strengths": ["Instruction Following", "Multilingual"]
+          },
+          {
+            "rank": 4,
+            "model": "GPT-5.2",
+            "organization": "OpenAI",
+            "elo": 1380,
+            "style_control_elo": 1365,
+            "ci": "±4",
+            "date": "2026-02"
+          },
+          {
+            "rank": 5,
+            "model": "Grok 4 Heavy",
+            "organization": "xAI",
+            "elo": 1375,
+            "style_control_elo": 1370,
+            "ci": "±6",
+            "date": "2026-02"
+          },
+          {
+            "rank": 6,
+            "model": "Claude Opus 4.5",
+            "organization": "Anthropic",
+            "elo": 1370,
+            "style_control_elo": 1366,
+            "ci": "±4",
+            "date": "2025-12"
+          },
+          {
+            "rank": 7,
+            "model": "DeepSeek V3.2-Speciale",
+            "organization": "DeepSeek",
+            "elo": 1361,
+            "style_control_elo": 1355,
+            "ci": "±5",
+            "date": "2026-02",
+            "notes": "Top open-weight model"
+          },
+          {
+            "rank": 8,
+            "model": "Qwen 3.5",
+            "organization": "Alibaba",
+            "elo": 1342,
+            "style_control_elo": 1335,
+            "ci": "±6",
+            "date": "2026-01"
+          },
+          {
+            "rank": 9,
+            "model": "Gemini 2.5 Flash",
+            "organization": "Google DeepMind",
+            "elo": 1335,
+            "style_control_elo": 1322,
+            "ci": "±5",
+            "date": "2025-11"
+          },
+          {
+            "rank": 10,
+            "model": "Llama 4 Maverick",
+            "organization": "Meta",
+            "elo": 1320,
+            "style_control_elo": 1310,
+            "ci": "±7",
+            "date": "2025-10",
+            "notes": "Best Meta model in general arena; note: chat-optimized version initially had inflated score"
+          }
+        ],
+        "coding_subleaderboard": [
+          {"rank": 1, "model": "Claude Opus 4.6", "elo": 1549, "notes": "Record high coding score; first model to exceed 1500"},
+          {"rank": 2, "model": "Claude Opus 4.6 Thinking", "elo": 1545},
+          {"rank": 3, "model": "Claude Sonnet 4.6", "elo": 1523},
+          {"rank": 4, "model": "Claude 4.5 Thinking", "elo": 1491},
+          {"rank": 5, "model": "GPT-5.4 High", "elo": 1457}
+        ]
+      },
+      "saturation": {
+        "status": "active",
+        "discriminating": true,
+        "notes": "The Arena cannot saturate in the traditional sense since new prompts are submitted by real users daily and evaluation is preference-based. However, at the frontier level (Elo 1380+), models are statistically indistinguishable within confidence intervals for many categories, making reliable differentiation at the top hard. The coding sub-leaderboard remains discriminating. The arena has expanded to cover vision/multimodal and agentic tasks, maintaining relevance."
+      },
+      "controversies": [
+        "Length/style bias: Users systematically prefer longer, more formatted responses, giving an unfair advantage to models that produce 'slop' (verbose, emoji-filled answers). The Llama 4 Maverick 'chat-optimized' version jumped to #2 before being replaced by the real model which dropped to ~#32. Style Control partially mitigates this but is not universally applied.",
+        "Private testing and selective disclosure: A 2025 paper (arxiv:2504.20879) documented that large labs test multiple private model variants and only submit the winner, violating the Bradley-Terry model's independence assumption and systematically inflating scores for providers with private access.",
+        "Sampling rate disparities: OpenAI/Google models receive up to 34% of daily battles while smaller providers get 1-3%, giving frontier models far more vote volume and faster convergence.",
+        "Voter distribution bias: Arena voters skew technical, English-speaking, and toward casual chat/creative prompts. Models optimized for enterprise or non-English use may be underrated.",
+        "Factuality blind spot: A model that gives a confident, wrong answer can win against a model that gives a correct but hedging answer. The Arena measures preference, not accuracy.",
+        "Model fingerprinting risk: Labs provide models via API. It is theoretically trivial to fingerprint model responses and direct bot votes to the correct anonymous model without LMSYS detection.",
+        "Context length cap: Arena prompts are capped at ~12,000 characters, excluding evaluation of long-context capability entirely."
+      ],
+      "links": {
+        "website": "https://chat.lmsys.org",
+        "leaderboard": "https://leaderboard.lmsys.org",
+        "huggingface": "https://huggingface.co/spaces/lmarena-ai/arena-leaderboard",
+        "paper": "https://arxiv.org/abs/2403.04132",
+        "style_control_blog": "https://lmsys.org/blog/2024-08-28-style-control/"
+      }
+    },
+
+    {
+      "id": "livebench",
+      "name": "LiveBench",
+      "full_name": "LiveBench: A Challenging, Contamination-Limited LLM Benchmark",
+      "slug": "livebench",
+      "category": "general",
+      "tags": ["contamination-resistant", "monthly-refresh", "objective-scoring", "math", "coding", "reasoning"],
+      "description": {
+        "short": "Monthly-refreshed benchmark using questions from recent math competitions, arXiv papers, and news articles. Automatically scored against objective ground truth — no LLM judge. Top models score ~75–87%.",
+        "full": "LiveBench is designed around a simple observation: if benchmark questions are fixed, they will eventually appear in training data, making scores meaningless. LiveBench prevents this by releasing new questions monthly, sourcing them from recent publications (math competitions, new arXiv papers, recent news articles, new IMDb movie synopses) that cannot have appeared in any prior training set. All questions have verifiable, objective ground-truth answers, so evaluation is fully automatic without LLM judges or human raters. The benchmark spans 6 categories and 18+ tasks, with difficulty calibrated so top models don't trivially saturate it.",
+        "motivation": "By 2024, static benchmarks like MMLU were essentially saturated — frontier models exceeded 85–90% accuracy, and there was suspicion that test data had leaked into training sets. LiveBench was created as a sustainable alternative that stays challenging even as models improve, because questions are perpetually renewed.",
+        "creators": "Colin White, Samuel Dooley, Manley Roberts, Arka Pal, Benjamin Feuer, et al. — with Yann LeCun, Tom Goldstein, and Micah Goldblum as senior authors. Multiple institutions (NYU, UMD, etc.). Spotlight paper at ICLR 2025.",
+        "year": 2024
+      },
+      "task_anatomy": {
+        "contamination_prevention": {
+          "monthly_refresh": "New questions released every month based on very recent sources. A question about an arXiv paper published last month cannot have been in training data.",
+          "source_recency": "Questions are derived from: recent math competition problems (AMC/AIME/Olympiad), new arXiv papers (for data analysis and instruction following), recent news articles, new IMDb movie synopses, recent code challenges",
+          "no_llm_judge": "All answers are verified against objective ground truth — a number, a sorted list, a specific string. This avoids the biases of LLM judging.",
+          "version_history": "Old questions are retired and replaced. When contamination is detected, tasks are refreshed. The 2025-04 update replaced all coding questions and multiple reasoning tasks."
+        },
+        "scoring": "Per-question accuracy against ground truth (0 or 1). Averaged per task, per category, then overall. Scores are 0–100.",
+        "categories": {
+          "math": {
+            "tasks": ["math_comp (AMC/AIME/Olympiad)", "olympiad (harder problems)", "AMPS (applied math)"],
+            "description": "Questions from recent math competitions; answers are exact numbers or expressions"
+          },
+          "coding": {
+            "tasks": ["code_generation (full function from spec)", "code_completion (fill in missing code)", "agentic_coding (SWE-agent on real GitHub issues)"],
+            "description": "Code generation evaluated by test suite execution; agentic coding uses Multi-SWE-Bench harness"
+          },
+          "reasoning": {
+            "tasks": ["web_of_lies (logic/truth-telling puzzles)", "zebra_puzzle (constraint satisfaction)", "spatial_reasoning", "theory_of_mind", "logic_with_navigation"],
+            "description": "Chain-of-thought reasoning tasks with verifiable answers"
+          },
+          "language": {
+            "tasks": ["typos (correct errors in recent arXiv abstracts)", "plot_unscrambling (reorder shuffled movie plot sentences)", "connections (NYT Connections-style categorization)"],
+            "description": "Language understanding and manipulation tasks"
+          },
+          "data_analysis": {
+            "tasks": ["tablereformat", "tablejoin", "table_analysis"],
+            "description": "Tabular data manipulation and analysis tasks using recent datasets"
+          },
+          "instruction_following": {
+            "tasks": ["IFEval-style tasks with harder constraints", "multi-constraint following"],
+            "description": "Precise instruction following measured by hard constraint satisfaction (e.g., 'answer in exactly 3 paragraphs', 'do not use the word X')"
+          }
+        }
+      },
+      "example_tasks": [
+        {
+          "category": "reasoning / web_of_lies",
+          "question": "In this question, assume each person either always tells the truth or always lies. Tala is at the movie theater. The person at the restaurant says the person at the aquarium tells the truth. [... 8 more clues ...] Does the person at the train station tell the truth? Does the person at the amusement park tell the truth? Does the person at the aquarium tell the truth? Think step by step, then put your answer in **bold** as a list of three words, yes or no (e.g., **yes, no, yes**).",
+          "expected_answer": "no, yes, yes",
+          "evaluation": "Exact string match on the bolded answer"
+        },
+        {
+          "category": "math / math_comp",
+          "question": "A 2024 AMC 12 problem: [problem text from recent competition that post-dates any training cutoff]",
+          "expected_answer": "Exact numerical answer (e.g., '42')",
+          "evaluation": "Exact numerical match"
+        },
+        {
+          "category": "coding / code_generation",
+          "question": "Implement a function `efficient_merge` in Python using the `pandas` library that: (1) reads two CSV files with identical schemas, (2) deduplicates based on a specified key column, (3) returns the merged DataFrame sorted by timestamp...",
+          "expected_answer": "Executable Python function",
+          "evaluation": "Test suite execution (multiple test cases)"
+        }
+      ],
+      "statistics": {
+        "current_task_count": "18+ tasks across 6 categories",
+        "initial_release": "960 questions (June 2024)",
+        "update_frequency": "Monthly",
+        "scoring": "Automatic, objective ground truth",
+        "no_llm_judge": true,
+        "correlation_with_other_leaderboards": "0.88–0.91 with other major leaderboards"
+      },
+      "leaderboard": {
+        "source": "livebench.ai, aimodelsmap.com",
+        "date": "2025–2026",
+        "note": "Scores are overall accuracy (0–100). At ICLR 2025 submission, top models were below 65%. By 2026, top models are in 75–87% range, showing rapid progress. The benchmark team has escalated difficulty with each refresh.",
+        "entries": [
+          {"rank": 1, "model": "o4-mini High", "organization": "OpenAI", "score": 87.3, "date": "2025-06"},
+          {"rank": 2, "model": "DeepSeek R1-0528", "organization": "DeepSeek", "score": 84.4, "date": "2025-05"},
+          {"rank": 3, "model": "Qwen3 235B A22B", "organization": "Alibaba", "score": 80.4, "date": "2025-04"},
+          {"rank": 4, "model": "Gemma 4 31B", "organization": "Google", "score": 80.0, "date": "2025-04"},
+          {"rank": 5, "model": "GPT-5.4", "organization": "OpenAI", "score": 79.0, "date": "2026-03"},
+          {"rank": 6, "model": "Claude Opus 4.6", "organization": "Anthropic", "score": 78.5, "date": "2026-02"},
+          {"rank": 7, "model": "Gemini 3 Pro", "organization": "Google", "score": 78.0, "date": "2025-12"},
+          {"rank": 8, "model": "GPT-5.2", "organization": "OpenAI", "score": 77.5, "date": "2025-11"},
+          {"rank": 9, "model": "GPT-5", "organization": "OpenAI", "score": 76.0, "date": "2025-08"},
+          {"rank": 10, "model": "Gemini 2.5 Pro", "organization": "Google", "score": 75.6, "date": "2025-07"},
+          {"rank": 11, "model": "o3", "organization": "OpenAI", "score": 74.8, "date": "2025-04"},
+          {"rank": 12, "model": "Gemini 3 Flash", "organization": "Google", "score": 74.5, "date": "2025-10"},
+          {"rank": 13, "model": "Claude Opus 4.5", "organization": "Anthropic", "score": 74.0, "date": "2025-11"},
+          {"rank": 14, "model": "Claude Sonnet 4.6", "organization": "Anthropic", "score": 73.2, "date": "2026-02"},
+          {"rank": 15, "model": "Grok 4", "organization": "xAI", "score": 73.0, "date": "2025-12"},
+          {"rank": 16, "model": "Claude Opus 4", "organization": "Anthropic", "score": 72.0, "date": "2025-05"},
+          {"rank": 17, "model": "o4-mini", "organization": "OpenAI", "score": 72.0, "date": "2025-04"},
+          {"rank": 18, "model": "o3-mini", "organization": "OpenAI", "score": 71.5, "date": "2025-03"},
+          {"rank": 19, "model": "Claude Sonnet 4.5", "organization": "Anthropic", "score": 70.5, "date": "2025-09"},
+          {"rank": 20, "model": "DeepSeek R1", "organization": "DeepSeek", "score": 67.3, "date": "2025-01"},
+          {"rank": 21, "model": "Claude 3.7 Sonnet", "organization": "Anthropic", "score": 65.8, "date": "2025-02"},
+          {"rank": 22, "model": "Gemini 2.5 Flash", "organization": "Google", "score": 66.5, "date": "2025-08"},
+          {"rank": 23, "model": "GPT-4.1", "organization": "OpenAI", "score": 64.5, "date": "2025-04"},
+          {"rank": 24, "model": "GPT-4o", "organization": "OpenAI", "score": "~55", "date": "2024"},
+          {"rank": 25, "model": "GPT-4o-mini", "organization": "OpenAI", "score": 35.5, "date": "2024"}
+        ]
+      },
+      "saturation": {
+        "status": "active",
+        "discriminating": true,
+        "notes": "By design, LiveBench is the least susceptible benchmark to saturation — questions are refreshed monthly and difficulty is escalated when scores approach 70%. Top scores of 87% (o4-mini High) suggest the easiest tasks are approaching saturation for top models, and the team has been consistently adding harder tasks. The agentic coding category (added 2025) provides a new hard ceiling. Not saturating."
+      },
+      "controversies": [
+        "Monthly refresh still has a ~1-month lag: questions from this month could theoretically be in next month's training data for labs with fast training pipelines.",
+        "Some tasks (e.g., typos from arXiv) may still correlate with training data for models with large arXiv coverage, since even 'new' papers are similar in style to old papers.",
+        "Not all question releases are public — some are held private to maintain leaderboard integrity, creating asymmetry between leaderboard evaluation and community evaluation.",
+        "Task rotation means historical scores are not comparable across versions (e.g., a score from mid-2024 used different tasks than a 2026 score).",
+        "The benchmark was initially scored at 'below 65%' for top models; top models now score 87%, raising questions about whether the difficulty escalation has kept pace."
+      ],
+      "links": {
+        "paper": "https://arxiv.org/abs/2406.19314",
+        "website": "https://livebench.ai",
+        "github": "https://github.com/LiveBench/LiveBench",
+        "leaderboard": "https://livebench.ai/#leaderboard",
+        "iclr_2025": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/e4a46394ba5378b3f9a186a5b4c650d1-Abstract-Conference.html"
+      }
+    },
+
+    {
+      "id": "arc-hellaswag",
+      "name": "ARC-Challenge + HellaSwag",
+      "full_name": "AI2 Reasoning Challenge (Challenge Set) + HellaSwag",
+      "slug": "arc-hellaswag",
+      "category": "classic",
+      "tags": ["multiple-choice", "commonsense-reasoning", "science-QA", "saturated", "baseline"],
+      "description": {
+        "short": "Two classic saturated benchmarks — ARC tests grade-school science reasoning (2,590 questions), HellaSwag tests commonsense sentence completion (10,000+ questions). Both exceeded by frontier models at ~95–98% accuracy.",
+        "full": "ARC-Challenge (AI2 Reasoning Challenge, Challenge Set) and HellaSwag are two of the most historically significant English-language LLM benchmarks. Both were designed to be challenging for their era (2018–2019) and both are now effectively saturated for frontier models. They remain valuable as (1) baseline checks to verify that a model has basic reasoning capability, (2) evaluation tools for smaller/open-source models where they still discriminate, and (3) historical reference points showing AI progress.",
+        "arc_description": "ARC-Challenge is a subset of 2,590 grade-school science questions from standardized tests (grades 3–9). The Challenge set was filtered to exclude questions answerable by simple retrieval or word co-occurrence — only questions that fooled both information retrieval and word frequency baselines are included. Covers physics, chemistry, biology, and earth science. Multiple choice with 3–5 options.",
+        "hellaswag_description": "HellaSwag tests commonsense natural language inference via sentence completion. Agents are given a short context (from video captions or WikiHow articles describing everyday activities) and must select the most plausible continuation from four options. Distractors are generated via Adversarial Filtering (AF) to be syntactically plausible but semantically wrong, making the task hard for models that rely on surface features.",
+        "creators": {
+          "arc": "Peter Clark, Isaac Cowhey, Oren Etzioni, et al. — Allen Institute for AI (AI2). Published 2018.",
+          "hellaswag": "Rowan Zellers, Ari Holtzman, Yonatan Bisk, Ali Farhadi, Yejin Choi — University of Washington / Allen Institute. Published at ACL 2019."
+        }
+      },
+      "task_anatomy": {
+        "arc_challenge": {
+          "format": "Multiple-choice science question with 3–5 labeled options (A–E). Single correct answer.",
+          "evaluation": "Accuracy (% correct). Typically evaluated in 0-shot or few-shot settings.",
+          "task_count_challenge": 2590,
+          "task_count_easy": 5197,
+          "total_arc_questions": 7787
+        },
+        "hellaswag": {
+          "format": "Short context (1–2 sentences from video captions or WikiHow) followed by 4 candidate sentence completions. Agent selects the most plausible continuation.",
+          "evaluation": "Accuracy (% correct). Evaluated on 10,003 validation questions.",
+          "total_questions": 70000,
+          "validation_questions": 10003
+        }
+      },
+      "example_tasks": [
+        {
+          "benchmark": "ARC-Challenge",
+          "question": "A student is studying the properties of different materials. Which of the following is the best conductor of electricity?",
+          "options": {"A": "Glass rod", "B": "Copper wire", "C": "Rubber band", "D": "Wooden stick"},
+          "correct_answer": "B",
+          "difficulty": "Easy for a human, but the Challenge set ensures this requires reasoning, not just keyword matching"
+        },
+        {
+          "benchmark": "ARC-Challenge",
+          "question": "Which of the following best explains why the seasons change on Earth?",
+          "options": {
+            "A": "Earth's distance from the Sun changes throughout the year",
+            "B": "Earth's axis is tilted relative to its orbital plane",
+            "C": "The Sun's energy output varies throughout the year",
+            "D": "Earth's rotation speed changes with the seasons"
+          },
+          "correct_answer": "B",
+          "difficulty": "Requires scientific reasoning beyond keyword lookup — common misconception (A) is a plausible distractor"
+        },
+        {
+          "benchmark": "HellaSwag",
+          "question": "A man is washing a car. He uses a sponge and soap to clean the surface.",
+          "options": {
+            "A": "He then polishes the car with a buffer, applying wax in circular motions.",
+            "B": "He suddenly stops and begins reading a newspaper inside the car.",
+            "C": "The car drives away while he watches from the driveway.",
+            "D": "He puts the sponge in the dishwasher and turns it on."
+          },
+          "correct_answer": "A",
+          "notes": "Adversarial filtering ensures options B, C, D are syntactically grammatical but don't follow the commonsense script of car washing"
+        }
+      ],
+      "statistics": {
+        "arc_challenge": {
+          "questions": 2590,
+          "domains": "Physics, Chemistry, Biology, Earth Science (grades 3–9)",
+          "human_baseline": "~90% (estimated; not formally established)",
+          "evaluation": "Accuracy, letter-match"
+        },
+        "hellaswag": {
+          "questions_validation": 10003,
+          "questions_total": 70000,
+          "human_baseline": "95.6%",
+          "evaluation": "Accuracy (4-way multiple choice)"
+        }
+      },
+      "leaderboard": {
+        "source": "codesota.com, lmmarketcap.com, airank.dev",
+        "date": "2024–2026",
+        "arc_challenge": [
+          {"rank": 1, "model": "o3 API", "organization": "OpenAI", "score": 98.1, "date": "2026-03"},
+          {"rank": 2, "model": "Gemini 2.5 Pro", "organization": "Google", "score": 97.8, "date": "2026-03"},
+          {"rank": 3, "model": "Llama-4-Maverick", "organization": "Meta", "score": 97.4, "date": "2026-03"},
+          {"rank": 4, "model": "o4-mini", "organization": "OpenAI", "score": 97.3, "date": "2026-03"},
+          {"rank": 5, "model": "DeepSeek R1", "organization": "DeepSeek", "score": 97.1, "date": "2026-03"},
+          {"rank": 6, "model": "Llama 3.1 405B", "organization": "Meta", "score": 96.9, "date": "2025"},
+          {"rank": 7, "model": "Claude 3.5 Sonnet", "organization": "Anthropic", "score": 96.7, "date": "2025-12"},
+          {"rank": 8, "model": "GPT-4o", "organization": "OpenAI", "score": 96.4, "date": "2025"},
+          {"rank": 9, "model": "GPT-4o mini", "organization": "OpenAI", "score": 96.4, "date": "2025"},
+          {"rank": 10, "model": "Phi-4", "organization": "Microsoft", "score": 95.5, "date": "2025"},
+          {"rank": 11, "model": "Qwen 2.5 72B", "organization": "Alibaba", "score": 95.1, "date": "2025"},
+          {"rank": 12, "model": "Llama 3.1 70B", "organization": "Meta", "score": 94.8, "date": "2024"},
+          {"rank": 13, "model": "Gemini 1.5 Pro", "organization": "Google", "score": 94.8, "date": "2024"},
+          {"rank": 14, "model": "Gemma 2 27B", "organization": "Google", "score": 93.2, "date": "2024"},
+          {"rank": 15, "model": "Mixtral 8x22B", "organization": "Mistral AI", "score": 91.3, "date": "2024"}
+        ],
+        "hellaswag": [
+          {"rank": 1, "model": "Llama 3.1 405B", "organization": "Meta", "score": 96.0, "date": "2024", "notes": "Exceeds human baseline of 95.6%"},
+          {"rank": 2, "model": "GPT-4o", "organization": "OpenAI", "score": 95.3, "date": "2024"},
+          {"rank": 3, "model": "Claude 3 Opus", "organization": "Anthropic", "score": 95.4, "date": "2024"},
+          {"rank": 4, "model": "GPT-4 Turbo", "organization": "OpenAI", "score": 95.1, "date": "2024"},
+          {"rank": 5, "model": "Llama 3.1 70B", "organization": "Meta", "score": 94.8, "date": "2024"},
+          {"rank": 6, "model": "Gemini 1.5 Pro", "organization": "Google", "score": 93.3, "date": "2024"},
+          {"rank": 7, "model": "GPT-4o mini", "organization": "OpenAI", "score": 93.0, "date": "2024"},
+          {"rank": 8, "model": "Gemma 2 27B", "organization": "Google", "score": 93.0, "date": "2024"},
+          {"rank": 9, "model": "Claude 3 Sonnet", "organization": "Anthropic", "score": 89.0, "date": "2024"},
+          {"rank": 10, "model": "Mixtral 8x22B", "organization": "Mistral AI", "score": 88.7, "date": "2024"},
+          {"rank": 11, "model": "Human baseline", "organization": "Human", "score": 95.6, "date": "2019"}
+        ]
+      },
+      "saturation": {
+        "arc_challenge": {
+          "status": "saturated",
+          "notes": "Frontier models score 96–98%. The gap between BERT-large (47.3% at launch) and modern models (96–98%) is the most dramatic capability curve in NLP benchmarking. No discriminating power for frontier models; only useful for mid-tier models below ~90%."
+        },
+        "hellaswag": {
+          "status": "saturated",
+          "notes": "Top models (Llama 3.1 405B at 96%) now exceed the human baseline of 95.6%. A 2025 paper (Borchmann, ACL 2025 Findings) argued that HellaSwag's apparent challenge for smaller models is partly an evaluation artifact — if models are tested on the answer text alone (without the question), more than 65% of predictions remain the same, suggesting spurious statistical correlations rather than genuine commonsense reasoning. A corrected subset 'GoldenSwag' was released."
+        }
+      },
+      "why_still_useful": [
+        "Quick sanity check: Any model that fails significantly on ARC-Easy or HellaSwag has a fundamental capability gap.",
+        "Small model evaluation: Models below 7B parameters still show meaningful spread on both benchmarks (Phi-2 ~38% on HellaSwag vs. Llama 3.1 405B at 96%).",
+        "Historical continuity: Reporting scores alongside modern benchmarks gives context for how much models have improved since 2019.",
+        "Regression detection: If a model update causes ARC score to drop, it suggests fundamental capability loss.",
+        "Paired with ARC-Easy: Comparing a model's ARC-Easy vs. ARC-Challenge score reveals whether it's using shortcut heuristics (high Easy, low Challenge gap = likely relying on surface features)."
+      ],
+      "controversies": [
+        "HellaSwag validity: A 2025 ACL paper showed that 65%+ of model predictions are unchanged when the question/context is removed and models see only answer choices — suggesting models may be exploiting statistical patterns in answer options rather than reasoning about context.",
+        "ARC Challenge 'challenge': A 2025 ACL Findings paper ('ARC Challenge Is Not That Challenging') argued the apparent difficulty vs. ARC-Easy stems largely from evaluation setup (log-probability scoring vs. answer text comparison), not genuine reasoning difficulty.",
+        "Data contamination: Both benchmarks were released 2018–2019 and have been reproduced extensively. Near-certain training data contamination for any model trained after 2020.",
+        "Human baselines are informal: The 95.6% HellaSwag human figure comes from a small annotator study. ARC-Challenge has no formal human baseline.",
+        "Superseded by harder benchmarks: For frontier model evaluation, both have been superseded by MMLU, GPQA Diamond, ARC-AGI-2, and LiveBench. Reporting ARC/HellaSwag scores for GPT-5 or Claude Opus 4 provides essentially zero signal."
+      ],
+      "links": {
+        "arc_paper": "https://arxiv.org/abs/1803.05457",
+        "arc_dataset": "https://huggingface.co/datasets/allenai/ai2_arc",
+        "hellaswag_paper": "https://arxiv.org/abs/1905.07830",
+        "hellaswag_dataset": "https://huggingface.co/datasets/Rowan/hellaswag",
+        "goldenswag_paper": "https://arxiv.org/abs/2504.07825",
+        "arc_challenge_paper": "https://aclanthology.org/2025.findings-acl.144/"
+      }
+    }
+  ]
+}

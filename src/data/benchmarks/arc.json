@@ -1,0 +1,71 @@
+{
+  "slug": "arc",
+  "name": "ARC-Challenge",
+  "shortDescription": "Grade-school science questions that simple retrieval systems can't answer.",
+  "description": "ARC (AI2 Reasoning Challenge) was released by the Allen Institute for AI (AI2) in 2018. The benchmark tests grade-school science question answering (grades 3-9) from standardized US tests. Its key design property: questions were selected specifically because simple retrieval-based systems and word co-occurrence algorithms both failed to answer them correctly.\n\nARC has two splits: the Easy set (questions that retrieval systems can answer) and the Challenge set (2,590 questions where both retrieval and word co-occurrence methods fail). The Challenge set is what is universally reported when people say 'ARC'.\n\nWhen released in 2018, the best system scored only 33.7% — barely above the 25% random baseline. The benchmark was designed to require genuine scientific reasoning, not just keyword matching. It rapidly became one of the five core benchmarks in the Open LLM Leaderboard alongside HellaSwag, Winogrande, GSM8K, and TruthfulQA.\n\nARC-Challenge is now fully saturated. Top models score 95-98%, with o3 at 98.1%. The benchmark is retained primarily as a regression test and for evaluating smaller open-source models where it still discriminates (50-80% range). For frontier model comparison, it provides no useful signal.",
+  "category": "reasoning",
+  "subcategory": "science-reasoning",
+  "tags": ["science", "multiple-choice", "grade-school", "saturated", "classic"],
+  "saturationStatus": "saturated",
+  "evaluationMethod": "exact-match",
+  "stats": {
+    "totalTasks": 2590,
+    "publicTasks": 2590,
+    "year": 2018,
+    "creator": "Peter Clark, Isaac Cowhey, Oren Etzioni, et al.",
+    "institution": "Allen Institute for AI",
+    "languages": [],
+    "domains": ["Science", "Biology", "Chemistry", "Physics", "Earth Science", "Astronomy"],
+    "humanBaseline": null,
+    "randomBaseline": 25.0
+  },
+  "taskAnatomy": {
+    "input": "A multiple-choice science question (4 answer options) from US standardized science tests for grades 3-9. Questions were specifically selected because retrieval-based systems could not answer them.",
+    "output": "Model selects one answer choice (A, B, C, or D).",
+    "evaluation": "Accuracy. Random baseline = 25%.",
+    "metric": "Accuracy"
+  },
+  "examples": [
+    {
+      "title": "Ecology — Chipmunks and acorns",
+      "difficulty": "Medium",
+      "input": "One year, the oak trees in a park began producing more acorns than usual. The next year, the population of chipmunks in the park also increased. Which of the following best explains why there were more chipmunks the following year?\n\nA) There were more predators of chipmunks in the park.\nB) The chipmunks ate more acorns and stored more food.\nC) The chipmunks had more food sources, allowing more to survive.\nD) The weather in the park changed, bringing more chipmunks.",
+      "solution": "More acorns = more food for chipmunks. More food available allows more chipmunks to survive winter and reproduce successfully. This is a basic population ecology relationship (food availability → population growth).",
+      "answer": "C) The chipmunks had more food sources, allowing more to survive.",
+      "notes": "Requires causal reasoning about ecological relationships, not just keyword matching. A retrieval system returning 'acorns chipmunks' wouldn't know which causal explanation is correct."
+    },
+    {
+      "title": "Physics — Shadow length",
+      "difficulty": "Hard (for 2018 systems)",
+      "input": "A student placed a ruler on a table and shone a flashlight on it from directly above. Then the student shone the flashlight from the side. Which of the following describes the shadows made by the ruler in each case?\n\nA) Both shadows were the same length.\nB) The shadow from above was longer.\nC) The shadow from the side was longer.\nD) There were no shadows because the ruler is transparent.",
+      "solution": "A flashlight from directly above casts a very short (or no) shadow since the ruler is horizontal — the shadow is just the ruler's width. A flashlight from the side casts a much longer shadow extending away from the ruler. Therefore the side shadow is longer.",
+      "answer": "C) The shadow from the side was longer.",
+      "notes": "Tests 3D spatial reasoning about light and shadows — difficult for early 2018 NLP systems but trivial for humans and modern LLMs."
+    }
+  ],
+  "results": [
+    { "modelId": "o3", "score": 98.1, "scoreLabel": "98.1%", "scoreType": "Accuracy", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "gpt-5", "score": 97.0, "scoreLabel": "~97%", "scoreType": "Accuracy", "date": "2025-08", "isVendorReported": true },
+    { "modelId": "claude-opus-4-5", "score": 96.5, "scoreLabel": "~96.5%", "scoreType": "Accuracy", "date": "2025-11", "isVendorReported": true },
+    { "modelId": "deepseek-v3", "score": 95.2, "scoreLabel": "95.2%", "scoreType": "Accuracy", "date": "2024-12", "isVendorReported": true },
+    { "modelId": "llama-4-maverick", "score": 92.3, "scoreLabel": "92.3%", "scoreType": "Accuracy", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "qwen-3-72b", "score": 94.0, "scoreLabel": "~94%", "scoreType": "Accuracy", "date": "2025-05", "isVendorReported": true },
+    { "modelId": "gpt-4o", "score": 96.0, "scoreLabel": "~96%", "scoreType": "Accuracy", "date": "2024-11", "isVendorReported": true }
+  ],
+  "controversies": [
+    "Completely saturated for frontier models — no meaningful discrimination above 90%.",
+    "Some ARC-Challenge questions have contested or ambiguous correct answers, especially in borderline earth science / ecology topics.",
+    "Used as a component of the Hugging Face Open LLM Leaderboard alongside HellaSwag, MMLU, and others — useful for open-source model ranking even when frontier models have saturated it."
+  ],
+  "keyFindings": [
+    "ARC-Challenge was genuinely hard in 2018 (best: 33.7%) and is now trivially solved (98%+), illustrating how rapidly the field has advanced on structured reasoning tasks.",
+    "Designed with a key methodological innovation: using retrieval system failure as a selection criterion for difficult questions, creating a more robust 'hard' partition than subjective difficulty ratings.",
+    "Still useful as a baseline floor check for open-source model evaluation where scores range from 40-90% across the model population."
+  ],
+  "links": {
+    "paper": "Think you have Solved Question Answering? Try ARC",
+    "arxiv": "https://arxiv.org/abs/1803.05457",
+    "dataset": "https://huggingface.co/datasets/allenai/ai2_arc",
+    "leaderboard": "https://leaderboard.allenai.org/arc/submissions/public"
+  }
+}

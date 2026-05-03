@@ -1,0 +1,99 @@
+{
+  "slug": "bigbench-hard",
+  "name": "BIG-Bench Hard",
+  "shortDescription": "23 hard reasoning tasks where chain-of-thought is required to exceed human performance.",
+  "description": "BIG-Bench Hard (BBH) is a curated subset of the larger BIG-Bench collaborative benchmark (200+ tasks from 100+ organizations). The BBH authors identified the 23 tasks from BIG-Bench where no language model exceeded average human performance even with few-shot prompting — selecting tasks that specifically required complex reasoning rather than knowledge retrieval.\n\nCreated by Mirac Suzgun and colleagues at Google and published at EMNLP 2023, BBH's central finding was that chain-of-thought (CoT) prompting specifically unlocked performance on these tasks. Without CoT, even large models scored near-randomly. With 3-shot CoT, Codex exceeded human performance on 17/23 tasks and PaLM on 10/23. This empirically demonstrated that CoT is not just a minor prompting trick but a fundamental capability enabler.\n\nBBH covers 23 diverse tasks: Boolean logic, logical deduction (3/5/7 objects), tracking shuffled objects, causal judgment, date understanding, dyck language completion, formal fallacies, geometric shapes, hyperbaton, movie recommendation, multi-step arithmetic, navigation, object counting, penguins in a table, colored object reasoning, snarks, sports understanding, temporal sequences, web of lies, and word sorting.\n\nBBH is now approaching saturation for frontier models, with top scores at 87-93%. Google DeepMind released BIG-Bench Extra Hard (BBEH) in February 2025 specifically because frontier models had saturated BBH. BBH remains useful for evaluating mid-tier models and as a regression test.",
+  "category": "reasoning",
+  "subcategory": "multi-step-reasoning",
+  "tags": ["reasoning", "chain-of-thought", "logic", "planning", "multi-step", "nearing-saturation"],
+  "saturationStatus": "nearing-saturation",
+  "evaluationMethod": "exact-match",
+  "stats": {
+    "totalTasks": 6511,
+    "publicTasks": 6511,
+    "year": 2022,
+    "creator": "Mirac Suzgun, Nathan Scales, Nathanael Schärli, et al.",
+    "institution": "Google",
+    "languages": [],
+    "domains": ["Boolean logic", "Logical deduction", "Arithmetic", "Causal reasoning", "Temporal reasoning", "Language understanding"],
+    "humanBaseline": 50.0,
+    "randomBaseline": null
+  },
+  "taskAnatomy": {
+    "input": "A problem from one of 23 task categories, formatted as a few-shot prompt with 3 chain-of-thought examples preceding the test question.",
+    "output": "An exact string answer (varies by task: 'True'/'False', an object name, a number, a sorted list, etc.).",
+    "evaluation": "Exact match against the ground truth string. No partial credit. Standard setup: 3-shot chain-of-thought.",
+    "metric": "Normalized accuracy (average across all 23 tasks)"
+  },
+  "examples": [
+    {
+      "title": "Boolean Expressions",
+      "difficulty": "Medium",
+      "input": "Q: not ( ( not not True ) ) is\n\nA: Let's think step by step.",
+      "solution": "Working from the inside out:\n- 'not True' = False\n- 'not False' = True (inner 'not not' applied)\n- 'not ( True )' = False (outer negation)\n- 'not ( False )' = True (outermost negation)\n\nWait, let me re-parse: 'not ( ( not not True ) )'\n- Inner: 'not not True' → 'not False' → True\n- Outer: 'not ( True )' → False",
+      "answer": "False",
+      "notes": "Without CoT, models struggle to track the nested negation correctly. With step-by-step reasoning, performance jumps significantly."
+    },
+    {
+      "title": "Web of Lies",
+      "difficulty": "Hard",
+      "input": "Q: Lena tells the truth. Lena says Mike tells the truth. Mike says Olivia tells the truth. Olivia says Petra lies. Petra says Quinn tells the truth. Quinn says Rosa lies. Does Rosa tell the truth?\n\nA: Let's think step by step.",
+      "solution": "Lena = truth-teller (given)\nLena says Mike tells truth → Mike tells truth\nMike says Olivia tells truth → Olivia tells truth\nOlivia says Petra lies → Petra is a liar\nPetra says Quinn tells truth → Since Petra lies, Quinn actually lies\nQuinn says Rosa lies → Since Quinn lies, Rosa actually tells truth",
+      "answer": "Yes",
+      "notes": "Requires tracking truth values through a 6-step chain. Each step flips or preserves the truth status based on whether the speaker is reliable. Without CoT, models lose track of the chain."
+    },
+    {
+      "title": "Tracking Shuffled Objects (3 objects)",
+      "difficulty": "Medium",
+      "input": "Q: Alice, Bob, and Claire are playing a game. At the start, Alice has the apple, Bob has the ball, Claire has the dog.\n- Alice and Bob swap.\n- Bob and Claire swap.\n- Alice and Claire swap.\nAt the end of the game, who has the dog?\n\nA: Let's think step by step.",
+      "solution": "Start: Alice=apple, Bob=ball, Claire=dog\nAfter Alice-Bob swap: Alice=ball, Bob=apple, Claire=dog\nAfter Bob-Claire swap: Alice=ball, Bob=dog, Claire=apple\nAfter Alice-Claire swap: Alice=apple, Bob=dog, Claire=ball",
+      "answer": "Bob",
+      "notes": "The 3-object version is manageable. BBH also has 5-object and 7-object variants that are significantly harder. Models without CoT often fail to track the state correctly across multiple swaps."
+    },
+    {
+      "title": "Logical Deduction (5 objects)",
+      "difficulty": "Hard",
+      "input": "Q: The following paragraphs describe a set of five objects arranged in a fixed order. The statements are logically consistent.\n\nIn a golf tournament: Ana, Ben, Cal, Dan, and Eve.\n- Ben finished lower than Eve.\n- Eve finished second.\n- Cal finished lower than Ana.\n- Dan finished last.\n- Ana finished higher than Ben.\n\nWhich golfer finished third?\n\nA: Let's think step by step.",
+      "solution": "Known facts: Eve = 2nd, Dan = 5th (last)\nBen < Eve → Ben is 3rd or 4th (lower-ranked)\nAna > Ben → Ana ranks higher than Ben\nCal < Ana → Cal ranks lower than Ana\n\nTesting: If Ana = 1st, Ben can be 3rd or 4th, Cal must be lower than Ana (2nd-5th)\n- Ana=1st, Eve=2nd, then Ben=3rd or 4th, Cal in remaining spots\n- Cal < Ana (=1st), so Cal can be any lower position\n- If Ben=4th, Cal=3rd (Cal=3rd satisfies Cal < Ana=1st? No — 3rd place is lower in ranking than 1st)\n- Ana=1st, Eve=2nd, Ben=4th, Cal=3rd, Dan=5th: Cal(3rd) < Ana(1st)? In golf, lower number = better. Cal finishing 3rd is worse than Ana finishing 1st. ✓\n\nAnswer: Cal (finished 3rd)",
+      "answer": "Cal",
+      "notes": "5-object deduction requires maintaining 5 constraint variables simultaneously. LLMs without CoT fail on these due to working memory limitations."
+    }
+  ],
+  "results": [
+    { "modelId": "claude-opus-4-5", "score": 93.1, "scoreLabel": "93.1%", "scoreType": "Normalized accuracy", "date": "2025-11", "isVendorReported": false },
+    { "modelId": "claude-sonnet-4", "score": 93.1, "scoreLabel": "93.1%", "scoreType": "Normalized accuracy", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "gemini-2-5-pro", "score": 89.2, "scoreLabel": "89.2%", "scoreType": "Normalized accuracy", "date": "2025-03", "isVendorReported": false },
+    { "modelId": "gpt-5", "score": 91.0, "scoreLabel": "~91%", "scoreType": "Normalized accuracy", "date": "2025-08", "isVendorReported": true },
+    { "modelId": "deepseek-v3", "score": 87.0, "scoreLabel": "~87%", "scoreType": "Normalized accuracy", "date": "2024-12", "isVendorReported": true },
+    { "modelId": "llama-4-maverick", "score": 85.0, "scoreLabel": "~85%", "scoreType": "Normalized accuracy", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "qwen-3-72b", "score": 88.0, "scoreLabel": "~88%", "scoreType": "Normalized accuracy", "date": "2025-05", "isVendorReported": true },
+    { "modelId": "gpt-4o", "score": 83.0, "scoreLabel": "~83%", "scoreType": "Normalized accuracy", "date": "2024-11", "isVendorReported": false }
+  ],
+  "variants": [
+    {
+      "name": "BIG-Bench Extra Hard (BBEH)",
+      "slug": "bbeh",
+      "description": "Successor to BBH released by Google DeepMind in February 2025. Harder variants of each BBH task designed specifically because frontier models saturated the original. Still active benchmark.",
+      "taskCount": 6511,
+      "year": 2025,
+      "saturationStatus": "active"
+    }
+  ],
+  "controversies": [
+    "The original CoT prompts for 3 BBH tasks (Multistep Arithmetic, Navigate, Web of Lies) contained logical errors that were later corrected. Some published results used the erroneous prompts.",
+    "BBH tasks are now well-known and documented online, meaning models may have seen CoT reasoning examples for these specific tasks during training.",
+    "Human baseline of ~50% represents average crowd workers on MTurk — not expert performance. Expert humans would score much higher on many tasks."
+  ],
+  "keyFindings": [
+    "BBH proved chain-of-thought is not a minor prompting improvement but a fundamental capability unlock: Codex went from near-random to beating human performance on 17/23 tasks with 3-shot CoT.",
+    "The benchmark identified 'reasoning' as an emergent capability: performance was essentially flat across model sizes without CoT, then jumped sharply at scale with CoT.",
+    "BBH helped establish the paradigm that complex reasoning requires explicitly 'showing work' — influencing the design of o1/o3 extended reasoning models.",
+    "Google DeepMind's BBEH release is itself a finding: frontier models had saturated BBH so completely that a new harder benchmark was required within 2 years of BBH's introduction."
+  ],
+  "links": {
+    "paper": "Challenging BIG-Bench Tasks and Whether Chain-of-Thought Can Solve Them",
+    "arxiv": "https://arxiv.org/abs/2210.09261",
+    "dataset": "https://github.com/suzgunmirac/BIG-Bench-Hard",
+    "leaderboard": "https://paperswithcode.com/sota/multi-step-reasoning-on-big-bench-hard"
+  }
+}

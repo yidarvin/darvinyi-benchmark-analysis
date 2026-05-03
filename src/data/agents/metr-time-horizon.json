@@ -1,0 +1,90 @@
+{
+  "slug": "metr-time-horizon",
+  "name": "METR Time Horizon",
+  "shortDescription": "How long can AI agents work autonomously? The 50%-success time horizon, doubling every 3 months.",
+  "description": "METR (Model Evaluation & Threat Research) is a safety-focused nonprofit (formerly ARC Evals) that performs pre-deployment evaluations for Anthropic, OpenAI, and other labs. Their Time Horizon metric asks a simple question with profound implications: 'What duration of task (measured in human expert time) can this AI agent complete with 50% reliability?'\n\nThe metric was designed as an interpretable safety measure — tracking whether AI systems are approaching the capability to conduct sustained autonomous actions that could be harmful. A system that can work autonomously for hours becomes capable of executing complex, multi-step plans without human checkpoints.\n\nConstruction: METR contracts skilled professionals (~5 years experience in software engineering, ML, or cybersecurity from top universities) to complete a suite of self-contained tasks, measuring their completion time. AI agents then make 6 independent attempts per task. A logistic curve is fitted predicting P(success) as a function of task duration, and the 50% time horizon = where this curve crosses 0.5.\n\nThe headline result: this metric has been growing exponentially, doubling approximately every 89 days since 2024. GPT-3-era agents: ~9 seconds. GPT-4: ~4 minutes. Claude 3.5 Sonnet: ~40 minutes. Claude Opus 4.6: ~14.5 hours. At the current doubling rate, week-long autonomous tasks may be achievable by late 2026.",
+  "creator": "METR (Model Evaluation & Threat Research)",
+  "institution": "METR (nonprofit, Berkeley-based)",
+  "year": 2025,
+  "tags": ["safety", "autonomous-capability", "time-horizon", "exponential-growth", "software-engineering", "agent"],
+  "isRequired": false,
+  "stats": {
+    "totalTasks": 228,
+    "publicTasks": 228,
+    "domains": ["Software Engineering", "Machine Learning", "Cybersecurity"],
+    "avgHumanTime": "2 minutes to 8+ hours (full task suite)",
+    "totalEconomicValue": null,
+    "evaluationMethod": "6 independent agent attempts per task. Logistic regression of P(success) vs. human task duration. Bootstrap confidence intervals.",
+    "primaryMetric": "50% Task-Completion Time Horizon (hours of human-equivalent work)"
+  },
+  "taskAnatomy": {
+    "setup": "METR's task suite (TH 1.1: 228 tasks from RE-Bench, HCAST, and SWAA) covers self-contained software engineering, ML, and cybersecurity tasks with clear, automatically-verifiable success criteria. Each task has a human expert time estimate from paid contractors.",
+    "input": "A well-specified technical task (e.g., 'Implement a function that...', 'Debug this distributed system...', 'Build a tool that...'). All necessary context and files are provided.",
+    "output": "Code, results, or artifacts that satisfy the task's automatically-verifiable success criteria.",
+    "evaluation": "Automated success/fail per task. 6 attempts per task per model. Logistic regression fit: P(success | task_duration). 50% time horizon = argmax where P=0.5. Bootstrap 95% CI via 3-level hierarchical bootstrap (task families → tasks → runs).",
+    "metric": "50% Task-Completion Time Horizon (in minutes/hours of human expert work)"
+  },
+  "examples": [
+    {
+      "title": "Short task — ~5 minute human time",
+      "difficulty": "Short",
+      "humanTime": "~5 minutes",
+      "description": "Implement a function solving a specific algorithmic problem (e.g., find all pairs in an integer list summing to a target value). Write unit tests. The task is self-contained with a clear specification and automatically-testable output.",
+      "input": "Function specification, example inputs/outputs, test scaffold.",
+      "output": "Working function + unit tests that pass the provided test suite.",
+      "evaluation": "Automated: run test suite; pass = success, any failure = fail."
+    },
+    {
+      "title": "Medium task — ~2 hour human time",
+      "difficulty": "Medium",
+      "humanTime": "~2 hours",
+      "description": "Implement a network protocol from scratch based on a provided technical specification. Must handle all specified edge cases, pass the provided test suite, and include documentation.",
+      "input": "RFC-style specification document, partial test suite, example client/server stub code.",
+      "output": "Complete protocol implementation passing all tests, with inline documentation.",
+      "evaluation": "Automated test suite execution: all tests must pass within time and memory limits."
+    },
+    {
+      "title": "Long task — ~8+ hour human time",
+      "difficulty": "Long",
+      "humanTime": "8+ hours",
+      "description": "Debug a failing distributed system. Identify root cause from logs and metrics, implement a fix that handles concurrent failures, verify with load testing, and write a postmortem report.",
+      "input": "Distributed system codebase, logs showing failures, metrics dashboard, test infrastructure.",
+      "output": "Code fix + test results showing fixed behavior + written postmortem.",
+      "evaluation": "Automated: system passes concurrent failure tests. Postmortem graded by checklist (root cause identified, fix explained, preventive measures listed)."
+    }
+  ],
+  "results": [
+    { "modelId": "claude-opus-4-6", "score": 870, "scoreLabel": "~14.5 hours", "scoreType": "50% Time Horizon (minutes)", "date": "2026-02", "isVendorReported": false, "notes": "870 min; CI: 360–5880 min (6h–98h)" },
+    { "modelId": "gpt-5", "score": 396, "scoreLabel": "~6.6 hours", "scoreType": "50% Time Horizon (minutes)", "date": "2025-08", "isVendorReported": false, "notes": "GPT-5.2 in METR paper; 396 min" },
+    { "modelId": "claude-opus-4-5", "score": 289, "scoreLabel": "~4h 49m", "scoreType": "50% Time Horizon (minutes)", "date": "2025-11", "isVendorReported": false, "notes": "289 min; CI: 170–729 min" },
+    { "modelId": "o3", "score": 121, "scoreLabel": "~2 hours", "scoreType": "50% Time Horizon (minutes)", "date": "2025-04", "isVendorReported": false },
+    { "modelId": "claude-sonnet-4", "score": 57, "scoreLabel": "~57 minutes", "scoreType": "50% Time Horizon (minutes)", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "gpt-4o", "score": 10, "scoreLabel": "~10 minutes", "scoreType": "50% Time Horizon (minutes)", "date": "2024-11", "isVendorReported": false }
+  ],
+  "keyFindings": [
+    "Exponential growth: 50% time horizon has grown from ~9 seconds (2020) to ~14.5 hours (Feb 2026), a ~5,800x increase in 6 years, doubling approximately every 89 days since 2024.",
+    "Wide confidence intervals: Claude Opus 4.6's CI is 6 hours to 98 hours — the true value could be anywhere in that range, making precise model comparison difficult near the current frontier.",
+    "Domain specificity: time horizons for software engineering tasks are 40-100x higher than for visual computer-use or physical tasks. The headline metric reflects SW/ML capability specifically.",
+    "Task design constraint: the benchmark is approaching saturation — Claude Opus 4.6 completes many 8-hour tasks, requiring METR to add longer tasks to maintain discrimination.",
+    "Safety implication: a model with a 14.5-hour time horizon is capable of autonomous multi-step operations sustained overnight without human checkpoints — a threshold relevant to AI safety evaluation."
+  ],
+  "whatMakesItUnique": [
+    "Single interpretable number: 'This model can complete 50%-probability tasks that take a human expert X hours' is more meaningful to policymakers than '74.2% on MMLU'.",
+    "Safety-first design: created by a safety nonprofit, not a capability lab — designed to detect dangerous capability thresholds, not to flatter AI progress.",
+    "Historical tracking with honest uncertainty: the only benchmark with a rigorous 6-year exponential trend and properly-computed, wide confidence intervals.",
+    "Doubles as pre-deployment safety evaluation: METR uses the same methodology for official safety assessments submitted to governments and used in lab deployment decisions."
+  ],
+  "controversies": [
+    "Very wide confidence intervals (often 4-15x range) make precise model comparison impossible — Claude Opus 4.6's CI is 6h–98h.",
+    "SW-only task distribution: the headline time horizon doesn't transfer to other task types. Visual computer-use tasks have 40-100x lower time horizons.",
+    "Low-context assumption: tasks are self-contained briefs with all necessary information. Real professional work involves institutional context, relationships, and shifting requirements that would lower performance.",
+    "Near-saturation problem: the current suite is becoming too easy for top models, and adding 8+ hour tasks is logistically difficult (requires human contractors to baseline).",
+    "Doubling rate extrapolation is linear-in-log-scale — assumes the current trend continues unchanged, which may not hold as task types become qualitatively more complex."
+  ],
+  "links": {
+    "arxiv": "https://arxiv.org/abs/2503.14499",
+    "leaderboard": "https://metr.org/time-horizons/",
+    "website": "https://metr.org",
+    "github": "https://github.com/METR/eval-analysis-public"
+  }
+}

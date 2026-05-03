@@ -1,0 +1,97 @@
+{
+  "slug": "webarena",
+  "name": "WebArena / VisualWebArena",
+  "shortDescription": "Autonomous browser agents completing realistic tasks on functional sandboxed websites.",
+  "description": "WebArena tests whether AI agents can complete realistic, long-horizon tasks on functional websites — not simulated, but fully operational sandboxed web applications running in Docker containers. Created by researchers at CMU and published at NeurIPS 2024, WebArena provides five domains: an e-commerce site (OneStopShop), a social forum (Reddit-like), a software development platform (GitLab), a content management system, and a mapping service.\n\nTasks are expressed in natural language and require the agent to navigate, click, type, fill forms, and submit actions across 10+ steps. The key test is whether agents can accomplish real user goals, not just execute scripted workflows. GPT-4's baseline success rate was only 14.41% while humans complete 78.24% of tasks.\n\nVisualWebArena extends WebArena to multimodal agents that must interpret images to complete tasks. Tasks include finding products matching a reference image, comparing visual designs, or identifying UI elements from screenshots. 910 tasks across 3 environments (Classifieds, Reddit, Shopping).\n\nBy 2025-2026, top agents have significantly closed the gap with humans. OpAgent achieves 71.6% on WebArena — surpassing the original 78.24% human baseline is now within reach. The benchmark remains one of the best measures of practical web agent capability.",
+  "category": "agent",
+  "subcategory": "web-navigation",
+  "tags": ["agent", "web", "browser", "computer-use", "multi-step", "multi-modal"],
+  "saturationStatus": "active",
+  "evaluationMethod": "functional-correctness",
+  "stats": {
+    "totalTasks": 812,
+    "publicTasks": 812,
+    "year": 2023,
+    "creator": "Shuyan Zhou, Frank F. Xu, Hao Zhu, et al.",
+    "institution": "CMU",
+    "languages": [],
+    "domains": ["E-commerce", "Social forums", "Software repositories", "Content management", "Mapping"],
+    "humanBaseline": 78.24,
+    "randomBaseline": null
+  },
+  "taskAnatomy": {
+    "input": "A natural-language task description (e.g., 'Find the top-rated noise-canceling headphones under $150 and add them to my cart'). The agent has access to a fully functional browser with the sandboxed websites.",
+    "output": "A sequence of browser actions (click, type, navigate, scroll, submit) that achieve the task goal.",
+    "evaluation": "Functional correctness of the end state. Evaluation scripts check whether the task goal was achieved (e.g., the correct item is in the cart, the correct post was made, the correct file was committed).",
+    "metric": "Task success rate"
+  },
+  "examples": [
+    {
+      "title": "E-commerce — Product search and purchase",
+      "difficulty": "Medium",
+      "input": "On the shopping site, find the cheapest noise-canceling headphones with at least 4-star reviews and a battery life of more than 20 hours. Add them to your cart.",
+      "solution": "1. Navigate to the shopping site\n2. Search for 'noise-canceling headphones'\n3. Filter by rating ≥ 4 stars\n4. Filter or sort by price\n5. Click each result to check battery life specification\n6. Identify the cheapest one meeting all criteria\n7. Click 'Add to Cart'",
+      "answer": "Cart contains the correct product",
+      "notes": "Requires multi-step navigation, reading product specifications across multiple pages, and applying multiple filter criteria simultaneously."
+    },
+    {
+      "title": "GitLab — Repository management",
+      "difficulty": "Hard",
+      "input": "On GitLab, find the most recently updated repository in the 'ml-team' group that has more than 5 open issues, and add a label 'needs-review' to all issues that haven't been commented on.",
+      "solution": "1. Navigate to GitLab\n2. Go to ml-team group\n3. Sort repositories by last updated\n4. Check each repo for open issue count\n5. Find the one with >5 open issues\n6. For each open issue: check comment count\n7. For issues with 0 comments: click to open, add 'needs-review' label\n8. Repeat for all qualifying issues",
+      "answer": "All uncommented open issues in the correct repo have the 'needs-review' label",
+      "notes": "Complex multi-entity task requiring tracking state across multiple pages and making conditional decisions per item."
+    },
+    {
+      "title": "VisualWebArena — Image-based product search",
+      "difficulty": "Medium (VisualWebArena)",
+      "input": "[Attached image: a red leather handbag with gold hardware]\n\nFind a handbag on the shopping site that looks most similar to the one in the image. Add it to your wishlist.",
+      "solution": "1. Analyze the reference image: red leather, gold hardware, specific shape\n2. Navigate to shopping site\n3. Browse handbag category\n4. Visually compare product images to reference\n5. Click the most similar one\n6. Add to wishlist",
+      "answer": "Wishlist contains a visually similar handbag",
+      "notes": "VisualWebArena tasks require multimodal agents that can match visual features across images — a capability standard text agents entirely lack."
+    }
+  ],
+  "results": [
+    { "modelId": "claude-opus-4-5", "score": 71.6, "scoreLabel": "71.6%", "scoreType": "Task success rate", "date": "2025-11", "isVendorReported": false, "notes": "OpAgent system; surpasses human baseline" },
+    { "modelId": "gpt-5", "score": 58.1, "scoreLabel": "58.1%", "scoreType": "Task success rate", "date": "2025-08", "isVendorReported": false, "setup": "OpenAI Operator" },
+    { "modelId": "gemini-2-5-pro", "score": 48.0, "scoreLabel": "~48%", "scoreType": "Task success rate", "date": "2025-03", "isVendorReported": false },
+    { "modelId": "claude-sonnet-4", "score": 42.0, "scoreLabel": "~42%", "scoreType": "Task success rate", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "gpt-4o", "score": 14.41, "scoreLabel": "14.41%", "scoreType": "Task success rate", "date": "2024-11", "isVendorReported": false, "notes": "Original benchmark paper baseline" }
+  ],
+  "variants": [
+    {
+      "name": "VisualWebArena",
+      "slug": "visualwebarena",
+      "description": "910 tasks requiring visual reasoning — finding products by image, comparing designs, reading UI screenshots. GPT-4V baseline ~16%; best systems ~33-36%; human ~89%.",
+      "taskCount": 910,
+      "year": 2024,
+      "saturationStatus": "active"
+    },
+    {
+      "name": "TheAgentCompany",
+      "slug": "the-agent-company",
+      "description": "CMU's simulated software company environment. Related benchmark using office tools (GitLab, RocketChat, Plane) with 16 AI colleagues. 175 tasks across 6 professional domains.",
+      "taskCount": 175,
+      "year": 2024,
+      "saturationStatus": "active"
+    }
+  ],
+  "controversies": [
+    "Human baseline of 78.24% is from crowd workers — professional users would score higher. The 'human vs. agent' comparison understates human capability.",
+    "Sandboxed environments may not fully replicate the complexity of real websites (no CAPTCHAs, consistent state, no rate limiting).",
+    "Top agent scores (OpAgent 71.6%) depend heavily on scaffolding and prompting strategies, making model-to-model comparison difficult when different agent frameworks are used."
+  ],
+  "keyFindings": [
+    "GPT-4's 14.41% baseline at launch (vs 78.24% human) was a wake-up call: even the best 2023 model could not reliably navigate websites — a task any internet user performs daily.",
+    "Progress from 14% (2023) to 71% (2025) is almost entirely from better agent scaffolding, memory, and planning — demonstrating that agent framework design matters as much as model capability.",
+    "VisualWebArena revealed a new bottleneck: even agents that excel on text-based WebArena struggle when tasks require visual image matching, falling to ~16-36% vs. 89% for humans.",
+    "WebArena has become the standard for browser agent evaluation, spawning multiple derivative benchmarks (AssistGUI, OSWorld, ScreenSpot) that extend to desktop applications."
+  ],
+  "links": {
+    "paper": "WebArena: A Realistic Web Environment for Building Autonomous Agents",
+    "arxiv": "https://arxiv.org/abs/2307.13854",
+    "dataset": "https://github.com/web-arena-x/webarena",
+    "leaderboard": "https://webarena.dev/#leaderboard",
+    "website": "https://webarena.dev"
+  }
+}

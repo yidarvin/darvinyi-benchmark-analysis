@@ -1,0 +1,79 @@
+{
+  "slug": "swe-lancer",
+  "name": "SWE-Lancer",
+  "shortDescription": "Real Upwork freelance software tasks mapped to $1M in economic value.",
+  "description": "SWE-Lancer, published by OpenAI at ICML 2025, maps AI coding performance directly to economic value. Every task corresponds to a real payment made on Upwork: from $50 bug fixes to $32,000 feature implementations, for a total of $1,000,000 across 1,488 tasks.\n\nThe benchmark uses the Expensify open-source repository — a real commercial full-stack application — rather than the popular Python OSS repos used by SWE-bench. This means tasks involve the full stack (React Native, web, API, database) and are evaluated using end-to-end Playwright browser automation tests that simulate real user workflows, not narrow unit tests.\n\nTwo task types exist: IC SWE tasks (764 tasks, $414K value) where the model must produce a code patch, and SWE Manager tasks (724 tasks, $585K value) where the model selects the best implementation proposal from 3-4 options submitted by real freelancers — mimicking engineering management decisions.\n\nThe economic framing makes SWE-Lancer uniquely interpretable: a model that 'earns' $208,050 of the $500,800 Diamond subset means it could autonomously complete about 41% of the economic value of those tasks. Even the best models failed the majority of tasks, with full-stack E2E tests catching bugs that narrower unit tests would miss.",
+  "category": "coding",
+  "subcategory": "software-engineering",
+  "tags": ["coding", "economic-value", "full-stack", "agent", "upwork", "e2e-testing", "javascript", "react-native"],
+  "saturationStatus": "active",
+  "evaluationMethod": "functional-correctness",
+  "stats": {
+    "totalTasks": 1488,
+    "publicTasks": 502,
+    "year": 2025,
+    "creator": "Samuel Miserendino, Michele Wang, Tejal Patwardhan, Johannes Heidecke",
+    "institution": "OpenAI",
+    "languages": ["JavaScript", "TypeScript", "React Native"],
+    "domains": ["Application Logic", "UI/UX", "Bug Fixes", "Feature Implementation"],
+    "humanBaseline": null,
+    "randomBaseline": 0
+  },
+  "taskAnatomy": {
+    "input": "For IC SWE tasks: a GitHub issue description, the full Expensify codebase, and an Upwork payment amount. For SWE Manager tasks: an issue description plus 3-4 implementation proposals submitted by real freelancers.",
+    "output": "IC SWE: A code patch resolving the issue. SWE Manager: Selection of the best proposal from the options provided.",
+    "evaluation": "IC SWE tasks are evaluated by Playwright end-to-end browser automation tests that simulate real user workflows — clicking through the app, submitting forms, verifying UI state. Tests are triple-verified by professional engineers. SWE Manager tasks are graded against the original engineering manager's choice (99% inter-rater agreement confirmed by 5 expert reviewers).",
+    "metric": "% of tasks resolved / $ earned out of total possible value"
+  },
+  "examples": [
+    {
+      "title": "Small Bug Fix — iOS submission button",
+      "difficulty": "Easy",
+      "input": "Issue ($150): On iOS, the expense submission button is unresponsive when the user's session has expired. The button appears active but nothing happens when tapped.\n\nModel receives: Full Expensify React Native codebase, issue description, environment.",
+      "solution": "Trace the touch handler for the submission button to find where session validation occurs. The fix adds a session check before the touch handler fires, redirecting expired sessions to the login flow.",
+      "answer": "Patch to the React Native touch handler code. Playwright test: simulate expired session → click submit → verify login modal appears.",
+      "notes": "Represents the 88% of SWE-Lancer tasks that are bug fixes rather than features."
+    },
+    {
+      "title": "Manager Decision — PDF receipt attachment",
+      "difficulty": "Medium",
+      "input": "Issue ($2,400): Implement PDF receipt attachment support for expense reports.\n\nThree proposals submitted by real freelancers:\nA) Modifies attachment handling pipeline, 200 lines\nB) Uses existing document viewer component, 80 lines (simpler)\nC) Adds new PDF service layer, 400 lines (more scalable)\n\nWhich proposal would the engineering manager select?",
+      "solution": "The original PM chose B — the simpler option reusing existing infrastructure. This is the ground truth the model must match.",
+      "answer": "Option B",
+      "notes": "SWE Manager tasks test judgment about software design tradeoffs — an underexplored capability distinct from code generation."
+    },
+    {
+      "title": "Feature Implementation — Recurring subscriptions",
+      "difficulty": "Hard",
+      "input": "Issue ($8,000): Add support for recurring expense subscriptions with configurable billing cycles (weekly, monthly, quarterly). Must include new UI components, backend subscription logic, and integration with the existing expense report pipeline.",
+      "solution": "Multi-file implementation touching: new billing cycle UI components, subscription state management, API endpoints for creating/modifying subscriptions, and integration tests for the expense pipeline.",
+      "answer": "Playwright test: create subscription → modify billing cycle → verify charges appear correctly in expense reports over simulated time.",
+      "notes": "The highest-value tasks ($8K–$32K) typically require architectural changes across multiple subsystems."
+    }
+  ],
+  "results": [
+    { "modelId": "gpt-5", "score": 66.3, "scoreLabel": "66.3%", "scoreType": "Normalized earnings (Diamond IC)", "date": "2025-08", "isVendorReported": true, "setup": "IC SWE Diamond subset", "notes": "Score represents fraction of maximum possible dollar value earned" },
+    { "modelId": "o3", "score": 37.3, "scoreLabel": "37.3%", "scoreType": "Normalized earnings (Diamond IC)", "date": "2025-04", "isVendorReported": true, "setup": "IC SWE Diamond subset" },
+    { "modelId": "claude-sonnet-4", "score": 26.2, "scoreLabel": "26.2%", "scoreType": "IC SWE accuracy (Diamond)", "date": "2025-02", "isVendorReported": false, "setup": "IC SWE Diamond; best original paper result", "notes": "Also scored 44.9% on SWE Manager tasks" },
+    { "modelId": "gpt-4o", "score": 9.0, "scoreLabel": "~9%", "scoreType": "IC SWE accuracy (Diamond)", "date": "2025-02", "isVendorReported": false, "setup": "IC SWE Diamond; original paper" }
+  ],
+  "controversies": [
+    "Single codebase limitation: all 1,488 tasks come from the Expensify repository. Performance may not generalize to other commercial full-stack codebases.",
+    "The original dataset required live internet access during execution, introducing environment variability. The July 2025 update removed this dependency.",
+    "Limited leaderboard: only 4-6 models formally evaluated, all from OpenAI. Anthropic and Google have not published results despite Claude 3.5 Sonnet being the best model in the original paper.",
+    "Management task validity: SWE Manager decisions are compared against a single engineering manager's choices. While 99% inter-rater agreement was found among expert reviewers, business decisions have legitimate disagreement."
+  ],
+  "keyFindings": [
+    "The first benchmark to directly map AI performance to dollar-denominated economic value — every task has a real Upwork price tag.",
+    "E2E browser automation testing (Playwright) catches significantly more incorrect solutions than narrow unit tests, explaining why SWE-Lancer scores are lower than SWE-bench scores on equivalent task difficulty.",
+    "SWE Manager tasks (selecting best implementation proposal) proved nearly as challenging as IC SWE coding tasks — suggesting AI judgment on software design is a distinct, underexplored capability.",
+    "Even at $8,000 task values, models were expected to make multi-subsystem architectural changes — these tasks saw near-0% success rates in the original paper, contrasting sharply with the high benchmark scores claimed on simpler coding evals.",
+    "Performance doubled from GPT-4o (~9%) to Claude 3.5 Sonnet (~26%) in the original paper, demonstrating rapid progress on real full-stack engineering."
+  ],
+  "links": {
+    "paper": "SWE-Lancer: Can Frontier LLMs Earn $1 Million from Real-World Freelance Software Engineering?",
+    "arxiv": "https://arxiv.org/abs/2502.12115",
+    "leaderboard": "https://swelancer.github.io/leaderboard/",
+    "github": "https://github.com/openai/SWELancer-Benchmark"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "slug": "math",
+  "name": "MATH Benchmark",
+  "shortDescription": "Competition-level math problems across 7 subjects, from AMC to AIME difficulty.",
+  "description": "The MATH benchmark, introduced at NeurIPS 2021 by Dan Hendrycks and colleagues at UC Berkeley, was designed to be a lasting challenge for AI systems. The authors sourced 12,500 problems from real high-school math competitions (AMC 8, AMC 10, AMC 12, AIME) to ensure human-validated difficulty and rich step-by-step solutions.\n\nThe benchmark spans 7 subject areas — Prealgebra, Algebra, Number Theory, Counting & Probability, Geometry, Intermediate Algebra, and Precalculus — with 5 difficulty levels (Level 1 = trivial, Level 5 = AIME-difficulty). Problems are written in LaTeX and models must produce answers in \\boxed{} notation, evaluated by symbolic equivalence checking.\n\nMATH was transformative: when introduced, GPT-3 scored only 6.9% and even Minerva (Google's specialized math model) reached 50.3% in 2022. The benchmark validated that math competition problems required genuine multi-step reasoning, not just pattern matching. However, frontier reasoning models (o3, GPT-5, Gemini 3 Pro) now score 93-97% on the widely-used MATH-500 subset, rendering it effectively saturated for frontier model comparison.\n\nA commonly used 500-problem representative subset (MATH-500) is used for most modern evaluations. The vals.ai leaderboard stopped running new frontier models on MATH-500 in 2025, citing saturation and contamination risk.",
+  "category": "math",
+  "subcategory": "competition-math",
+  "tags": ["math", "reasoning", "competition", "latex", "multi-step", "saturated"],
+  "saturationStatus": "nearing-saturation",
+  "evaluationMethod": "exact-match",
+  "stats": {
+    "totalTasks": 12500,
+    "publicTasks": 12500,
+    "year": 2021,
+    "creator": "Dan Hendrycks, Collin Burns, Saurav Kadavath, et al.",
+    "institution": "UC Berkeley",
+    "languages": [],
+    "domains": ["Prealgebra", "Algebra", "Number Theory", "Counting & Probability", "Geometry", "Intermediate Algebra", "Precalculus"],
+    "humanBaseline": null,
+    "randomBaseline": 0
+  },
+  "taskAnatomy": {
+    "input": "A natural-language math problem written in LaTeX, often from a real competition. Problems range from single-step arithmetic to multi-page proofs requiring creative insight.",
+    "output": "Model generates full step-by-step solution ending with the final answer inside \\boxed{} LaTeX notation.",
+    "evaluation": "Symbolic equivalence checking: ½, 0.5, and \\frac{1}{2} all count as the same answer. Evaluated with 4-shot examples (Minerva convention) or 0-shot.",
+    "metric": "Accuracy (% of problems with correct final answer)"
+  },
+  "examples": [
+    {
+      "title": "Prealgebra — Level 1",
+      "difficulty": "Level 1",
+      "input": "What is the value of (6² + 6) ÷ 6?",
+      "solution": "6² + 6 = 36 + 6 = 42\n42 ÷ 6 = 7",
+      "answer": "\\boxed{7}",
+      "notes": "The simplest MATH problems. Level 1 comprises ~7% of the test set. Modern models get near 100% on these."
+    },
+    {
+      "title": "Algebra — Level 3",
+      "difficulty": "Level 3",
+      "input": "If x + y = 7 and x² + y² = 29, what is xy?",
+      "solution": "We know (x+y)² = x² + 2xy + y²\nSubstituting: 49 = 29 + 2xy\n2xy = 20\nxy = 10",
+      "answer": "\\boxed{10}",
+      "notes": "Requires recognizing the algebraic identity (x+y)² = x² + 2xy + y² and substituting the given values — a non-obvious two-step approach."
+    },
+    {
+      "title": "Number Theory — Level 5",
+      "difficulty": "Level 5",
+      "input": "How many positive integers less than 1000 are divisible by at least one of 3, 5, or 7?",
+      "solution": "Using inclusion-exclusion:\n|A| = ⌊999/3⌋ = 333\n|B| = ⌊999/5⌋ = 199  \n|C| = ⌊999/7⌋ = 142\n|A∩B| = ⌊999/15⌋ = 66\n|A∩C| = ⌊999/21⌋ = 47\n|B∩C| = ⌊999/35⌋ = 28\n|A∩B∩C| = ⌊999/105⌋ = 9\n\n|A∪B∪C| = 333 + 199 + 142 - 66 - 47 - 28 + 9 = 542",
+      "answer": "\\boxed{542}",
+      "notes": "Level 5 problems require creative combinatorial insight. The inclusion-exclusion principle must be applied correctly with 7 terms. These problems still discriminate between reasoning models."
+    }
+  ],
+  "results": [
+    { "modelId": "gemini-3-pro", "score": 96.4, "scoreLabel": "96.4%", "scoreType": "Accuracy (MATH-500)", "date": "2026-02", "isVendorReported": true },
+    { "modelId": "gpt-5", "score": 94.0, "scoreLabel": "~94%", "scoreType": "Accuracy (MATH-500)", "date": "2025-08", "isVendorReported": true },
+    { "modelId": "o3", "score": 91.5, "scoreLabel": "~91.5%", "scoreType": "Accuracy (MATH-500)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "o4-mini", "score": 93.0, "scoreLabel": "~93%", "scoreType": "Accuracy (MATH-500)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "deepseek-v3", "score": 97.3, "scoreLabel": "97.3%", "scoreType": "Accuracy (MATH-500)", "date": "2024-12", "isVendorReported": true },
+    { "modelId": "qwen-3-72b", "score": 96.4, "scoreLabel": "96.4%", "scoreType": "Accuracy (MATH-500)", "date": "2025-05", "isVendorReported": true },
+    { "modelId": "deepseek-r1", "score": 97.3, "scoreLabel": "97.3%", "scoreType": "Accuracy (MATH-500)", "date": "2025-01", "isVendorReported": true },
+    { "modelId": "claude-opus-4-5", "score": 90.0, "scoreLabel": "~90%", "scoreType": "Accuracy (MATH-500)", "date": "2025-11", "isVendorReported": true },
+    { "modelId": "llama-4-maverick", "score": 85.0, "scoreLabel": "~85%", "scoreType": "Accuracy (MATH-500)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "mistral-large-3", "score": 80.0, "scoreLabel": "~80%", "scoreType": "Accuracy (MATH-500)", "date": "2025-06", "isVendorReported": true }
+  ],
+  "variants": [
+    {
+      "name": "MATH-500",
+      "slug": "math-500",
+      "description": "Representative 500-problem subset introduced by Lightman et al. (Let's Verify Step by Step). Used for most modern evaluations due to cost.",
+      "taskCount": 500,
+      "year": 2023,
+      "saturationStatus": "saturated"
+    },
+    {
+      "name": "AIME",
+      "slug": "aime",
+      "description": "The actual American Invitational Mathematics Examination used as a live AI benchmark. New problems each February prevent contamination. See separate AIME entry.",
+      "taskCount": 30,
+      "year": 2024,
+      "saturationStatus": "active"
+    }
+  ],
+  "controversies": [
+    "Severe contamination: the full dataset has been publicly available on GitHub since 2021 and has appeared in most model training corpora. High scores on MATH-500 almost certainly reflect partial memorization.",
+    "Evaluation ambiguity: different symbolic normalizers give different scores. Simple string matching, SymPy symbolic checking, and regex-based normalization produce different pass rates for the same model outputs.",
+    "MATH Level 5 ≠ AIME: the benchmark describes Level 5 as 'AIME difficulty' but fresh AIME competition problems (released annually) clearly discriminate frontier models better, since they cannot be in training data.",
+    "vals.ai stopped running new frontier models on MATH-500 in 2025 due to saturation and contamination, recommending AIME 2025 for any meaningful frontier model comparison."
+  ],
+  "keyFindings": [
+    "Score progression from 6.9% (GPT-3, 2021) to 97% (DeepSeek R1 / Qwen3, 2025) is one of AI's most dramatic benchmark arcs — a nearly 14x improvement in 4 years.",
+    "Minerva (Google, 2022) was the first model to break 50%, establishing that specialized math training was necessary before general scale caught up.",
+    "The benchmark proved that chain-of-thought prompting was essential: early few-shot prompting with step-by-step examples provided a ~20-30% boost over direct answer prompting.",
+    "Level 5 problems remain harder for most models (~65-70% for non-reasoning models) but frontier reasoning models now exceed 90% even there, making AIME the new discrimination tool."
+  ],
+  "links": {
+    "paper": "Measuring Mathematical Problem Solving With the MATH Dataset",
+    "arxiv": "https://arxiv.org/abs/2103.03874",
+    "dataset": "https://github.com/hendrycks/math",
+    "leaderboard": "https://paperswithcode.com/sota/math-word-problem-solving-on-math"
+  }
+}

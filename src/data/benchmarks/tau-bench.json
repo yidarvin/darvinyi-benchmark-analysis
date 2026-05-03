@@ -1,0 +1,88 @@
+{
+  "slug": "tau-bench",
+  "name": "τ-bench (tau-bench)",
+  "shortDescription": "AI customer service agents that must follow policy while solving real customer problems.",
+  "description": "τ-bench (tau-bench) evaluates AI agents on customer service tasks requiring simultaneous: (1) tool use (calling domain-specific APIs), (2) natural conversation with a simulated user, and (3) strict adherence to business policy. Created by Shunyu Yao and colleagues at Sierra Research and Princeton, published in 2024.\n\nThe setup simulates real enterprise customer service: the agent has access to domain-specific API tools (flight booking system, retail order management), a detailed policy document it must follow, and interacts with a simulated user (another LLM acting as the customer). The agent must satisfy the customer's request while following all applicable policy rules — often a tension-filled constraint.\n\nThe benchmark introduced the Pass^k metric: the probability that a task is solved correctly k times out of k consecutive runs. This penalizes flaky agents — a model that succeeds 50% of the time is not production-ready for customer service where failure means a bad customer experience. Pass^1 measures single-attempt success; Pass^8 measures consistent reliability.\n\nTwo primary domains: Airline (change/cancel flights, manage seats, apply upgrades) and Retail (returns, refunds, order modifications, account updates). τ²-bench and τ³-bench (2025) added banking, telecom, voice mode, and fixed 75+ quality issues in the original tasks.\n\nTop models score 84.7% on Retail but only 56% on Airline — policy complexity matters significantly.",
+  "category": "agent",
+  "subcategory": "customer-service",
+  "tags": ["agent", "customer-service", "tool-use", "policy-following", "multi-turn", "reliability"],
+  "saturationStatus": "active",
+  "evaluationMethod": "functional-correctness",
+  "stats": {
+    "totalTasks": 200,
+    "publicTasks": 200,
+    "year": 2024,
+    "creator": "Shunyu Yao, et al.",
+    "institution": "Sierra Research / Princeton",
+    "languages": [],
+    "domains": ["Airline customer service", "Retail customer service", "Banking", "Telecom"],
+    "humanBaseline": null,
+    "randomBaseline": null
+  },
+  "taskAnatomy": {
+    "input": "A customer task description (from the simulated user's perspective) plus: the domain-specific API documentation (tools the agent can call), and a policy document listing all applicable business rules.",
+    "output": "A multi-turn dialogue in which the agent calls APIs, asks clarifying questions, and ultimately resolves the customer's issue — correctly following all policy constraints.",
+    "evaluation": "Binary: did the agent (1) complete the customer's request, (2) call the correct APIs with correct parameters, and (3) follow all applicable policy rules? All three must be true for a task to count as solved. Pass^k = probability of success on all k consecutive runs.",
+    "metric": "Pass@1 and Pass^k (k=1,8) per domain"
+  },
+  "examples": [
+    {
+      "title": "Airline — Flight change with fare difference",
+      "difficulty": "Medium",
+      "input": "Customer: I need to change my flight from LAX to JFK from tomorrow to the day after tomorrow. My booking number is AA-4821.\n\nAgent has: flight_search API, booking_modify API, payment_process API\nPolicy: Basic fare tickets can be changed up to 24h before departure for a $50 fee plus any fare difference. Fare difference is waived for Gold members.",
+      "solution": "Agent actions:\n1. Call get_booking(AA-4821) → retrieve current booking details, fare class, member status\n2. Call flight_search(LAX→JFK, date+1) → get available flights and prices\n3. Calculate fare difference (new fare - original fare)\n4. Check member status → not Gold member, so fare difference applies\n5. Confirm with customer: 'There's a $50 change fee plus a $127 fare difference. Total charge: $177. Shall I proceed?'\n6. Customer confirms\n7. Call booking_modify(AA-4821, new_flight_id) + payment_process($177)\n8. Confirm change to customer",
+      "answer": "Booking modified with correct charges applied per policy",
+      "notes": "A successful resolution requires getting all policy details right: base change fee, fare difference calculation, and member status check. Missing any one of these fails the task."
+    },
+    {
+      "title": "Retail — Return policy conflict",
+      "difficulty": "Hard",
+      "input": "Customer: I want to return my laptop that I bought 45 days ago. The screen cracked but I didn't do it — it was a defect.\n\nAgent has: order_lookup API, return_create API, warranty_check API\nPolicy: Standard returns accepted within 30 days. Defective items can be returned within 90 days of purchase. Customer must provide defect description.",
+      "solution": "Agent actions:\n1. Call order_lookup(customer_id) → verify purchase date: 45 days ago\n2. Standard 30-day window has expired\n3. Apply exception: defective item policy allows 90-day return\n4. Customer claims defect (cracked screen from manufacturing defect)\n5. Document defect description (required by policy)\n6. Call warranty_check(product_id) → confirm product has defect coverage\n7. Call return_create(order_id, reason='manufacturing_defect', description=...)\n8. Provide return shipping label and confirm timeline",
+      "answer": "Return authorized under defective item policy with proper documentation",
+      "notes": "The agent must recognize that two policies apply (standard 30-day vs. defective item 90-day) and correctly apply the exception path rather than refusing the return outright."
+    }
+  ],
+  "results": [
+    { "modelId": "claude-sonnet-4", "score": 84.7, "scoreLabel": "84.7%", "scoreType": "Pass@1 (Retail)", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "gpt-5", "score": 79.0, "scoreLabel": "~79%", "scoreType": "Pass@1 (Retail)", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "claude-opus-4-5", "score": 56.0, "scoreLabel": "~56%", "scoreType": "Pass@1 (Airline)", "date": "2025-11", "isVendorReported": false },
+    { "modelId": "gpt-5", "score": 54.0, "scoreLabel": "~54%", "scoreType": "Pass@1 (Airline)", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "gemini-2-5-pro", "score": 48.0, "scoreLabel": "~48%", "scoreType": "Pass@1 (Airline)", "date": "2025-03", "isVendorReported": false },
+    { "modelId": "gpt-4o", "score": 25.0, "scoreLabel": "~25%", "scoreType": "Pass^8 (Retail)", "date": "2024-11", "isVendorReported": false, "notes": "Even Pass^8 (best of 8 tries) below 25% for GPT-4o on Retail" }
+  ],
+  "variants": [
+    {
+      "name": "τ²-bench",
+      "slug": "tau-bench-2",
+      "description": "Voice mode support, fixed 75+ quality issues from the original. More reliable evaluation.",
+      "year": 2025,
+      "saturationStatus": "active"
+    },
+    {
+      "name": "τ³-bench",
+      "slug": "tau-bench-3",
+      "description": "Adds Banking and Telecom domains. The most comprehensive version.",
+      "year": 2025,
+      "saturationStatus": "active"
+    }
+  ],
+  "controversies": [
+    "The simulated user (another LLM) may behave differently from real human customers, particularly in edge cases and escalations.",
+    "Policy documents are synthetic — real enterprise policies are more complex, ambiguous, and full of special cases that aren't captured.",
+    "Pass^k penalizes even occasional failures, which may be too strict — real enterprise deployments typically have human escalation paths for edge cases."
+  ],
+  "keyFindings": [
+    "Pass^k metric insight: GPT-4o has <25% Pass^8 on Retail, meaning it fails at least once in any 8-attempt sequence. A customer service bot that fails 1 in 8 interactions is not production-ready.",
+    "Airline domain is significantly harder than Retail (56% vs 84.7% for best models) — flight booking involves more complex multi-step policy rules with financial and legal implications.",
+    "The benchmark revealed that models which score well on static benchmarks often fail when required to maintain policy compliance across multiple turns of dynamic conversation.",
+    "Tool use errors are the primary failure mode: models either call the wrong API, pass incorrect parameters, or fail to call necessary APIs before making commitments to customers."
+  ],
+  "links": {
+    "paper": "τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
+    "arxiv": "https://arxiv.org/abs/2406.12045",
+    "dataset": "https://github.com/sierra-research/tau-bench",
+    "leaderboard": "https://taubench.com",
+    "website": "https://taubench.com"
+  }
+}

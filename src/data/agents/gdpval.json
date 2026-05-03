@@ -1,0 +1,90 @@
+{
+  "slug": "gdpval",
+  "name": "GDPval",
+  "shortDescription": "AI on real professional tasks from 44 occupations covering $3 trillion in annual wages.",
+  "description": "GDPval was created by OpenAI and published in October 2025 to measure AI performance on tasks drawn directly from occupations that collectively produce the majority of US economic output. The name reflects its design philosophy: tasks are drawn from jobs in the top industries contributing to US GDP (per Federal Reserve data), ensuring coverage of economically important work rather than academically convenient tasks.\n\nThe benchmark covers 44 occupations across 9 major industries: Finance & Insurance, Professional/Technical Services, Healthcare, Manufacturing, Information Technology, Real Estate, Wholesale Trade, Retail, and Education. Occupations were selected based on total wages (BLS May 2024 data) within each sector, filtered to those where at least 60% of O*NET tasks are 'knowledge work.' These 44 occupations collectively earn approximately $3 trillion annually.\n\n1,320 tasks (30 per occupation) were built from actual work products created by professionals with an average of 14 years of experience. Evaluation uses blind pairwise comparison by expert graders: AI deliverable vs. human-produced deliverable, with 9 comparisons per prompt (3 samples × 3 graders).\n\nKey findings: Claude Opus 4.1 leads overall at 47.6% win+tie rate (primarily from aesthetic quality of formatted outputs like PDFs/slides). GPT-5 leads on accuracy and instruction-following. Performance has more than doubled from GPT-4o (spring 2024) to GPT-5 (summer 2025), following a near-linear improvement trend. GDPval-AA (Artificial Analysis extension) provides an Elo-based agentic leaderboard with 200+ models.",
+  "creator": "OpenAI",
+  "institution": "OpenAI",
+  "year": 2025,
+  "tags": ["professional-work", "economic-value", "44-occupations", "pairwise-evaluation", "gdp", "real-work"],
+  "isRequired": true,
+  "stats": {
+    "totalTasks": 1320,
+    "publicTasks": 220,
+    "domains": ["Finance", "Healthcare", "Law", "Engineering", "Consulting", "Education", "Sales", "HR", "Manufacturing", "IT"],
+    "avgHumanTime": "~6.7 hours per task (~404 minutes)",
+    "totalEconomicValue": "$3 trillion annual wages (covered occupations)",
+    "evaluationMethod": "Blind pairwise comparison by industry expert graders (AI vs. human deliverable). 9 comparisons per prompt.",
+    "primaryMetric": "Win+Tie rate (% judged as good as or better than human expert output)"
+  },
+  "taskAnatomy": {
+    "setup": "One-shot prompting: model receives the task description and supporting documents, produces a deliverable. No multi-turn interaction, no tool use in the core benchmark. GDPval-AA extends this to agentic evaluation.",
+    "input": "Task description from a professional's work context, plus supporting reference files (documents, data, regulations, patient records, etc.). Tasks represent the full O*NET Work Activity breadth for each occupation.",
+    "output": "A professional-quality deliverable: legal brief, nursing care plan, engineering report, financial analysis, marketing materials, code, etc. Output formats include .docx, .xlsx, .pdf, .pptx, and plain text depending on the occupation.",
+    "evaluation": "Primary: 3 expert graders independently compare AI deliverable vs. human gold standard in a blind pairwise comparison. Each grades 3 model samples = 9 comparisons total per prompt. Verdict: 'Better than,' 'As good as,' or 'Worse than.' Secondary: automated grading at evals.openai.com for the 220-task public subset.",
+    "metric": "Win+Tie rate (% of comparisons where AI is rated equal to or better than human expert)"
+  },
+  "examples": [
+    {
+      "title": "Legal — Motion to Dismiss Brief",
+      "jobType": "Lawyer",
+      "humanTime": "4-6 hours",
+      "description": "Draft a legal brief for a motion to dismiss a breach-of-contract lawsuit. Must include proper legal formatting, correct citation of applicable precedents, and compelling argumentation.",
+      "input": "Client complaint (20 pages), relevant case law documents (3 cases), jurisdiction-specific procedural rules, company's prior communications with plaintiff.",
+      "output": "Formatted legal brief (8-12 pages) with proper citation format, legal argument structure (Introduction, Background, Legal Standard, Argument, Conclusion), and specific case citations.",
+      "evaluation": "Expert lawyer graders compare AI brief vs. human-written brief on: accuracy of legal citations, quality of argumentation, formatting compliance, completeness of analysis."
+    },
+    {
+      "title": "Nursing — Care Plan",
+      "jobType": "Registered Nurse",
+      "humanTime": "1-2 hours",
+      "description": "Based on patient history, vitals, and physician notes, create a comprehensive nursing care plan with SMART goals, nursing diagnoses, and planned interventions.",
+      "input": "Patient chart: vital signs, lab results, medication list, physician notes, patient history, allergies, social history.",
+      "output": "Structured nursing care plan with: (1) NANDA nursing diagnoses, (2) SMART outcome goals, (3) Nursing interventions with rationale, (4) Evaluation criteria.",
+      "evaluation": "Expert nurse graders compare AI care plan vs. human-written on: clinical accuracy, appropriate NANDA diagnoses, realistic SMART goals, evidence-based interventions."
+    },
+    {
+      "title": "Engineering — Technical Review Report",
+      "jobType": "Civil/Mechanical Engineer",
+      "humanTime": "3-5 hours",
+      "description": "Review engineering blueprints and technical specifications for a structural component. Identify code compliance issues and prepare a written report with specific recommendations.",
+      "input": "CAD drawings (PDF), technical specifications document, applicable building codes (IBC 2021, relevant sections), project requirements document.",
+      "output": "Technical review report (5-8 pages) identifying: compliance issues by code section reference, severity rating (critical/major/minor), specific recommendations for each issue.",
+      "evaluation": "Expert engineer graders compare AI report vs. human report on: identification of actual compliance issues, accuracy of code references, completeness, recommendation quality."
+    }
+  ],
+  "results": [
+    { "modelId": "claude-opus-4-5", "score": 47.6, "scoreLabel": "47.6% win+tie", "scoreType": "Win+Tie rate vs. human", "date": "2025-09", "isVendorReported": true, "notes": "Claude Opus 4.1 in original paper; leads on aesthetic quality" },
+    { "modelId": "gpt-5", "score": 40.0, "scoreLabel": "~40%", "scoreType": "Win+Tie rate vs. human", "date": "2025-08", "isVendorReported": true, "notes": "Leads on accuracy and instruction-following" },
+    { "modelId": "o3", "score": 35.2, "scoreLabel": "35.2%", "scoreType": "Win+Tie rate vs. human", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "o4-mini", "score": 29.1, "scoreLabel": "29.1%", "scoreType": "Win+Tie rate vs. human", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "gpt-4o", "score": 12.5, "scoreLabel": "12.5%", "scoreType": "Win+Tie rate vs. human", "date": "2024-11", "isVendorReported": true, "notes": "2024 baseline" }
+  ],
+  "keyFindings": [
+    "Performance has more than doubled from GPT-4o (~12.5%) to Claude Opus 4.1 (47.6%) in roughly one year, following a near-linear improvement trend across 4 model generations.",
+    "Claude Opus 4.1 leads on aesthetics (formatting, slide layout, PDF/Excel/PPT output quality) while GPT-5 leads on accuracy (correct calculations, domain-specific knowledge, instruction-following).",
+    "Models complete GDPval tasks approximately 1.4x faster and 1.6x cheaper than human experts under realistic 'review and fix' workflows — significantly less than the frequently-cited '100x' figure which uses naïve inference timing.",
+    "An experimental fine-tuned GPT-5 trained specifically on GDPval-style tasks showed further improvement, validating that targeted domain fine-tuning works for professional knowledge work.",
+    "GDPval-AA (Artificial Analysis Elo extension) enables agentic evaluation with shell access and web browsing. The Elo leaderboard shows GPT-5.5 and Claude Opus 4.7 competing at the top (~1771 Elo)."
+  ],
+  "whatMakesItUnique": [
+    "GDP-grounded occupational selection: the only benchmark that uses Federal Reserve GDP data + BLS wage data to determine which occupations and tasks to include — a scientifically defensible sampling frame.",
+    "$3 trillion coverage: tasks represent work from occupations collectively earning $3T/year — the largest economic footprint of any benchmark by far.",
+    "Real expert work product: tasks built from actual deliverables by professionals with 14-year average experience, not constructed by researchers.",
+    "Multi-format deliverables: models must produce .pdf, .xlsx, .ppt, and text outputs — the only benchmark testing realistic multi-format professional output.",
+    "Double-blind human expert graders: primary metric uses independent domain experts in a blind comparison — not LLM judges."
+  ],
+  "controversies": [
+    "Self-evaluation bias: OpenAI created and published the benchmark, featured prominently while GPT-5 performed well. Objectivity questions remain.",
+    "The claim that AI is '100x faster/cheaper' than humans is based on naïve inference timing. Under realistic review-and-iterate workflows, the advantage is 1.4x faster and 1.6x cheaper — still significant but far less dramatic.",
+    "Blind comparisons were not perfectly blind: Claude outputs used first-person phrasing; Grok referred to itself by name. Graders may have inferred model identity.",
+    "Only 30 tasks per occupation is 'a limited, initial cut' per the paper. Not statistically robust for comparing models within specific occupations.",
+    "Physical and manual work is excluded by design (60% knowledge-work threshold), covering only a subset of GDP-contributing occupations."
+  ],
+  "links": {
+    "arxiv": "https://arxiv.org/abs/2510.04374",
+    "dataset": "https://huggingface.co/datasets/openai/gdpval",
+    "leaderboard": "https://artificialanalysis.ai/evaluations/gdpval-aa",
+    "website": "https://openai.com/research/gdpval"
+  }
+}

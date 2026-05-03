@@ -1,0 +1,82 @@
+{
+  "slug": "livecodebench",
+  "name": "LiveCodeBench",
+  "shortDescription": "Contamination-resistant coding benchmark using freshly released competition problems.",
+  "description": "LiveCodeBench solves the core problem plaguing static coding benchmarks: training data contamination. By continuously collecting new problems from competitive programming platforms (LeetCode, AtCoder, Codeforces) and tagging each with its release date, evaluators can restrict evaluation to problems released after a model's training cutoff — ensuring models genuinely have not seen the problems before.\n\nCreated at UC Berkeley, MIT, and Cornell and published at ICLR 2025, LiveCodeBench has grown from 400 problems in March 2024 (v1) to 1,055 problems in April 2025 (v6). This continuous refresh means the benchmark resists saturation by design — new hard problems are always entering the pool.\n\nA key innovation is testing four distinct scenarios rather than just code generation: (1) Code Generation — solve competitive programming problems; (2) Self-Repair — fix a failed solution given error feedback; (3) Code Execution — predict what a given code snippet outputs for a specific input; (4) Test Output Prediction — predict the correct output for a problem without writing code. These four scenarios together give a more complete picture of coding ability than generation alone.\n\nThe benchmark exposed dramatic contamination effects in other models: DeepSeek models showed a sharp performance drop on problems released after their training cutoff while performing well on pre-cutoff problems — clear evidence of memorization rather than genuine reasoning.",
+  "category": "coding",
+  "subcategory": "competitive-programming",
+  "tags": ["coding", "contamination-resistant", "competitive-programming", "python", "leetcode", "codeforces"],
+  "saturationStatus": "active",
+  "evaluationMethod": "functional-correctness",
+  "stats": {
+    "totalTasks": 1055,
+    "publicTasks": 1055,
+    "year": 2024,
+    "creator": "Naman Jain, King Han, Alex Gu, et al.",
+    "institution": "UC Berkeley / MIT / Cornell",
+    "languages": ["Python", "C++", "Java"],
+    "domains": ["Algorithms", "Data Structures", "Mathematics", "Graph Theory", "Dynamic Programming"],
+    "humanBaseline": null,
+    "randomBaseline": 0
+  },
+  "taskAnatomy": {
+    "input": "A competitive programming problem statement with example input/output pairs. For LeetCode: additional starter code. For AtCoder/Codeforces: standard input format.",
+    "output": "A complete program that reads input and produces the correct output within time/memory limits.",
+    "evaluation": "The generated code is executed against hidden test cases. Score = pass@1. Four scenarios are tested: code generation, self-repair (fix failed code given error feedback), code execution (predict output), and test output prediction.",
+    "metric": "pass@1 (code generation scenario)"
+  },
+  "examples": [
+    {
+      "title": "Code Generation — Array Duplicate Count",
+      "difficulty": "Easy",
+      "input": "Problem: Given an array of integers, return the count of elements that appear more than once.\n\nExample Input: [1, 2, 2, 3, 3, 3]\nExample Output: 2\n\nConstraints: 1 ≤ n ≤ 10^5, -10^9 ≤ nums[i] ≤ 10^9",
+      "solution": "from collections import Counter\n\ndef count_duplicates(nums):\n    freq = Counter(nums)\n    return sum(1 for v in freq.values() if v > 1)",
+      "answer": "2 for [1, 2, 2, 3, 3, 3] (elements 2 and 3 appear more than once)",
+      "notes": "Easy-tier problem. Tests basic frequency counting. Models should get ~95% on this difficulty."
+    },
+    {
+      "title": "Code Execution — Predict Output",
+      "difficulty": "Medium",
+      "input": "What does this function return for the given input?\n\nfrom collections import Counter\n\ndef count(nums):\n    freq = Counter(nums)\n    max_freq = max(freq.values())\n    return sum(k for k, v in freq.items() if v == max_freq)\n\nInput: count([1, 2, 2, 3])",
+      "solution": "Trace execution:\n1. freq = {1: 1, 2: 2, 3: 1}\n2. max_freq = 2 (the highest frequency)\n3. sum of keys where freq == 2: only key 2 has freq 2\n4. Return 2",
+      "answer": "2",
+      "notes": "Code execution tasks test whether models understand program semantics, not just generate code. Models must trace execution mentally."
+    },
+    {
+      "title": "Test Output Prediction — Inversion Count",
+      "difficulty": "Hard",
+      "input": "Problem: Count inversions in an array (pairs (i,j) where i < j but arr[i] > arr[j]).\n\nTest input: [3, 1, 2]\n\nWhat is the correct output?",
+      "solution": "Check all pairs:\n- (3,1): i=0, j=1, arr[0]=3 > arr[1]=1 → inversion\n- (3,2): i=0, j=2, arr[0]=3 > arr[2]=2 → inversion  \n- (1,2): i=1, j=2, arr[1]=1 < arr[2]=2 → not an inversion\nTotal: 2 inversions",
+      "answer": "2",
+      "notes": "Output prediction tests deep understanding of the problem specification — models must reason about program behavior without executing code."
+    }
+  ],
+  "results": [
+    { "modelId": "gemini-3-pro", "score": 91.7, "scoreLabel": "91.7%", "scoreType": "pass@1", "date": "2026-02", "isVendorReported": false, "setup": "LiveCodeBench v6, full corpus" },
+    { "modelId": "kimi-k2-6", "score": 89.6, "scoreLabel": "89.6%", "scoreType": "pass@1", "date": "2026-04", "isVendorReported": true, "setup": "LiveCodeBench v6" },
+    { "modelId": "deepseek-r1", "score": 87.1, "scoreLabel": "87.1%", "scoreType": "pass@1", "date": "2025-01", "isVendorReported": true, "setup": "LiveCodeBench v4" },
+    { "modelId": "claude-opus-4-5", "score": 87.1, "scoreLabel": "87.1%", "scoreType": "pass@1", "date": "2025-11", "isVendorReported": false, "setup": "LiveCodeBench v6" },
+    { "modelId": "gpt-5", "score": 79.0, "scoreLabel": "~79%", "scoreType": "pass@1", "date": "2025-08", "isVendorReported": true, "setup": "LiveCodeBench v5" },
+    { "modelId": "qwen-3-72b", "score": 83.6, "scoreLabel": "83.6%", "scoreType": "pass@1", "date": "2025-05", "isVendorReported": true, "setup": "LiveCodeBench v6" },
+    { "modelId": "o4-mini", "score": 85.9, "scoreLabel": "85.9%", "scoreType": "pass@1", "date": "2025-04", "isVendorReported": true, "setup": "LiveCodeBench v6, high compute" }
+  ],
+  "controversies": [
+    "Score inflation via window selection: scores on the full corpus (including pre-training-cutoff problems) are significantly higher than post-cutoff-only scores. Publishers often cite the more favorable number without disclosing which window was used.",
+    "Competition-programming focus: tasks are algorithmic (data structures, mathematics, graph theory) and don't cover real software engineering (no multi-file codebases, no APIs, no debugging existing systems).",
+    "LeetCode platform concentration: many problems come from LeetCode, which has a distinct style that some models are specifically fine-tuned on.",
+    "Rank divergence from SWE-bench is informative but confusing: Gemini 3 Pro scores 91.7% on LiveCodeBench but only ~78% on SWE-bench Verified — the skills are related but different enough to produce opposite rankings for some model pairs."
+  ],
+  "keyFindings": [
+    "Contamination detection: DeepSeek models showed a sharp performance cliff on problems released after their training cutoff while performing well on pre-cutoff problems — the first clear empirical demonstration of competitive programming contamination.",
+    "Four-scenario design reveals that models optimized for code generation often struggle at code execution and test output prediction — distinct capabilities not captured by pass@1 alone.",
+    "LiveCodeBench v6 (1,055 problems) shows top models at 91%+ on the full corpus but substantially lower on the fresh post-cutoff window — the benchmark's self-refreshing design maintains discriminating power.",
+    "The benchmark revealed a systematic rank divergence from SWE-bench: models strong at algorithmic reasoning (LiveCodeBench) are not necessarily strong at practical engineering (SWE-bench), and vice versa."
+  ],
+  "links": {
+    "paper": "LiveCodeBench: Holistic and Contamination Free Evaluation of Large Language Models for Code",
+    "arxiv": "https://arxiv.org/abs/2403.07974",
+    "dataset": "https://huggingface.co/datasets/livecodebench/code_generation_lite",
+    "leaderboard": "https://livecodebench.github.io/leaderboard.html",
+    "github": "https://github.com/LiveCodeBench/LiveCodeBench"
+  }
+}

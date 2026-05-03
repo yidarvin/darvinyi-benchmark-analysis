@@ -1,0 +1,78 @@
+{
+  "slug": "gaia",
+  "name": "GAIA",
+  "shortDescription": "Multi-step real-world tasks that are conceptually simple for humans but require tool-using agents.",
+  "description": "GAIA (General AI Assistants benchmark) was designed to measure whether AI assistants can solve tasks that are 'conceptually simple for humans' but require multi-step reasoning, tool use, multimodal understanding, and multi-hop information retrieval. Created by Meta AI and HuggingFace researchers and introduced at ICLR 2024.\n\nThe benchmark consists of 466 questions (166 public dev, 300 private test) across 3 difficulty levels. Level 1 requires minimal steps and tools. Level 2 requires 5-10 steps with multiple coordinated tools. Level 3 requires long-horizon planning with advanced multi-tool integration. All answers are unambiguous exact strings — no partial credit.\n\nThe 'conceptually simple' framing is key: these are questions an intelligent adult could answer, but only by combining web search, file reading, calculator use, and multi-hop reasoning across multiple sources. Standalone LLMs (without tool access) score near-random. Tool-augmented agents make the task tractable.\n\nGAIA is notable for Level 3 questions that seem impossible: 'Which fruits shown in the 2008 painting Embroidery from Uzbekistan were served at the October 1949 breakfast menu of the ocean liner later used as a prop in The Last Voyage? List clockwise from 12 o'clock.' This question requires looking up a painting, identifying fruits, finding an ocean liner, finding its historical breakfast menus, and correlating the information — truly multi-hop.\n\nHuman baseline is 92%. The best AI agents now score 67%+ on the validation set, with ensemble approaches reaching 91%+.",
+  "category": "agent",
+  "subcategory": "general-assistant",
+  "tags": ["agent", "multi-step", "tool-use", "web-search", "multi-modal", "real-world"],
+  "saturationStatus": "active",
+  "evaluationMethod": "exact-match",
+  "stats": {
+    "totalTasks": 466,
+    "publicTasks": 166,
+    "year": 2023,
+    "creator": "Grégoire Mialon, Clémentine Fourrier, et al.",
+    "institution": "Meta AI / HuggingFace",
+    "languages": [],
+    "domains": ["Web research", "File analysis", "Mathematical calculation", "Multi-hop reasoning", "Multimodal understanding"],
+    "humanBaseline": 92.0,
+    "randomBaseline": null
+  },
+  "taskAnatomy": {
+    "input": "A natural-language question requiring multi-step reasoning and tool use. Questions are often accompanied by files (PDFs, images, spreadsheets). Level 1: simple, few steps. Level 2: medium, multiple tools needed. Level 3: complex, long-horizon planning.",
+    "output": "A single, unambiguous exact string answer.",
+    "evaluation": "Exact string match against the verified correct answer. No partial credit. Test set answers are private (submit via HuggingFace leaderboard).",
+    "metric": "Accuracy (% correct)"
+  },
+  "examples": [
+    {
+      "title": "Level 1 — Simple fact retrieval with calculation",
+      "difficulty": "Level 1",
+      "input": "What is the population of France as of the most recent census, divided by the number of departments in France?",
+      "solution": "Step 1: Web search for current French population → ~68 million (2023 census)\nStep 2: Web search for number of French departments → 101 (including overseas)\nStep 3: Calculate 68,000,000 / 101 ≈ 673,267",
+      "answer": "~673,000 (exact value depends on census data used)",
+      "notes": "Level 1 tasks require tool use but are conceptually simple — a student could do this with Google in 2 minutes."
+    },
+    {
+      "title": "Level 2 — File analysis + web research",
+      "difficulty": "Level 2",
+      "input": "[Attached: a PDF of a scientific paper with a table of experimental results]\n\nThe paper reports results for Experiment 3B. Convert the mean value in column 4, row 7 of Table 2 from centimeters to inches, then find the scientific name of the species described in the abstract.",
+      "solution": "Step 1: Open/read the PDF attachment\nStep 2: Navigate to Table 2, find row 7, column 4\nStep 3: Extract the cm value and multiply by 0.3937\nStep 4: Read the abstract to find the species common name\nStep 5: Web search for the scientific name of that species\nStep 6: Combine both answers",
+      "answer": "[Two-part answer: converted measurement + scientific name]",
+      "notes": "Level 2 tasks require coordinating file reading and web search. Models without file access cannot complete this at all."
+    },
+    {
+      "title": "Level 3 — Multi-hop research across obscure sources",
+      "difficulty": "Level 3",
+      "input": "Which of the fruits shown in the 2008 painting 'Embroidery from Uzbekistan' were served as part of the October 1949 breakfast menu for the ocean liner later used as a floating prop in 'The Last Voyage'? List the fruits clockwise from the 12 o'clock position.",
+      "solution": "Step 1: Find the 2008 painting 'Embroidery from Uzbekistan' and identify fruits depicted\nStep 2: Find the film 'The Last Voyage' (1960 film)\nStep 3: Identify the ocean liner used as a prop → SS Île de France\nStep 4: Find historical breakfast menus from October 1949 for the SS Île de France (requires finding digitized historical records)\nStep 5: Cross-reference fruits from the painting with fruits on the menu\nStep 6: Determine the clockwise position order from the painting",
+      "answer": "[Specific fruits in specific order — this is the canonical hard GAIA example]",
+      "notes": "This is the most cited Level 3 GAIA example. It requires 5+ distinct web searches, synthesizing information across completely unrelated domains (Uzbek art, 1960s cinema, 1940s maritime records), and spatial reasoning about painting composition. Even the best agents often fail here."
+    }
+  ],
+  "results": [
+    { "modelId": "gpt-5", "score": 67.0, "scoreLabel": "67.0%", "scoreType": "Accuracy (validation set)", "date": "2025-08", "isVendorReported": true, "notes": "OpenAI Deep Research agent" },
+    { "modelId": "claude-opus-4-5", "score": 57.0, "scoreLabel": "~57%", "scoreType": "Accuracy (validation set)", "date": "2025-11", "isVendorReported": false },
+    { "modelId": "gemini-2-5-pro", "score": 52.0, "scoreLabel": "~52%", "scoreType": "Accuracy (validation set)", "date": "2025-03", "isVendorReported": false },
+    { "modelId": "gpt-4o", "score": 15.0, "scoreLabel": "~15%", "scoreType": "Accuracy (validation set)", "date": "2024-11", "isVendorReported": false, "notes": "GPT-4 with plugins at original publication" }
+  ],
+  "controversies": [
+    "Ensemble approaches (combining multiple agent runs) push scores to 91%+ on the validation set, near-matching human performance. These ensemble results are not comparable to single-agent performance.",
+    "Test set labels are private, making independent verification difficult. All public scores are on the 166-question validation set.",
+    "Level 3 questions are so dependent on specific historical records that 'correct' answers may change as internet sources are updated or removed.",
+    "The benchmark was created by Meta AI, and Manus AI (which reached SOTA at launch) was subsequently acquired by Meta — a notable potential conflict of interest in benchmark competition."
+  ],
+  "keyFindings": [
+    "GPT-4 with plugins scored only 15% at the benchmark's introduction in 2023. OpenAI Deep Research reached 67% by 2025 — a 4.5x improvement in 2 years, all from better agent scaffolding rather than model upgrades alone.",
+    "Human performance (92%) vs. best agent (67%) reveals a persistent ~25-point gap on tasks humans find conceptually simple. The gap is entirely in execution: multi-tool coordination, file handling, and multi-hop reasoning chains.",
+    "GAIA validated that standalone LLMs (without tools) are not viable for real research tasks — scoring near random on Level 2-3 questions. The benchmark helped establish tool-augmented agents as a distinct evaluation category.",
+    "Level 1 scores are now high (>90% for top agents) but Level 3 scores remain in the 20-40% range even for the best systems — illustrating that task complexity, not just tool access, remains a fundamental bottleneck."
+  ],
+  "links": {
+    "paper": "GAIA: a benchmark for General AI Assistants",
+    "arxiv": "https://arxiv.org/abs/2311.12983",
+    "dataset": "https://huggingface.co/datasets/gaia-benchmark/GAIA",
+    "leaderboard": "https://huggingface.co/spaces/gaia-benchmark/leaderboard"
+  }
+}

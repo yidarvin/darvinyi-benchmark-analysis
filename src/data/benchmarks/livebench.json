@@ -1,0 +1,82 @@
+{
+  "slug": "livebench",
+  "name": "LiveBench",
+  "shortDescription": "Contamination-resistant benchmark refreshed monthly from recent sources with no LLM judge.",
+  "description": "LiveBench solves two core problems with standard benchmarks simultaneously: training data contamination and LLM-as-judge bias. Created by Colin White, Samuel Dooley, and colleagues and published at ICLR 2025 (Spotlight), it draws questions from recently published arXiv papers, news articles, math competition releases, and new datasets — ensuring questions couldn't have been in any model's training data.\n\nAll answers are objectively verifiable, eliminating the need for an LLM judge (which introduces judge model bias and can be gamed by models that perform similarly to the judge). Questions are updated monthly, with older questions replaced as they approach the risk of contamination.\n\nThe benchmark covers 7 categories and 23 tasks: Reasoning (spatial, temporal, counting, web of lies, logical deduction), Coding (code generation, code completion), Mathematics (AMPS hard, AIME-style, Olympiad), Language (connections, plot unscrambling, word sorting, typos), Data Analysis (tabular reasoning, forecasting), Instruction Following (length constraints, format constraints), and Agentic Coding (multi-file programming tasks from recent papers).\n\nLiveBench is designed to remain challenging indefinitely by always including the hardest problems from new math competitions and the most demanding tasks from new research papers. As models improve, harder problems are added from the same freshly-released sources.",
+  "category": "contamination-resistant",
+  "subcategory": "multi-category",
+  "tags": ["contamination-resistant", "monthly-refresh", "math", "coding", "reasoning", "no-llm-judge"],
+  "saturationStatus": "active",
+  "evaluationMethod": "exact-match",
+  "stats": {
+    "totalTasks": 1000,
+    "publicTasks": 1000,
+    "year": 2024,
+    "creator": "Colin White, Samuel Dooley, Manley Roberts, et al.",
+    "institution": "Abacus AI / University of Maryland",
+    "languages": [],
+    "domains": ["Reasoning", "Coding", "Mathematics", "Language", "Data Analysis", "Instruction Following", "Agentic Coding"],
+    "humanBaseline": null,
+    "randomBaseline": null
+  },
+  "taskAnatomy": {
+    "input": "A question drawn from a recently published source (arXiv paper, math competition, news article). Each question has an objectively verifiable answer. Questions rotate monthly.",
+    "output": "Model generates an answer in the specified format for the task type.",
+    "evaluation": "Exact match or structured comparison against ground truth. No LLM judge — all answers are deterministically correct or incorrect.",
+    "metric": "Global Average score across all 7 categories"
+  },
+  "examples": [
+    {
+      "title": "Mathematics — Recent competition problem",
+      "difficulty": "Hard",
+      "input": "From a 2024-2025 math competition (released after model training cutoff):\n\nA sequence satisfies a₁ = 1, a₂ = 2, and aₙ = 3aₙ₋₁ - aₙ₋₂ for n ≥ 3. Find the sum of all positive integers k such that aₖ divides a₂₀₂₅.",
+      "solution": "The sequence is: 1, 2, 5, 13, 34, 89, ... (related to Fibonacci-like sequences with linear recurrence).\nProperty: aₘ | aₙ if and only if m | n.\nDivisors of 2025 = 3⁴ × 5² = 81 × 25: 1, 3, 5, 9, 15, 25, 27, 45, 75, 135, 225, 405, 675, 2025.\nSum of divisors: σ(2025) = σ(3⁴) × σ(5²) = (1+3+9+27+81)(1+5+25) = 121 × 31 = 3751",
+      "answer": "3751",
+      "notes": "Because this problem is drawn from a competition released after training cutoffs, models cannot have memorized the answer. This is the core anti-contamination property."
+    },
+    {
+      "title": "Language — Connections puzzle",
+      "difficulty": "Medium",
+      "input": "Group these 16 words into 4 categories of 4 related words:\n\nAPPLE, ORANGE, PITCH, PLUM, CHERRY, BASS, OLIVE, PINE, TREBLE, CLEF, NOTE, KEY, FLAT, SHARP, SCALE, MAJOR\n\n(From a recent NYT Connections puzzle released after training cutoffs)",
+      "solution": "Music terms: BASS, TREBLE, CLEF, NOTE\nMusic modifiers: FLAT, SHARP, MAJOR, KEY\nColors: ORANGE, PLUM, CHERRY, OLIVE\nTypes of tree: APPLE, PINE, PITCH (pine pitch), SCALE (fish scales?)\n... [requires careful disambiguation of multi-meaning words]",
+      "answer": "The specific groupings from the puzzle release",
+      "notes": "Connections puzzles require careful disambiguation of words with multiple meanings. The puzzle is drawn from a specific NYT release date after training cutoffs."
+    },
+    {
+      "title": "Data Analysis — Forecasting from recent data",
+      "difficulty": "Hard",
+      "input": "Based on the provided table of monthly renewable energy installation data (Jan 2024 - Oct 2024), predict the November 2024 solar capacity addition (GW) using the trend you observe.\n\n[Table with actual 2024 data released after training cutoffs]",
+      "solution": "Analyze trend: months Jan-Oct show seasonal pattern with summer peak, fall decline. Fit appropriate trend model (linear, polynomial, or seasonal). Extrapolate to November.",
+      "answer": "Specific numeric value matching the ground truth from the actual November 2024 data",
+      "notes": "Data analysis tasks use real recent datasets — the answers are objectively correct based on actual measured values, not opinion."
+    }
+  ],
+  "results": [
+    { "modelId": "o4-mini", "score": 87.3, "scoreLabel": "87.3%", "scoreType": "Global Average", "date": "2025-04", "isVendorReported": false, "setup": "High compute setting" },
+    { "modelId": "gpt-5", "score": 82.0, "scoreLabel": "~82%", "scoreType": "Global Average", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "claude-opus-4-5", "score": 79.0, "scoreLabel": "~79%", "scoreType": "Global Average", "date": "2025-11", "isVendorReported": false },
+    { "modelId": "gemini-2-5-pro", "score": 76.0, "scoreLabel": "~76%", "scoreType": "Global Average", "date": "2025-03", "isVendorReported": false },
+    { "modelId": "deepseek-r1", "score": 72.0, "scoreLabel": "~72%", "scoreType": "Global Average", "date": "2025-01", "isVendorReported": false },
+    { "modelId": "gpt-4o", "score": 53.0, "scoreLabel": "~53%", "scoreType": "Global Average", "date": "2024-11", "isVendorReported": false },
+    { "modelId": "llama-4-maverick", "score": 67.0, "scoreLabel": "~67%", "scoreType": "Global Average", "date": "2025-04", "isVendorReported": false },
+    { "modelId": "qwen-3-72b", "score": 73.0, "scoreLabel": "~73%", "scoreType": "Global Average", "date": "2025-05", "isVendorReported": false }
+  ],
+  "controversies": [
+    "Task rotation means that scores from different months are not directly comparable — a model's score in January vs. July reflects different sets of questions.",
+    "While anti-contamination by design, the sources (arXiv, NYT, competition sites) may be scraped into training data faster than LiveBench can update, potentially reducing the contamination gap over time.",
+    "The math category's difficulty level varies significantly month-to-month depending on which competitions released problems — making longitudinal comparison within the math category noisy."
+  ],
+  "keyFindings": [
+    "LiveBench provided the clearest empirical demonstration that static benchmarks are contaminated: models that scored high on MATH-500 showed significantly lower performance on equivalent LiveBench math questions from the same difficulty tier.",
+    "No LLM judge is a key design win: removing judge model bias makes LiveBench scores more reliable than benchmarks evaluated by GPT-4-class judges, which can favor outputs similar to GPT-4.",
+    "The monthly refresh design is the benchmark's core structural advantage — as AI capabilities improve, the benchmark automatically includes harder problems from the latest competitions and papers.",
+    "Score spread across the model population (~35% for GPT-4o-mini to ~87% for o4-mini) makes LiveBench one of the most discriminating active benchmarks for frontier model comparison."
+  ],
+  "links": {
+    "paper": "LiveBench: A Challenging, Contamination-Free LLM Benchmark",
+    "arxiv": "https://arxiv.org/abs/2406.19314",
+    "leaderboard": "https://livebench.ai",
+    "github": "https://github.com/LiveBench/LiveBench",
+    "website": "https://livebench.ai"
+  }
+}

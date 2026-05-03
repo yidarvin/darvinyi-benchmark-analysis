@@ -1,0 +1,76 @@
+{
+  "slug": "chatbot-arena",
+  "name": "LMSYS Chatbot Arena",
+  "shortDescription": "Crowdsourced human preference Elo ratings from millions of real user comparisons.",
+  "description": "Chatbot Arena is the world's largest crowdsourced AI evaluation platform, where real users submit any prompt they want and vote on which of two randomly selected anonymous models gives the better response. Operated by LMSYS Org (UC Berkeley, UCSD, CMU) and launched in May 2023, the platform has collected over 6 million human preference votes across commercial and open-source models.\n\nThe evaluation methodology uses the Bradley-Terry statistical model to compute Elo-like scores from pairwise comparisons. Unlike most benchmarks, Arena reflects genuine user preferences across the full diversity of real-world tasks — from creative writing to technical coding to emotional support — weighted by what users actually want to do with AI.\n\nArena includes sub-leaderboards for specific capabilities: Coding, Math, Instruction Following, Longer Query, Multilingual, and Vision. Each sub-leaderboard uses only prompts from users who engaged with that category, giving a more precise capability signal.\n\nArena's primary strength is ecological validity: it reflects what real users value, not what researchers think they should value. Its primary weakness is that 'what users value' includes style, formatting, and sycophancy — models can game human preferences by being verbose, agreeable, and aesthetically polished without being more accurate.",
+  "category": "human-preference",
+  "subcategory": "elo-ranking",
+  "tags": ["human-preference", "elo", "crowdsourced", "pairwise-comparison", "multi-domain"],
+  "saturationStatus": "active",
+  "evaluationMethod": "human-preference",
+  "stats": {
+    "totalTasks": 6000000,
+    "publicTasks": 6000000,
+    "year": 2023,
+    "creator": "Lianmin Zheng, Wei-Lin Chiang, et al.",
+    "institution": "UC Berkeley / UCSD / CMU (LMSYS Org)",
+    "languages": ["English", "Chinese", "Spanish", "French", "German", "and more"],
+    "domains": ["General", "Coding", "Math", "Creative Writing", "Instruction Following", "Roleplay"],
+    "humanBaseline": null,
+    "randomBaseline": null
+  },
+  "taskAnatomy": {
+    "input": "Any user prompt (the user writes whatever they want to ask). Two anonymous models respond simultaneously. The user votes for the better response (Win A, Win B, Tie, or Both Bad).",
+    "output": "A vote for which model response was better.",
+    "evaluation": "Bradley-Terry model fit to all pairwise votes gives each model an Elo-like score. 95% confidence intervals are computed from bootstrap resampling. Models with overlapping confidence intervals are not reliably distinguishable.",
+    "metric": "Arena Score (Elo-like; ~1200 is competitive, ~1500 is top tier)"
+  },
+  "examples": [
+    {
+      "title": "Why Arena matters: Real user diversity",
+      "difficulty": "N/A — varies by user",
+      "input": "Users submit prompts like:\n- 'Write a cover letter for a software engineering job'\n- 'Explain quantum entanglement like I'm 5'\n- 'Debug this Python code: [500 lines of code]'\n- 'What's a good recipe for someone who hates vegetables?'\n- 'Help me write a breakup text that's kind but clear'",
+      "solution": "Two random models answer. The user votes which answer they preferred. No pre-defined tasks — pure user demand.",
+      "answer": "User votes: Win A, Win B, Tie, or Both Bad",
+      "notes": "The key difference from static benchmarks: tasks are not predetermined. Arena measures what real users value across the full distribution of AI use cases."
+    },
+    {
+      "title": "Style control experiment",
+      "difficulty": "N/A — methodological",
+      "input": "Researchers asked: do users prefer longer responses, regardless of quality? Style-controlled analysis stripped out length and formatting signals from votes to measure raw quality preference.",
+      "solution": "Result: yes, users are significantly biased toward longer, more formatted responses. GPT-4 class models that produce verbose, well-formatted output win Arena battles partly on style rather than substance.",
+      "answer": "Style-controlled scores differ from raw Elo scores, sometimes reshuffling model rankings.",
+      "notes": "This methodological concern is why Arena critics argue it measures 'appeal' rather than 'quality.' The Arena team now provides style-controlled sub-leaderboards."
+    }
+  ],
+  "results": [
+    { "modelId": "claude-opus-4-6", "score": 1503, "scoreLabel": "~1503 Elo", "scoreType": "Arena Score", "date": "2026-02", "isVendorReported": false, "setup": "General leaderboard" },
+    { "modelId": "gpt-5", "score": 1490, "scoreLabel": "~1490 Elo", "scoreType": "Arena Score", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "gemini-2-5-pro", "score": 1480, "scoreLabel": "~1480 Elo", "scoreType": "Arena Score", "date": "2025-03", "isVendorReported": false },
+    { "modelId": "grok-4", "score": 1465, "scoreLabel": "~1465 Elo", "scoreType": "Arena Score", "date": "2025-07", "isVendorReported": false },
+    { "modelId": "claude-sonnet-4", "score": 1430, "scoreLabel": "~1430 Elo", "scoreType": "Arena Score", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "gpt-4o", "score": 1380, "scoreLabel": "~1380 Elo", "scoreType": "Arena Score", "date": "2024-11", "isVendorReported": false },
+    { "modelId": "deepseek-v3", "score": 1350, "scoreLabel": "~1350 Elo", "scoreType": "Arena Score", "date": "2024-12", "isVendorReported": false },
+    { "modelId": "llama-4-maverick", "score": 1400, "scoreLabel": "~1400 Elo", "scoreType": "Arena Score", "date": "2025-04", "isVendorReported": false, "notes": "Initial high score; controversy noted" },
+    { "modelId": "claude-opus-4-6", "score": 1549, "scoreLabel": "1549 Elo (Coding)", "scoreType": "Coding sub-leaderboard", "date": "2026-02", "isVendorReported": false }
+  ],
+  "controversies": [
+    "Style bias: users prefer longer, formatted, and more agreeable responses even when they are less accurate. Models can improve Arena scores by being verbose and sycophantic without improving actual quality.",
+    "The Llama 4 'slop' incident (April 2025): Meta's Llama 4 debuted at high Arena scores but received community criticism for 'answer farming' — optimizing for what users vote for rather than actual quality. Arena scores temporarily conflated style optimization with genuine capability.",
+    "Sampling disparity: a 2024 paper found that top models were sampled from in Arena battles proportionally more than mid-tier models, creating statistical artifacts in Elo calculations.",
+    "Gameable by labs: if a lab knows the Arena voting patterns, they could fine-tune specifically to appeal to Arena voters rather than to be genuinely better.",
+    "Not task-specific: a model that is excellent at coding but poor at roleplay might lose Arena battles dominated by roleplay users, making general Elo a poor signal for specific use cases."
+  ],
+  "keyFindings": [
+    "6 million+ human preference votes make Arena the largest behavioral evaluation dataset in AI history — no other benchmark has this scale of real human judgment.",
+    "Arena Elo correlates with other benchmark scores but not perfectly: models that score similarly on MMLU or GPQA can differ by 50+ Arena Elo points, suggesting distinct user-valued capabilities not captured by academic benchmarks.",
+    "Sub-leaderboard analysis reveals specialization: the Coding sub-leaderboard ranking differs meaningfully from the General ranking. Models like Kimi K2.6 that excel at coding may rank lower on general Arena than their coding ability would suggest.",
+    "The voting process revealed that human preferences are not consistent — the same model pair produces different voting outcomes on similar prompts, requiring statistical aggregation over thousands of votes to get reliable signal."
+  ],
+  "links": {
+    "paper": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+    "arxiv": "https://arxiv.org/abs/2306.05685",
+    "leaderboard": "https://lmarena.ai",
+    "website": "https://lmarena.ai"
+  }
+}

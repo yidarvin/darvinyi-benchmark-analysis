@@ -1,0 +1,92 @@
+{
+  "slug": "rli",
+  "name": "Remote Labor Index (RLI)",
+  "shortDescription": "Real Upwork freelance projects: $143,991 of actual paid work, 2.5% maximum automation.",
+  "description": "The Remote Labor Index (RLI) is the most rigorous real-world work evaluation benchmark: it uses actual projects that real human freelancers were hired and paid to complete on Upwork, including the original work brief and the human-produced gold-standard deliverable. Created jointly by the Center for AI Safety (CAIS) and Scale AI, published October 30, 2025.\n\nUnlike benchmarks that use expert-constructed tasks, RLI sources its tasks entirely from the market: real client briefs, real freelancer submissions, real payment amounts. 358 verified freelancers provided samples of completed work across 43 eligible Upwork job categories. The resulting 240 projects represent $143,991 in total economic value and over 6,000 hours of human labor.\n\nThe benchmark evaluates AI on complete end-to-end project delivery: agents must produce finished, client-ready deliverables (game builds, architectural drawings, video animations, brand logos) — not isolated subtasks. Evaluation is performed manually by trained expert graders asking: 'Would a reasonable client accept this in place of the human gold standard?'\n\nThe headline result is striking: the best AI agent (Manus) automates only 2.5% of projects to client-acceptable quality — despite the same models scoring 80%+ on SWE-bench and 67% on GAIA. The gap reveals the fundamental difficulty of real end-to-end project work: 28.9-hour average tasks with multimodal output requirements across CAD, video, 3D, and audio formats that current AI systems cannot reliably produce.",
+  "creator": "Center for AI Safety (CAIS) + Scale AI",
+  "institution": "CAIS / Scale AI",
+  "year": 2025,
+  "tags": ["real-work", "upwork", "freelance", "economic-value", "automation", "multimodal", "end-to-end"],
+  "isRequired": true,
+  "stats": {
+    "totalTasks": 240,
+    "publicTasks": 10,
+    "domains": ["3D Animation", "Architectural Design", "Audio Production", "Branding", "CAD", "Copywriting", "Data Analysis", "Game Development", "Graphic Design", "Market Research", "Mechanical Engineering", "Presentation Design", "Product Design", "Video Animation", "Video Production", "Web Design"],
+    "avgHumanTime": "28.9 hours (median: 11.5 hours)",
+    "totalEconomicValue": "$143,991 across 240 projects",
+    "evaluationMethod": "Manual expert evaluation: 3-point scale (Fails/Meets/Exceeds), 3 evaluators per project, majority vote. 94.4% inter-annotator agreement.",
+    "primaryMetric": "Automation Rate (% of projects where AI output is rated at least as good as human gold standard)"
+  },
+  "taskAnatomy": {
+    "setup": "AI agent receives the original project brief and all input files exactly as the human freelancer received them. Agent produces its best attempt at the complete deliverable. A separate expert evaluation team then compares the AI output to the human gold standard.",
+    "input": "Original Upwork project brief (client's description of what they want) + any input files the client provided (brand assets, specifications, reference images, scripts, etc.).",
+    "output": "A complete, client-ready deliverable: could be a .blend file for 3D modeling, .mp4 for video, .dwg for CAD, .ai for graphic design, .exe for game, audio files, or documents depending on the project.",
+    "evaluation": "Three independent expert evaluators score each submission on a 3-point scale: 1 = Fails to meet standard, 2 = Meets standard (client would accept), 3 = Exceeds standard. AI output presented as 'alternative,' human output as 'reference.' Majority vote determines pass/fail.",
+    "metric": "Automation Rate (% scoring ≥2 out of 3), Elo score (pairwise comparison, human baseline=1000), $ Earned (value of completed projects)"
+  },
+  "examples": [
+    {
+      "title": "Game Development — Unity Mini Arcade Game",
+      "jobType": "Game Development",
+      "economicValue": "$800",
+      "humanTime": "22 hours",
+      "description": "Design and implement a mini arcade-style game in Unity with 3 levels, score tracking, and the provided art assets.",
+      "input": "Art asset pack (.png files), game design document, Unity project template, specific feature requirements.",
+      "output": "Playable .exe game build with functional gameplay, 3 levels, score display, and integrated art assets.",
+      "evaluation": "Expert game developer evaluates: does the game run without crashes? Are all 3 levels playable? Is the score tracking correct? Are all art assets integrated? Would the client approve this build?"
+    },
+    {
+      "title": "Architectural Design — Residential Floor Plans",
+      "jobType": "Architectural Design",
+      "economicValue": "$450",
+      "humanTime": "15 hours",
+      "description": "Create professional floor plan drawings for a 2,500 sq ft residential home with specific room requirements.",
+      "input": "Client sketch (hand-drawn), room specifications (kitchen, 3 bedrooms, 2 bathrooms, dimensions), local building code requirements.",
+      "output": "AutoCAD .dwg files with properly dimensioned floor plans, room labels, door/window placements, and standard architectural notation.",
+      "evaluation": "Expert architect evaluates: are all specified rooms present with correct dimensions? Are door/window placements architecturally sound? Does it comply with specified building codes? Is the .dwg file properly formatted?"
+    },
+    {
+      "title": "Video Animation — Explainer Video",
+      "jobType": "Video Animation",
+      "economicValue": "$1,200",
+      "humanTime": "18 hours",
+      "description": "Create a 60-second explainer animation for a SaaS product with voiceover sync and brand consistency.",
+      "input": "Brand style guide (colors, fonts, logo), voiceover audio (.mp3), script, reference animation examples.",
+      "output": "60-second .mp4 at 1080p with animation synced to voiceover, correct brand colors, and smooth transitions.",
+      "evaluation": "Expert video editor evaluates: is the animation synced to audio? Are brand colors and fonts consistent? Is it 60 seconds at 1080p? Is production quality sufficient for client use?"
+    }
+  ],
+  "results": [
+    { "modelId": "claude-opus-4-6", "score": 3.75, "scoreLabel": "3.75%", "scoreType": "Automation Rate", "date": "2026-02", "isVendorReported": false, "notes": "CoWork agent setup; latest leaderboard leader" },
+    { "modelId": "claude-opus-4-5", "score": 3.75, "scoreLabel": "~3.75% (tied)", "scoreType": "Automation Rate", "date": "2025-11", "isVendorReported": false },
+    { "modelId": "gpt-5", "score": 2.5, "scoreLabel": "2.5%", "scoreType": "Automation Rate", "date": "2025-08", "isVendorReported": false, "notes": "Original paper; GPT-5 = 1.7% in original" },
+    { "modelId": "grok-4", "score": 2.1, "scoreLabel": "2.1%", "scoreType": "Automation Rate", "date": "2025-07", "isVendorReported": false },
+    { "modelId": "gemini-2-5-pro", "score": 1.25, "scoreLabel": "1.25%", "scoreType": "Automation Rate", "date": "2025-03", "isVendorReported": false },
+    { "modelId": "gpt-4o", "score": 0.5, "scoreLabel": "~0.5%", "scoreType": "Automation Rate", "date": "2024-11", "isVendorReported": false }
+  ],
+  "keyFindings": [
+    "The most sobering data point in AI evaluation: models scoring 80%+ on SWE-bench complete only 2.5% of real freelance projects to client-acceptable quality — a 32x performance gap between structured benchmarks and real end-to-end project delivery.",
+    "The primary failure modes are: (1) corrupt or wrong-format output files, (2) incomplete deliverables missing required components, (3) quality gap (technically present but visually/qualitatively below professional standard), (4) multi-file inconsistency, (5) misunderstanding creative intent.",
+    "Most RLI tasks require specialized software (Unity, AutoCAD, Adobe Creative Suite, DAWs) that current AI agents cannot reliably operate — this is a tool access problem as much as a capability problem.",
+    "Elo scores show steady relative improvement even when absolute automation rates are near zero — suggesting the benchmark is sensitive enough to track progress long before agents can complete full projects.",
+    "Average human completion time of 28.9 hours (vs 2 hours for APEX-Agents, 6.7 hours for GDPval) explains much of the automation gap — longer, more complex projects with multimodal outputs have far more failure modes."
+  ],
+  "whatMakesItUnique": [
+    "True economic grounding: every project has a real dollar value set by the real professional who did the work — no synthetic cost estimates.",
+    "Multi-format, multi-tool deliverables: projects span .blend, .mp4, .dwg, .ai, .exe, .wav — far more output format diversity than any other benchmark.",
+    "Client-acceptance standard: 'Would a paying client accept this?' is a fundamentally higher bar than 'is it technically correct?'",
+    "Complete end-to-end: AI must handle the entire project from brief to final deliverable, not just isolated subtasks.",
+    "Safety organization perspective: created by CAIS (Center for AI Safety) alongside Scale AI — designed partly to ground (lower) inflated claims about AI automation readiness."
+  ],
+  "controversies": [
+    "Only 10 of 240 projects are public — severely limiting independent reproducibility.",
+    "The 23 of 64 Upwork categories included may systematically differ in AI capability from excluded categories (e.g., back-end development, which might be more automatable).",
+    "Evaluation subjectivity: 'Would a client accept this?' depends heavily on evaluator standards. The same output might be acceptable to some clients and not others.",
+    "Scale AI is a major AI data and evaluation company that competes commercially — potential conflict of interest in benchmark design and execution."
+  ],
+  "links": {
+    "arxiv": "https://arxiv.org/abs/2510.26787",
+    "leaderboard": "https://labs.scale.com/leaderboard/rli",
+    "website": "https://www.remotelabor.ai/"
+  }
+}
