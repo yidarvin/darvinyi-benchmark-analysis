@@ -52,16 +52,19 @@
     }
   ],
   "results": [
-    { "modelId": "gemini-3-pro", "score": 96.4, "scoreLabel": "96.4%", "scoreType": "Accuracy (MATH-500)", "date": "2026-02", "isVendorReported": true },
-    { "modelId": "gpt-5", "score": 94.0, "scoreLabel": "~94%", "scoreType": "Accuracy (MATH-500)", "date": "2025-08", "isVendorReported": true },
-    { "modelId": "o3", "score": 91.5, "scoreLabel": "~91.5%", "scoreType": "Accuracy (MATH-500)", "date": "2025-04", "isVendorReported": true },
-    { "modelId": "o4-mini", "score": 93.0, "scoreLabel": "~93%", "scoreType": "Accuracy (MATH-500)", "date": "2025-04", "isVendorReported": true },
-    { "modelId": "deepseek-v3", "score": 97.3, "scoreLabel": "97.3%", "scoreType": "Accuracy (MATH-500)", "date": "2024-12", "isVendorReported": true },
-    { "modelId": "qwen-3-72b", "score": 96.4, "scoreLabel": "96.4%", "scoreType": "Accuracy (MATH-500)", "date": "2025-05", "isVendorReported": true },
     { "modelId": "deepseek-r1", "score": 97.3, "scoreLabel": "97.3%", "scoreType": "Accuracy (MATH-500)", "date": "2025-01", "isVendorReported": true },
-    { "modelId": "claude-opus-4-5", "score": 90.0, "scoreLabel": "~90%", "scoreType": "Accuracy (MATH-500)", "date": "2025-11", "isVendorReported": true },
-    { "modelId": "llama-4-maverick", "score": 85.0, "scoreLabel": "~85%", "scoreType": "Accuracy (MATH-500)", "date": "2025-04", "isVendorReported": true },
-    { "modelId": "mistral-large-3", "score": 80.0, "scoreLabel": "~80%", "scoreType": "Accuracy (MATH-500)", "date": "2025-06", "isVendorReported": true }
+    { "modelId": "deepseek-v3", "score": 90.2, "scoreLabel": "90.2%", "scoreType": "Accuracy (MATH-500)", "date": "2024-12", "isVendorReported": true },
+    { "modelId": "claude-opus-4-6", "score": 97.5, "scoreLabel": "~97–98%", "scoreType": "Accuracy (MATH-500)", "date": "2026-02", "isVendorReported": true, "notes": "Inferred from AIME 2025 99.79%" },
+    { "modelId": "gemini-3-pro", "score": 96.4, "scoreLabel": "96.4%", "scoreType": "Accuracy (MATH-500)", "date": "2026-02", "isVendorReported": true },
+    { "modelId": "qwen-3-72b", "score": 96.4, "scoreLabel": "96.4%", "scoreType": "Accuracy (MATH-500)", "date": "2025-05", "isVendorReported": true, "setup": "thinking mode" },
+    { "modelId": "o3", "score": 97.0, "scoreLabel": "~97%", "scoreType": "Accuracy (MATH-500)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "o4-mini", "score": 96.0, "scoreLabel": "~96%", "scoreType": "Accuracy (MATH-500)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "gpt-5", "score": 95.0, "scoreLabel": "~95%+", "scoreType": "Accuracy (MATH-500)", "date": "2025-08", "isVendorReported": true, "notes": "Inferred from AIME 2025 94.6%" },
+    { "modelId": "mistral-large-3", "score": 93.6, "scoreLabel": "93.6%", "scoreType": "Accuracy (MATH-500)", "date": "2025-06", "isVendorReported": true },
+    { "modelId": "claude-opus-4-5", "score": 97.0, "scoreLabel": "~97%", "scoreType": "Accuracy (MATH-500)", "date": "2025-11", "isVendorReported": true },
+    { "modelId": "claude-sonnet-4", "score": 97.2, "scoreLabel": "97.2%", "scoreType": "Accuracy (MATH-500)", "date": "2025-08", "isVendorReported": true },
+    { "modelId": "llama-4-maverick", "score": 88.9, "scoreLabel": "88.9%", "scoreType": "Accuracy (MATH-500)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "gpt-4o", "score": 76.6, "scoreLabel": "76.6%", "scoreType": "Accuracy (MATH, 4-shot CoT)", "date": "2024-11", "isVendorReported": true }
   ],
   "variants": [
     {

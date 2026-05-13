@@ -52,10 +52,11 @@
     }
   ],
   "results": [
-    { "modelId": "gpt-5", "score": 91.4, "scoreLabel": "91.4%", "scoreType": "Accuracy (5-shot)", "date": "2025-08", "isVendorReported": true },
-    { "modelId": "claude-opus-4-5", "score": 91.8, "scoreLabel": "91.8%", "scoreType": "Accuracy (5-shot)", "date": "2025-11", "isVendorReported": true },
-    { "modelId": "gemini-2-5-pro", "score": 90.0, "scoreLabel": "~90%", "scoreType": "Accuracy (5-shot)", "date": "2025-03", "isVendorReported": true },
     { "modelId": "grok-4", "score": 92.7, "scoreLabel": "92.7%", "scoreType": "Accuracy (5-shot)", "date": "2025-07", "isVendorReported": true },
+    { "modelId": "gpt-5", "score": 93.0, "scoreLabel": "93.0%", "scoreType": "Accuracy (5-shot)", "date": "2025-08", "isVendorReported": true },
+    { "modelId": "claude-opus-4-6", "score": 90.8, "scoreLabel": "~90.8%", "scoreType": "Accuracy (MMMLU proxy)", "date": "2026-02", "isVendorReported": true },
+    { "modelId": "claude-opus-4-5", "score": 90.8, "scoreLabel": "90.8%", "scoreType": "Accuracy (5-shot)", "date": "2025-11", "isVendorReported": true },
+    { "modelId": "gemini-2-5-pro", "score": 89.2, "scoreLabel": "89.2%", "scoreType": "Accuracy (5-shot)", "date": "2025-03", "isVendorReported": true },
     { "modelId": "deepseek-v3", "score": 88.2, "scoreLabel": "88.2%", "scoreType": "Accuracy (5-shot)", "date": "2024-12", "isVendorReported": true },
     { "modelId": "llama-4-maverick", "score": 87.8, "scoreLabel": "87.8%", "scoreType": "Accuracy (5-shot)", "date": "2025-04", "isVendorReported": true },
     { "modelId": "qwen-3-72b", "score": 88.7, "scoreLabel": "88.7%", "scoreType": "Accuracy (5-shot)", "date": "2025-05", "isVendorReported": true },

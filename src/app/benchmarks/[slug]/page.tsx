@@ -40,7 +40,7 @@ export default async function BenchmarkDetailPage({ params }: PageProps) {
       {/* Back */}
       <Link
         href="/benchmarks"
-        className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-300 mb-6 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-cyan-400 mb-6 transition-colors"
       >
         ← Back to Benchmarks
       </Link>

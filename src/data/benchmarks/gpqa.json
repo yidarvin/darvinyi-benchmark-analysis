@@ -53,16 +53,19 @@
   ],
   "results": [
     { "modelId": "gemini-3-pro", "score": 94.3, "scoreLabel": "94.3%", "scoreType": "Accuracy (Diamond)", "date": "2026-02", "isVendorReported": false, "setup": "Gemini 3.1 Pro Preview, 0-shot CoT" },
-    { "modelId": "claude-opus-4-6", "score": 88.0, "scoreLabel": "~88%", "scoreType": "Accuracy (Diamond)", "date": "2026-02", "isVendorReported": true },
+    { "modelId": "claude-opus-4-6", "score": 91.3, "scoreLabel": "91.3%", "scoreType": "Accuracy (Diamond)", "date": "2026-02", "isVendorReported": true, "setup": "64K thinking, max effort" },
+    { "modelId": "claude-opus-4-5", "score": 87.0, "scoreLabel": "87.0%", "scoreType": "Accuracy (Diamond)", "date": "2025-11", "isVendorReported": true, "setup": "64K thinking" },
     { "modelId": "o3", "score": 87.7, "scoreLabel": "87.7%", "scoreType": "Accuracy (Diamond)", "date": "2025-04", "isVendorReported": true },
-    { "modelId": "grok-4", "score": 85.0, "scoreLabel": "~85%", "scoreType": "Accuracy (Diamond)", "date": "2025-07", "isVendorReported": true },
-    { "modelId": "gemini-2-5-pro", "score": 83.0, "scoreLabel": "~83%", "scoreType": "Accuracy (Diamond)", "date": "2025-03", "isVendorReported": true },
+    { "modelId": "grok-4", "score": 87.5, "scoreLabel": "87.5–88.9%", "scoreType": "Accuracy (Diamond)", "date": "2025-07", "isVendorReported": true },
+    { "modelId": "gemini-2-5-pro", "score": 86.4, "scoreLabel": "86.4%", "scoreType": "Accuracy (Diamond)", "date": "2025-03", "isVendorReported": true },
+    { "modelId": "gpt-5", "score": 85.7, "scoreLabel": "85.7%", "scoreType": "Accuracy (Diamond)", "date": "2025-08", "isVendorReported": true, "setup": "high thinking" },
     { "modelId": "o4-mini", "score": 81.4, "scoreLabel": "81.4%", "scoreType": "Accuracy (Diamond)", "date": "2025-04", "isVendorReported": true },
-    { "modelId": "gpt-5", "score": 75.0, "scoreLabel": "~75%", "scoreType": "Accuracy (Diamond)", "date": "2025-08", "isVendorReported": true },
-    { "modelId": "deepseek-r1", "score": 71.0, "scoreLabel": "~71%", "scoreType": "Accuracy (Diamond)", "date": "2025-01", "isVendorReported": true },
-    { "modelId": "claude-sonnet-4", "score": 68.0, "scoreLabel": "~68%", "scoreType": "Accuracy (Diamond)", "date": "2025-08", "isVendorReported": true },
-    { "modelId": "llama-4-maverick", "score": 60.0, "scoreLabel": "~60%", "scoreType": "Accuracy (Diamond)", "date": "2025-04", "isVendorReported": true },
-    { "modelId": "gpt-4o", "score": 53.0, "scoreLabel": "~53%", "scoreType": "Accuracy (Diamond)", "date": "2024-11", "isVendorReported": true }
+    { "modelId": "qwen-3-72b", "score": 78.0, "scoreLabel": "~78%", "scoreType": "Accuracy (Diamond)", "date": "2025-05", "isVendorReported": true, "setup": "thinking mode" },
+    { "modelId": "claude-sonnet-4", "score": 75.4, "scoreLabel": "75.4%", "scoreType": "Accuracy (Diamond)", "date": "2025-08", "isVendorReported": true, "setup": "thinking mode" },
+    { "modelId": "gpt-4o", "score": 74.8, "scoreLabel": "74.8%", "scoreType": "Accuracy (Diamond)", "date": "2024-11", "isVendorReported": true },
+    { "modelId": "deepseek-r1", "score": 71.5, "scoreLabel": "71.5%", "scoreType": "Accuracy (Diamond)", "date": "2025-01", "isVendorReported": true },
+    { "modelId": "llama-4-maverick", "score": 69.8, "scoreLabel": "69.8%", "scoreType": "Accuracy (Diamond)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "deepseek-v3", "score": 59.1, "scoreLabel": "59.1%", "scoreType": "Accuracy (Diamond)", "date": "2024-12", "isVendorReported": true }
   ],
   "controversies": [
     "The dataset is password-protected to limit contamination (password: 'deserted-untie-orchid') but is published openly enough that contamination is possible for models trained after mid-2024.",

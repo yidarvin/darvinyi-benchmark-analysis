@@ -52,13 +52,17 @@
     }
   ],
   "results": [
-    { "modelId": "claude-opus-4-6", "score": 80.8, "scoreLabel": "80.8%", "scoreType": "% Resolved", "date": "2026-02", "isVendorReported": false, "setup": "SWE-bench Verified (now deprecated)", "notes": "Leaderboard result before contamination declaration" },
     { "modelId": "claude-opus-4-5", "score": 80.9, "scoreLabel": "80.9%", "scoreType": "% Resolved", "date": "2025-11", "isVendorReported": false, "setup": "SWE-bench Verified (now deprecated)", "notes": "First model to break 80%" },
+    { "modelId": "claude-opus-4-6", "score": 80.8, "scoreLabel": "80.8%", "scoreType": "% Resolved", "date": "2026-02", "isVendorReported": false, "setup": "SWE-bench Verified (now deprecated)", "notes": "25-trial avg; before contamination declaration" },
     { "modelId": "minimax-m2-5", "score": 80.2, "scoreLabel": "80.2%", "scoreType": "% Resolved", "date": "2026-02", "isVendorReported": true, "setup": "SWE-bench Verified" },
-    { "modelId": "gemini-2-5-pro", "score": 78.0, "scoreLabel": "78.0%", "scoreType": "% Resolved", "date": "2025-11", "isVendorReported": false, "setup": "SWE-bench Verified" },
-    { "modelId": "gpt-5", "score": 74.9, "scoreLabel": "74.9%", "scoreType": "% Resolved", "date": "2025-08", "isVendorReported": true, "setup": "SWE-bench Verified" },
-    { "modelId": "deepseek-r1", "score": 73.3, "scoreLabel": "73.3%", "scoreType": "% Resolved", "date": "2025-06", "isVendorReported": false, "setup": "SWE-bench Verified" },
-    { "modelId": "kimi-k2-6", "score": 80.2, "scoreLabel": "80.2%", "scoreType": "% Resolved", "date": "2026-04", "isVendorReported": true, "setup": "SWE-bench Verified" }
+    { "modelId": "kimi-k2-6", "score": 80.2, "scoreLabel": "80.2%", "scoreType": "% Resolved", "date": "2026-04", "isVendorReported": true, "setup": "SWE-bench Verified" },
+    { "modelId": "gemini-2-5-pro", "score": 67.2, "scoreLabel": "67.2% (multi)", "scoreType": "% Resolved", "date": "2025-06", "isVendorReported": true, "setup": "SWE-bench Verified; 59.6% single / 67.2% multi-attempt" },
+    { "modelId": "o3", "score": 69.1, "scoreLabel": "69.1%", "scoreType": "% Resolved", "date": "2025-04", "isVendorReported": true, "setup": "SWE-bench Verified, n=477 subset" },
+    { "modelId": "o4-mini", "score": 68.1, "scoreLabel": "68.1%", "scoreType": "% Resolved", "date": "2025-04", "isVendorReported": true, "setup": "SWE-bench Verified, n=477 subset" },
+    { "modelId": "gpt-5", "score": 74.9, "scoreLabel": "74.9%", "scoreType": "% Resolved", "date": "2025-08", "isVendorReported": true, "setup": "SWE-bench Verified; medium reasoning" },
+    { "modelId": "claude-sonnet-4", "score": 72.7, "scoreLabel": "72.7%", "scoreType": "% Resolved", "date": "2025-08", "isVendorReported": true, "setup": "SWE-bench Verified" },
+    { "modelId": "deepseek-r1", "score": 49.2, "scoreLabel": "49.2%", "scoreType": "% Resolved", "date": "2025-01", "isVendorReported": true, "setup": "SWE-bench Verified" },
+    { "modelId": "deepseek-v3", "score": 42.0, "scoreLabel": "42.0%", "scoreType": "% Resolved", "date": "2024-12", "isVendorReported": true, "setup": "SWE-bench Verified; agentless framework" }
   ],
   "variants": [
     {

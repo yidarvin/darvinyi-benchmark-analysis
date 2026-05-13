@@ -35,23 +35,16 @@ export default async function AgentDetailPage({ params }: PageProps) {
       {/* Back */}
       <Link
         href="/agents"
-        className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-300 mb-6 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-cyan-400 mb-6 transition-colors"
       >
         ← Back to Agent Evaluations
       </Link>
 
       {/* Header */}
-      <div
-        className={
-          agent.isRequired
-            ? "rounded-xl border border-red-500/20 bg-red-500/5 p-6 mb-8"
-            : "mb-8"
-        }
-      >
+      <div className="mb-8">
         <div className="flex flex-wrap items-center gap-2 mb-3">
-          {agent.isRequired && <Badge color="#ef4444">Required Evaluation</Badge>}
           <Badge color="#71717a">{agent.institution}</Badge>
-          <Badge color="#3b82f6">{agent.year}</Badge>
+          <Badge color="#06b6d4">{agent.year}</Badge>
         </div>
         <h1 className="text-3xl font-bold text-zinc-50 mb-2">{agent.name}</h1>
         <p className="text-base text-zinc-400">{agent.shortDescription}</p>
@@ -215,7 +208,7 @@ export default async function AgentDetailPage({ params }: PageProps) {
           <ul className="space-y-3">
             {agent.keyFindings.map((finding, i) => (
               <li key={i} className="flex gap-3">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 bg-red-400" />
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 bg-cyan-400" />
                 <p className="text-sm text-zinc-400 leading-relaxed">{finding}</p>
               </li>
             ))}

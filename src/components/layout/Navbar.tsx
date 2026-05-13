@@ -19,7 +19,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1 shrink-0">
-          <span className="font-mono font-bold text-zinc-50 text-sm">benchmark</span>
+          <span className="font-mono font-bold text-cyan-400 text-sm">benchmark</span>
           <span className="font-mono text-zinc-500 text-sm">.darvinyi.com</span>
         </Link>
 
@@ -34,7 +34,7 @@ export function Navbar() {
                 className={cn(
                   "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
                   active
-                    ? "bg-zinc-800 text-zinc-50"
+                    ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30"
                     : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
                 )}
               >

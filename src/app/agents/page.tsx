@@ -3,9 +3,6 @@ import { AgentCard } from "@/components/agents/AgentCard";
 import { PageHeader } from "@/components/ui/SectionHeader";
 
 export default function AgentsPage() {
-  const required = ALL_AGENTS.filter((a) => a.isRequired);
-  const additional = ALL_AGENTS.filter((a) => !a.isRequired);
-
   return (
     <div>
       <PageHeader
@@ -26,32 +23,15 @@ export default function AgentsPage() {
         </p>
       </div>
 
-      {/* Required (4 mandatory) */}
-      <section className="mb-12">
-        <div className="flex items-center gap-3 mb-5">
-          <h2 className="text-lg font-bold text-zinc-50">4 Required Evaluations</h2>
-          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/10 border border-red-500/20 text-red-400">
-            Mandatory coverage
-          </span>
-        </div>
-        <div className="grid sm:grid-cols-2 gap-4">
-          {required.map((agent) => (
+      {/* All evaluations */}
+      <section>
+        <h2 className="text-lg font-bold text-zinc-50 mb-5">All Evaluations</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {ALL_AGENTS.map((agent) => (
             <AgentCard key={agent.slug} agent={agent} />
           ))}
         </div>
       </section>
-
-      {/* Additional */}
-      {additional.length > 0 && (
-        <section>
-          <h2 className="text-lg font-bold text-zinc-50 mb-5">Additional Evaluations</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {additional.map((agent) => (
-              <AgentCard key={agent.slug} agent={agent} />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }

@@ -44,14 +44,16 @@
     }
   ],
   "results": [
-    { "modelId": "claude-opus-4-6", "score": 1503, "scoreLabel": "~1503 Elo", "scoreType": "Arena Score", "date": "2026-02", "isVendorReported": false, "setup": "General leaderboard" },
-    { "modelId": "gpt-5", "score": 1490, "scoreLabel": "~1490 Elo", "scoreType": "Arena Score", "date": "2025-08", "isVendorReported": false },
-    { "modelId": "gemini-2-5-pro", "score": 1480, "scoreLabel": "~1480 Elo", "scoreType": "Arena Score", "date": "2025-03", "isVendorReported": false },
-    { "modelId": "grok-4", "score": 1465, "scoreLabel": "~1465 Elo", "scoreType": "Arena Score", "date": "2025-07", "isVendorReported": false },
-    { "modelId": "claude-sonnet-4", "score": 1430, "scoreLabel": "~1430 Elo", "scoreType": "Arena Score", "date": "2025-08", "isVendorReported": false },
-    { "modelId": "gpt-4o", "score": 1380, "scoreLabel": "~1380 Elo", "scoreType": "Arena Score", "date": "2024-11", "isVendorReported": false },
-    { "modelId": "deepseek-v3", "score": 1350, "scoreLabel": "~1350 Elo", "scoreType": "Arena Score", "date": "2024-12", "isVendorReported": false },
-    { "modelId": "llama-4-maverick", "score": 1400, "scoreLabel": "~1400 Elo", "scoreType": "Arena Score", "date": "2025-04", "isVendorReported": false, "notes": "Initial high score; controversy noted" },
+    { "modelId": "claude-opus-4-6", "score": 1503, "scoreLabel": "1496–1503 Elo", "scoreType": "Arena Score", "date": "2026-02", "isVendorReported": false, "setup": "General leaderboard; #1–2 overall" },
+    { "modelId": "claude-opus-4-5", "score": 1468, "scoreLabel": "~1468 Elo", "scoreType": "Arena Score", "date": "2025-11", "isVendorReported": false },
+    { "modelId": "gemini-2-5-pro", "score": 1448, "scoreLabel": "1448 Elo", "scoreType": "Arena Score", "date": "2025-03", "isVendorReported": false, "notes": "#1 in April 2025 before Claude Opus 4 series" },
+    { "modelId": "o3", "score": 1411, "scoreLabel": "~1411 Elo", "scoreType": "Arena Score", "date": "2025-04", "isVendorReported": false },
+    { "modelId": "gpt-5", "score": 1426, "scoreLabel": "~1426 Elo", "scoreType": "Arena Score", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "llama-4-maverick", "score": 1417, "scoreLabel": "~1417 Elo", "scoreType": "Arena Score", "date": "2025-04", "isVendorReported": false, "notes": "High launch score; controversy noted" },
+    { "modelId": "grok-3", "score": 1402, "scoreLabel": "1402 Elo", "scoreType": "Arena Score", "date": "2025-02", "isVendorReported": false },
+    { "modelId": "claude-sonnet-4", "score": 1410, "scoreLabel": "~1410 Elo", "scoreType": "Arena Score", "date": "2025-08", "isVendorReported": false },
+    { "modelId": "gpt-4o", "score": 1345, "scoreLabel": "~1345 Elo", "scoreType": "Arena Score", "date": "2024-11", "isVendorReported": false },
+    { "modelId": "deepseek-v3", "score": 1363, "scoreLabel": "~1363 Elo", "scoreType": "Arena Score", "date": "2024-12", "isVendorReported": false },
     { "modelId": "claude-opus-4-6", "score": 1549, "scoreLabel": "1549 Elo (Coding)", "scoreType": "Coding sub-leaderboard", "date": "2026-02", "isVendorReported": false }
   ],
   "controversies": [

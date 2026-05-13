@@ -52,16 +52,18 @@
     }
   ],
   "results": [
-    { "modelId": "o3", "score": 96.7, "scoreLabel": "96.7%", "scoreType": "% Correct (AIME 2024, 30 problems)", "date": "2025-04", "isVendorReported": true },
-    { "modelId": "o4-mini", "score": 93.4, "scoreLabel": "93.4%", "scoreType": "% Correct (AIME 2024)", "date": "2025-04", "isVendorReported": true },
-    { "modelId": "gpt-5", "score": 94.6, "scoreLabel": "94.6%", "scoreType": "% Correct (AIME 2025)", "date": "2025-08", "isVendorReported": true, "notes": "AIME 2025 (cleaner, less contamination)" },
-    { "modelId": "gemini-2-5-pro", "score": 86.7, "scoreLabel": "86.7%", "scoreType": "% Correct (AIME 2025)", "date": "2025-03", "isVendorReported": true },
-    { "modelId": "grok-4", "score": 88.0, "scoreLabel": "~88%", "scoreType": "% Correct (AIME 2024)", "date": "2025-07", "isVendorReported": true },
-    { "modelId": "claude-opus-4-5", "score": 80.0, "scoreLabel": "80.0%", "scoreType": "% Correct (AIME 2025)", "date": "2025-11", "isVendorReported": true },
-    { "modelId": "deepseek-r1", "score": 79.8, "scoreLabel": "79.8%", "scoreType": "% Correct (AIME 2024)", "date": "2025-01", "isVendorReported": true },
-    { "modelId": "qwen-3-72b", "score": 72.0, "scoreLabel": "~72%", "scoreType": "% Correct (AIME 2025)", "date": "2025-05", "isVendorReported": true },
+    { "modelId": "claude-opus-4-6", "score": 99.79, "scoreLabel": "99.79%", "scoreType": "% Correct (AIME 2025)", "date": "2026-02", "isVendorReported": true, "setup": "Adaptive thinking, max effort" },
+    { "modelId": "grok-4", "score": 100.0, "scoreLabel": "100% (Heavy)", "scoreType": "% Correct (AIME 2025)", "date": "2025-07", "isVendorReported": true, "notes": "Heavy multi-agent mode; standard: 91.7%" },
     { "modelId": "gemini-3-pro", "score": 93.0, "scoreLabel": "~93%", "scoreType": "% Correct (AIME 2024)", "date": "2026-02", "isVendorReported": true },
-    { "modelId": "gpt-4o", "score": 20.0, "scoreLabel": "~20%", "scoreType": "% Correct (AIME 2024)", "date": "2024-11", "isVendorReported": true, "notes": "Pre-reasoning models struggle significantly" }
+    { "modelId": "o3", "score": 96.7, "scoreLabel": "96.7%", "scoreType": "% Correct (AIME 2024)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "gpt-5", "score": 94.6, "scoreLabel": "94.6%", "scoreType": "% Correct (AIME 2025)", "date": "2025-08", "isVendorReported": true, "notes": "AIME 2025 (cleaner, less contamination)" },
+    { "modelId": "o4-mini", "score": 93.4, "scoreLabel": "93.4%", "scoreType": "% Correct (AIME 2024)", "date": "2025-04", "isVendorReported": true },
+    { "modelId": "claude-opus-4-5", "score": 92.77, "scoreLabel": "92.77%", "scoreType": "% Correct (AIME 2025)", "date": "2025-11", "isVendorReported": true, "notes": "Possible contamination flagged by Anthropic" },
+    { "modelId": "grok-4", "score": 91.7, "scoreLabel": "91.7%", "scoreType": "% Correct (AIME 2025, standard)", "date": "2025-07", "isVendorReported": true },
+    { "modelId": "gemini-2-5-pro", "score": 88.0, "scoreLabel": "88.0%", "scoreType": "% Correct (AIME 2025)", "date": "2025-03", "isVendorReported": true },
+    { "modelId": "qwen-3-72b", "score": 79.2, "scoreLabel": "79.2%", "scoreType": "% Correct (AIME 2025)", "date": "2025-05", "isVendorReported": true, "setup": "thinking mode" },
+    { "modelId": "deepseek-r1", "score": 79.8, "scoreLabel": "79.8%", "scoreType": "% Correct (AIME 2024)", "date": "2025-01", "isVendorReported": true },
+    { "modelId": "gpt-4o", "score": 11.0, "scoreLabel": "~11%", "scoreType": "% Correct (AIME 2024)", "date": "2024-11", "isVendorReported": true, "notes": "Pre-reasoning models struggle significantly" }
   ],
   "controversies": [
     "Year dependency: AIME 2024 scores are systematically ~10-15 points higher than AIME 2025 scores for the same model, confirming training contamination on older problems. 'AIME performance' is meaningless without specifying the year.",

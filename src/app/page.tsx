@@ -35,15 +35,15 @@ export default function HomePage() {
       <section className="pt-8 pb-4">
         <div className="max-w-3xl">
           <div className="flex items-center gap-2 mb-5">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-blue-500/10 border border-blue-500/20 text-blue-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
               Updated 2026
             </span>
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold text-zinc-50 leading-tight mb-5">
             The AI Benchmark
             <br />
-            <span className="text-zinc-400">Explorer</span>
+            <span className="text-cyan-400">Explorer</span>
           </h1>
           <p className="text-lg text-zinc-400 leading-relaxed mb-8 max-w-2xl">
             Deep-dives into every major LLM benchmark — what they test, how they
@@ -52,7 +52,7 @@ export default function HomePage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/benchmarks"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-zinc-50 text-zinc-950 font-semibold text-sm hover:bg-zinc-200 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-cyan-500 text-zinc-950 font-semibold text-sm hover:bg-cyan-400 transition-colors"
             >
               Explore Benchmarks
             </Link>
@@ -69,10 +69,10 @@ export default function HomePage() {
       {/* Stats bar */}
       <section>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <StatCard label="Benchmarks" value={ALL_BENCHMARKS.length} color="#3b82f6" />
-          <StatCard label="Agent Evals" value={ALL_AGENTS.length} color="#ef4444" />
-          <StatCard label="Curated Models" value={MODELS.length} color="#10b981" />
-          <StatCard label="Required Evals" value={ALL_AGENTS.filter((a) => a.isRequired).length} sub="APEX · GDPval · RLI · HAPI" color="#f59e0b" />
+          <StatCard label="Benchmarks" value={ALL_BENCHMARKS.length} color="#06b6d4" />
+          <StatCard label="Agent Evals" value={ALL_AGENTS.length} color="#10b981" />
+          <StatCard label="Curated Models" value={MODELS.length} color="#8b5cf6" />
+          <StatCard label="Agentic Benchmarks" value={ALL_AGENTS.length} sub="Real-work evaluations" color="#f59e0b" />
         </div>
       </section>
 
@@ -89,7 +89,7 @@ export default function HomePage() {
         <div className="grid sm:grid-cols-3 gap-4">
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
             <p className="text-xs text-zinc-500 mb-1">SWE-bench Pro</p>
-            <p className="text-3xl font-bold text-blue-400 font-mono mb-1">
+            <p className="text-3xl font-bold text-cyan-400 font-mono mb-1">
               {sweBenchProTop?.scoreLabel ?? "58.6%"}
             </p>
             <p className="text-xs text-zinc-500">Resolving real GitHub issues</p>
@@ -244,29 +244,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Required Agent Evals callout */}
+      {/* Agent Evals callout */}
       <section>
-        <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-6">
+        <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-6">
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0 text-red-400 font-bold text-lg">
-              4
+            <div className="w-10 h-10 rounded-lg bg-cyan-500/15 flex items-center justify-center shrink-0 text-cyan-400 font-bold text-lg">
+              {ALL_AGENTS.length}
             </div>
             <div>
               <h2 className="text-lg font-bold text-zinc-50 mb-1">
-                4 Required Agentic Evaluations
+                Agentic Evaluations
               </h2>
               <p className="text-sm text-zinc-400 mb-4">
-                These four systems evaluate AI on real, economically-grounded work — not synthetic tasks.
+                These systems evaluate AI on real, economically-grounded work — not synthetic tasks.
                 They represent the most rigorous tests of whether AI can actually replace human labor.
               </p>
               <div className="grid sm:grid-cols-2 gap-2 mb-4">
-                {ALL_AGENTS.filter((a) => a.isRequired).map((agent) => (
+                {ALL_AGENTS.map((agent) => (
                   <Link
                     key={agent.slug}
                     href={`/agents/${agent.slug}`}
-                    className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 hover:border-zinc-600 hover:bg-zinc-800 transition-colors group"
+                    className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 hover:border-cyan-500/40 hover:bg-zinc-800 transition-colors group"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />
                     <span className="text-sm font-medium text-zinc-200 group-hover:text-zinc-50">
                       {agent.name}
                     </span>
@@ -278,7 +278,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/agents"
-                className="text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
+                className="text-sm font-medium text-cyan-400 hover:text-cyan-300 transition-colors"
               >
                 Explore all agent evaluations →
               </Link>

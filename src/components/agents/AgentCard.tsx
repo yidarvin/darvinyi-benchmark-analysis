@@ -19,18 +19,12 @@ export function AgentCard({ agent }: AgentCardProps) {
       <div
         className={cn(
           "h-full rounded-xl border bg-zinc-900 p-5 transition-colors",
-          "hover:border-zinc-700 hover:bg-zinc-800/50",
-          agent.isRequired ? "border-red-500/30" : "border-zinc-800"
+          "border-zinc-800 hover:border-zinc-700 hover:bg-zinc-800/50"
         )}
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="flex flex-wrap gap-1.5">
-            {agent.isRequired && (
-              <Badge color="#ef4444" size="sm">
-                Required
-              </Badge>
-            )}
             <Badge color="#71717a" size="sm">
               {agent.institution}
             </Badge>
