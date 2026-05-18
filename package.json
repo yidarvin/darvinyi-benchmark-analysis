@@ -8,18 +8,25 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "test:storage": "node --experimental-strip-types --no-warnings scripts/test-storage.ts"
+    "test:storage": "node --experimental-strip-types --no-warnings scripts/test-storage.ts",
+    "agent:dry-run": "node --experimental-strip-types --no-warnings scripts/run-agent.ts"
   },
   "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.143",
+    "@anthropic-ai/sdk": "^0.96.0",
     "clsx": "^2.1.1",
     "next": "16.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^2.15.3",
-    "tailwind-merge": "^3.3.0"
+    "tailwind-merge": "^3.3.0",
+    "zod": "^4.4.3"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["sharp", "unrs-resolver"]
+    "onlyBuiltDependencies": [
+      "sharp",
+      "unrs-resolver"
+    ]
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
