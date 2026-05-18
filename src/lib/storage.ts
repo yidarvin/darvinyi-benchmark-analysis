@@ -119,6 +119,49 @@ export async function writeCrawlState(state: CrawlState): Promise<void> {
   );
 }
 
+// Read-modify-write the crawl state inside a single lock acquisition. The
+// transformer runs with the most recent on-disk state and its return value is
+// persisted atomically. Used by the trigger route to check cooldown and flip
+// to "running" without a race between two concurrent POSTs.
+export async function updateCrawlState(
+  transform: (current: CrawlState) => CrawlState | Promise<CrawlState>,
+): Promise<CrawlState> {
+  return withLock(crawlStatePath(), async () => {
+    let current: CrawlState;
+    if (await fileExists(crawlStatePath())) {
+      current = await readJson<CrawlState>(crawlStatePath());
+    } else {
+      current = { ...DEFAULT_STATE, runs: [] };
+    }
+    const next = await transform(current);
+    await atomicWriteJson(crawlStatePath(), next);
+    return next;
+  });
+}
+
+// Same pattern for the benchmarks file. Keeps the meta block intact across
+// writes.
+export async function updateBenchmarks(
+  transform: (current: BenchmarkRecord[]) => BenchmarkRecord[] | Promise<BenchmarkRecord[]>,
+): Promise<BenchmarkRecord[]> {
+  return withLock(benchmarksPath(), async () => {
+    let meta: BenchmarksFile["meta"] = { version: "1.0" };
+    let benchmarks: BenchmarkRecord[] = [];
+    if (await fileExists(benchmarksPath())) {
+      try {
+        const existing = await readJson<BenchmarksFile>(benchmarksPath());
+        if (existing?.meta) meta = existing.meta;
+        benchmarks = existing?.benchmarks ?? [];
+      } catch {
+        // Corrupt — start from empty list but keep default meta.
+      }
+    }
+    const next = await transform(benchmarks);
+    await atomicWriteJson(benchmarksPath(), { meta, benchmarks: next });
+    return next;
+  });
+}
+
 // ─── Bootstrap ────────────────────────────────────────────────────────────────
 
 // Where to find the bundled seed file. Resolution order:

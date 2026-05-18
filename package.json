@@ -9,6 +9,7 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test:storage": "node --experimental-strip-types --no-warnings scripts/test-storage.ts",
+    "test:merge": "node --experimental-strip-types --no-warnings scripts/test-merge.ts",
     "agent:dry-run": "node --experimental-strip-types --no-warnings scripts/run-agent.ts"
   },
   "dependencies": {
