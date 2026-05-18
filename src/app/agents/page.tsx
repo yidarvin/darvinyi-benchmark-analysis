@@ -1,11 +1,11 @@
-import { loadAgents } from "@/data/loaders";
+import { loadAgentCardItems } from "@/data/loaders";
 import { AgentCard } from "@/components/agents/AgentCard";
 import { CrawlUpdateButton } from "@/components/CrawlUpdateButton";
 
 export const dynamic = "force-dynamic";
 
 export default async function AgentsPage() {
-  const agents = await loadAgents();
+  const items = await loadAgentCardItems();
 
   return (
     <div>
@@ -44,8 +44,8 @@ export default async function AgentsPage() {
       <section>
         <h2 className="text-lg font-bold text-zinc-50 mb-5">All Evaluations</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {agents.map((agent) => (
-            <AgentCard key={agent.slug} agent={agent} />
+          {items.map(({ agent, isNew }) => (
+            <AgentCard key={agent.slug} agent={agent} isNew={isNew} />
           ))}
         </div>
       </section>

@@ -310,3 +310,31 @@ export interface AgentsFile {
   };
   agents: AgentRecord[];
 }
+
+// ─── Render-layer crawl integration ───────────────────────────────────────────
+// Crawl-discovered benchmarks land on disk as sparse BenchmarkRecords (6 fields
+// from the agent's proposal vs. ~30 in the curated Benchmark shape). To surface
+// them on /benchmarks without faking the rich fields, the list page accepts a
+// discriminated union: "full" wraps a curated Benchmark; "crawl-stub" carries
+// just what the agent gave us. Both carry an `isNew` flag for the last-run
+// badge.
+
+export interface BenchmarkCardFull {
+  kind: "full";
+  benchmark: Benchmark;
+  isNew: boolean;
+}
+
+export interface BenchmarkCardStub {
+  kind: "crawl-stub";
+  slug: string;
+  name: string;
+  shortDescription: string;
+  category: string;              // free-form string from the crawl agent
+  year: number | null;
+  sourceUrl: string | null;
+  notes: string | null;
+  isNew: boolean;
+}
+
+export type BenchmarkCardItem = BenchmarkCardFull | BenchmarkCardStub;

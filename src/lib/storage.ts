@@ -446,3 +446,14 @@ export async function recoverInterruptedRuns(): Promise<void> {
   await withLock(crawlStatePath(), recoverInterruptedRun);
   await withLock(agentCrawlStatePath(), recoverInterruptedAgentRun);
 }
+
+// Returns the run_id of the most recent SUCCESSFUL run, or null if there
+// hasn't been one yet. Used by the render layer to flag items added by that
+// run as "NEW" — picking success (not just last) so a failed run doesn't
+// wipe out the badge from the previous good crawl.
+export function latestSuccessfulRunId(state: CrawlState): string | null {
+  for (const run of state.runs) {
+    if (run.status === "success") return run.id;
+  }
+  return null;
+}

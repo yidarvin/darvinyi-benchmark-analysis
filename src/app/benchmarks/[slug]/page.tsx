@@ -1,14 +1,22 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ALL_BENCHMARKS, BENCHMARK_MAP } from "@/data";
+import { ALL_BENCHMARKS } from "@/data";
+import { loadBenchmarkBySlug } from "@/data/loaders";
 import { Badge } from "@/components/ui/Badge";
+import { NewBadge } from "@/components/ui/NewBadge";
 import { SaturationBadge } from "@/components/benchmarks/SaturationBadge";
 import { BenchmarkTable } from "@/components/benchmarks/BenchmarkTable";
 import { ExampleBlock } from "@/components/benchmarks/ExampleBlock";
 import { ScoreLineChartWrapper } from "@/components/charts/ScoreLineChartWrapper";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { categoryColor, categoryLabel, saturationColor } from "@/lib/utils";
+import type { BenchmarkCardItem } from "@/lib/types";
+
+// Page is dynamic so crawl-added stub slugs resolve at request time without a
+// rebuild. We still pre-render the curated slugs via generateStaticParams so
+// the well-known paths are fast.
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -20,19 +28,24 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const benchmark = BENCHMARK_MAP[slug];
-  if (!benchmark) return {};
-  return {
-    title: benchmark.name,
-    description: benchmark.shortDescription,
-  };
+  const item = await loadBenchmarkBySlug(slug);
+  if (!item) return {};
+  const name = item.kind === "full" ? item.benchmark.name : item.name;
+  const desc =
+    item.kind === "full" ? item.benchmark.shortDescription : item.shortDescription;
+  return { title: name, description: desc };
 }
 
 export default async function BenchmarkDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const benchmark = BENCHMARK_MAP[slug];
-  if (!benchmark) notFound();
+  const item = await loadBenchmarkBySlug(slug);
+  if (!item) notFound();
 
+  if (item.kind === "crawl-stub") {
+    return <StubPage item={item} />;
+  }
+
+  const benchmark = item.benchmark;
   const isContaminated = benchmark.saturationStatus === "contaminated";
 
   return (
@@ -315,6 +328,89 @@ export default async function BenchmarkDetailPage({ params }: PageProps) {
             </a>
           )}
         </div>
+      </section>
+    </div>
+  );
+}
+
+// Minimal detail page for crawl-discovered benchmarks. We render only the
+// fields the agent gave us (name, short description, category, year, source
+// link, notes) and explicitly call out that the entry is awaiting curation —
+// rather than faking taskAnatomy / results / examples that the agent doesn't
+// produce.
+function StubPage({
+  item,
+}: {
+  item: Extract<BenchmarkCardItem, { kind: "crawl-stub" }>;
+}) {
+  return (
+    <div className="max-w-3xl">
+      <Link
+        href="/benchmarks"
+        className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-cyan-400 mb-6 transition-colors"
+      >
+        ← Back to Benchmarks
+      </Link>
+
+      <div className="rounded-xl border border-dashed border-zinc-700 bg-zinc-900/60 p-6 mb-8">
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          {item.category && (
+            <Badge color="#71717a" size="sm">
+              {item.category}
+            </Badge>
+          )}
+          {item.isNew && <NewBadge />}
+          <span className="text-xs text-zinc-500 italic">Pending curation</span>
+        </div>
+        <h1 className="text-3xl font-bold text-zinc-100 mb-2">{item.name}</h1>
+        {item.shortDescription && (
+          <p className="text-base text-zinc-400">{item.shortDescription}</p>
+        )}
+        {item.year !== null && (
+          <div className="flex flex-wrap gap-4 mt-5 pt-5 border-t border-zinc-800">
+            <div>
+              <span className="text-xs text-zinc-600 block">Year</span>
+              <span className="text-sm font-mono font-semibold text-zinc-200">
+                {item.year}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <section className="mb-10">
+        <SectionHeader
+          title="Why our crawl picked it up"
+          description="Notes the discovery agent wrote when proposing this benchmark."
+        />
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
+          <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
+            {item.notes || "(no notes recorded)"}
+          </p>
+        </div>
+      </section>
+
+      {item.sourceUrl && (
+        <section className="mb-10">
+          <SectionHeader title="Source" />
+          <a
+            href={item.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-700 bg-zinc-900 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:border-zinc-600 transition-colors"
+          >
+            Primary source ↗
+          </a>
+        </section>
+      )}
+
+      <section className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+        <p className="text-sm text-zinc-400 leading-relaxed">
+          This entry was added by an automated crawl and hasn&apos;t been
+          curated yet. Once it&apos;s reviewed and promoted into the bundled
+          set, you&apos;ll see task anatomy, examples, scores, and richer
+          context here.
+        </p>
       </section>
     </div>
   );

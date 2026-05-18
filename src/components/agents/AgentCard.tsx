@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
+import { NewBadge } from "@/components/ui/NewBadge";
 import { cn } from "@/lib/utils";
 import type { AgentSystem } from "@/lib/types";
 import { MODEL_MAP } from "@/data/models";
 
 interface AgentCardProps {
   agent: AgentSystem;
+  isNew?: boolean;
 }
 
-export function AgentCard({ agent }: AgentCardProps) {
+export function AgentCard({ agent, isNew = false }: AgentCardProps) {
   const topResult = agent.results
     .slice()
     .sort((a, b) => b.score - a.score)[0];
@@ -28,6 +30,7 @@ export function AgentCard({ agent }: AgentCardProps) {
             <Badge color="#71717a" size="sm">
               {agent.institution}
             </Badge>
+            {isNew && <NewBadge />}
           </div>
           <span className="text-xs text-zinc-600 shrink-0">{agent.year}</span>
         </div>
