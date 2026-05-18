@@ -73,7 +73,7 @@ export class AgentOutputError extends Error {
 
 const DEFAULT_MODEL = "claude-sonnet-4-6";
 const DEFAULT_MAX_TURNS = 20;
-const DEFAULT_TIMEOUT_MS = 5 * 60 * 1000;
+const DEFAULT_TIMEOUT_MS = 15 * 60 * 1000;
 const RAW_LOG_MAX_BYTES = 10 * 1024;
 const MCP_SERVER_NAME = "crawl-tools";
 
@@ -273,7 +273,7 @@ export async function runCrawlAgent(
     onProgress,
     model = process.env.CRAWL_MODEL ?? DEFAULT_MODEL,
     maxTurns = Number(process.env.CRAWL_MAX_TURNS ?? DEFAULT_MAX_TURNS),
-    timeoutMs = DEFAULT_TIMEOUT_MS,
+    timeoutMs = Number(process.env.CRAWL_TIMEOUT_MS ?? DEFAULT_TIMEOUT_MS),
     apiKey = process.env.ANTHROPIC_API_KEY,
   } = opts;
 
@@ -287,7 +287,9 @@ export async function runCrawlAgent(
   const mcpServer = buildMcpServer(existingBenchmarks);
 
   const abortController = new AbortController();
+  let timedOut = false;
   const timeoutHandle = setTimeout(() => {
+    timedOut = true;
     abortController.abort(new Error(`crawl agent timed out after ${timeoutMs}ms`));
   }, timeoutMs);
 
@@ -382,6 +384,13 @@ export async function runCrawlAgent(
       }
     }
   } catch (err) {
+    if (timedOut) {
+      const timeoutErr = new Error(
+        `crawl agent timed out after ${timeoutMs}ms (no final JSON received)`,
+      );
+      emit({ type: "agent_error", message: timeoutErr.message });
+      throw timeoutErr;
+    }
     const detail = err instanceof Error ? err.message : String(err);
     emit({ type: "agent_error", message: detail });
     throw err;
