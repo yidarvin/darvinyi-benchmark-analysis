@@ -323,6 +323,11 @@ export async function runCrawlAgent(
         permissionMode: "bypassPermissions",
         allowDangerouslySkipPermissions: true,
         abortController,
+        // Next.js standalone output drops the SDK's optional native binary, so
+        // in the container we point at the copy staged by the Dockerfile.
+        ...(process.env.CLAUDE_CODE_EXECUTABLE
+          ? { pathToClaudeCodeExecutable: process.env.CLAUDE_CODE_EXECUTABLE }
+          : {}),
         // Pass the API key explicitly into the subprocess Claude Code spawns.
         env: { ...process.env, ANTHROPIC_API_KEY: apiKey },
       },

@@ -433,6 +433,9 @@ export async function runAgentCrawlAgent(
         permissionMode: "bypassPermissions",
         allowDangerouslySkipPermissions: true,
         abortController,
+        ...(process.env.CLAUDE_CODE_EXECUTABLE
+          ? { pathToClaudeCodeExecutable: process.env.CLAUDE_CODE_EXECUTABLE }
+          : {}),
         env: { ...process.env, ANTHROPIC_API_KEY: apiKey },
       },
     });

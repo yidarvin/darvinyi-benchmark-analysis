@@ -8,6 +8,12 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
+# Extract the agent SDK's linux-x64-musl native binary to a stable path.
+# Next.js `output: "standalone"` drops it because the SDK resolves it dynamically.
+RUN mkdir -p /app/.claude-bin && \
+    cp node_modules/.pnpm/@anthropic-ai+claude-agent-sdk-linux-x64-musl@*/node_modules/@anthropic-ai/claude-agent-sdk-linux-x64-musl/claude /app/.claude-bin/claude && \
+    chmod +x /app/.claude-bin/claude
+
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -20,6 +26,7 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV DATA_DIR=/data
+ENV CLAUDE_CODE_EXECUTABLE=/app/.claude-bin/claude
 
 # su-exec lets the entrypoint fix /data ownership as root then drop privileges.
 RUN apk add --no-cache su-exec
@@ -30,6 +37,7 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=deps --chown=nextjs:nodejs /app/.claude-bin /app/.claude-bin
 
 # Seed file used by src/lib/storage.ts on first boot to populate $DATA_DIR.
 # Not the runtime source of truth — the Railway Volume at /data is.
