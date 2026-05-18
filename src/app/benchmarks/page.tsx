@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { ALL_BENCHMARKS } from "@/data";
 import { CATEGORIES } from "@/data/categories";
 import { BenchmarkCard } from "@/components/benchmarks/BenchmarkCard";
-import { PageHeader } from "@/components/ui/SectionHeader";
+import { CrawlUpdateButton } from "@/components/CrawlUpdateButton";
 import { cn, categoryColor } from "@/lib/utils";
 import type { BenchmarkCategory } from "@/lib/types";
 
@@ -41,10 +41,15 @@ export default function BenchmarksPage() {
 
   return (
     <div>
-      <PageHeader
-        title="Benchmarks"
-        description="Every major LLM benchmark explained — what it tests, how tasks work, and where models stand."
-      />
+      <div className="mb-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+        <div>
+          <h1 className="text-3xl font-bold text-zinc-50 mb-2">Benchmarks</h1>
+          <p className="text-base text-zinc-400 max-w-2xl">
+            Every major LLM benchmark explained — what it tests, how tasks work, and where models stand.
+          </p>
+        </div>
+        <CrawlUpdateButton />
+      </div>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
