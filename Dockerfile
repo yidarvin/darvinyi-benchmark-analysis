@@ -21,6 +21,9 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV DATA_DIR=/data
 
+# su-exec lets the entrypoint fix /data ownership as root then drop privileges.
+RUN apk add --no-cache su-exec
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
@@ -32,7 +35,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Not the runtime source of truth — the Railway Volume at /data is.
 COPY --from=builder --chown=nextjs:nodejs /app/benchmarks.json /app/seed/benchmarks.json
 
-USER nextjs
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE 3000
 
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["node", "server.js"]
