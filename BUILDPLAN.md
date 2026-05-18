@@ -485,3 +485,13 @@ Key facts to preserve accurately in any UI copy:
 Run `pnpm install` first, then build all components and pages. After building, run `pnpm dev` to verify it runs. The site should compile with `pnpm build` with zero TypeScript errors.
 
 Good luck. The data is ready. Build something great.
+
+---
+
+## Agentic Crawl Feature
+
+An operator-triggered, server-side crawl that asks Claude (via `@anthropic-ai/claude-agent-sdk`) to discover new LLM/agent benchmarks, then deterministically merges any genuinely new proposals into a Railway-Volume-backed `benchmarks.json`. The trigger is async (the route returns `202` and the client polls `/api/crawl/status`), gated by a 24-hour cooldown from the *completion* of the previous successful run, and survives container restarts via a recovery routine in `src/lib/storage.ts`. The button lives in the site UI; the volume is mounted at `/data` and seeded from the repo's bundled `benchmarks.json` on first boot.
+
+- Design / contracts: [context/CRAWL_FEATURE.md](context/CRAWL_FEATURE.md)
+- Railway dashboard checklist: [context/RAILWAY_SETUP.md](context/RAILWAY_SETUP.md)
+- Production smoke test: [scripts/smoke-prod.sh](scripts/smoke-prod.sh)

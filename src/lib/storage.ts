@@ -182,7 +182,10 @@ async function resolveSeedPath(): Promise<string | null> {
 
 async function seedBenchmarksIfMissing(): Promise<void> {
   const target = benchmarksPath();
-  if (await fileExists(target)) return;
+  if (await fileExists(target)) {
+    console.log(`[seed] benchmarks.json already present at ${target} — skipping seed`);
+    return;
+  }
   const seed = await resolveSeedPath();
   if (!seed) {
     throw new Error(
@@ -191,17 +194,22 @@ async function seedBenchmarksIfMissing(): Promise<void> {
     );
   }
   await fs.mkdir(path.dirname(target), { recursive: true });
-  // Copy via read+atomic-write rather than fs.copyFile so we end up with
-  // exactly one canonical writer for this path.
   const body = await fs.readFile(seed, "utf8");
   const parsed = JSON.parse(body) as BenchmarksFile;
   await atomicWriteJson(target, parsed);
+  console.log(
+    `[seed] seeded benchmarks.json from repo copy: ${seed} -> ${target} (${parsed.benchmarks?.length ?? 0} records)`,
+  );
 }
 
 async function seedCrawlStateIfMissing(): Promise<void> {
   const target = crawlStatePath();
-  if (await fileExists(target)) return;
+  if (await fileExists(target)) {
+    console.log(`[seed] crawl_state.json already present at ${target} — skipping seed`);
+    return;
+  }
   await atomicWriteJson(target, DEFAULT_STATE);
+  console.log(`[seed] initialized empty crawl_state.json at ${target}`);
 }
 
 // If the process died mid-run, the on-disk state still says "running" with
@@ -232,9 +240,13 @@ async function recoverInterruptedRun(): Promise<void> {
     current_run_id: null,
   };
   await atomicWriteJson(crawlStatePath(), recovered);
+  console.log(
+    `[seed] recovered interrupted run ${state.current_run_id} -> marked failed`,
+  );
 }
 
 export async function ensureSeeded(): Promise<void> {
+  console.log(`[seed] ensuring data dir at ${dataDir()}`);
   await fs.mkdir(dataDir(), { recursive: true });
   await withLock(benchmarksPath(), seedBenchmarksIfMissing);
   await withLock(crawlStatePath(), async () => {
