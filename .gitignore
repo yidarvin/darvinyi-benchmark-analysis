@@ -39,3 +39,6 @@ next-env.d.ts
 # Misc research files (not part of the app)
 benchmarks.json
 frontier_model_benchmarks.md
+
+# Local crawl persistence (default DATA_DIR for `pnpm dev`)
+.data/

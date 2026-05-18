@@ -19,6 +19,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+ENV DATA_DIR=/data
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -26,6 +27,10 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Seed file used by src/lib/storage.ts on first boot to populate $DATA_DIR.
+# Not the runtime source of truth — the Railway Volume at /data is.
+COPY --from=builder --chown=nextjs:nodejs /app/benchmarks.json /app/seed/benchmarks.json
 
 USER nextjs
 EXPOSE 3000

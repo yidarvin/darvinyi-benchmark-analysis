@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test:storage": "node --experimental-strip-types --no-warnings scripts/test-storage.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

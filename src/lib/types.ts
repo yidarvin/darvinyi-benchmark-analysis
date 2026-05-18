@@ -223,3 +223,69 @@ export interface CategoryMeta {
   icon: string;                 // Lucide icon name
   benchmarkCount?: number;
 }
+
+// ─── Crawl Persistence Types ──────────────────────────────────────────────────
+// These describe the snake_case rich research dump stored on the Railway
+// volume at $DATA_DIR/benchmarks.json, and the crawl bookkeeping file at
+// $DATA_DIR/crawl_state.json. They are intentionally separate from the
+// camelCase site-render Benchmark type above. See context/CRAWL_FEATURE.md.
+
+export interface CrawlProvenance {
+  discovered_at: string;        // ISO-8601
+  run_id: string;
+  notes?: string;
+}
+
+// The rich record is highly nested and not fully typed — only the fields the
+// merger and reader actually need are pinned. Unknown extra fields pass through.
+export interface BenchmarkRecord {
+  id: string;
+  name: string;
+  slug: string;
+  full_name?: string;
+  category?: string;
+  tags?: string[];
+  description?: {
+    short?: string;
+    full?: string;
+    motivation?: string;
+    creators?: string;
+    year?: number;
+  } & Record<string, unknown>;
+  source_url?: string;
+  _crawl?: CrawlProvenance;
+  [key: string]: unknown;       // preserve unknown fields verbatim
+}
+
+export interface BenchmarksFile {
+  meta: {
+    generated?: string;
+    description?: string;
+    version?: string;
+    [key: string]: unknown;
+  };
+  benchmarks: BenchmarkRecord[];
+}
+
+export type CrawlRunStatus = "running" | "success" | "failed";
+export type CrawlStateStatus = "idle" | CrawlRunStatus;
+
+export interface CrawlRun {
+  id: string;
+  started_at: string;           // ISO-8601
+  completed_at: string | null;  // ISO-8601
+  status: CrawlRunStatus;
+  candidates_found: number;
+  added: number;
+  skipped_duplicates: number;
+  error: string | null;
+  log_summary: string;
+}
+
+export interface CrawlState {
+  last_started_at: string | null;
+  last_completed_at: string | null;
+  last_status: CrawlStateStatus;
+  current_run_id: string | null;
+  runs: CrawlRun[];             // newest first, capped at 20
+}
