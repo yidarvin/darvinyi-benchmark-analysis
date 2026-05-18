@@ -434,13 +434,15 @@ export async function ensureSeeded(): Promise<void> {
   console.log(`[seed] ensuring data dir at ${dataDir()}`);
   await fs.mkdir(dataDir(), { recursive: true });
   await withLock(benchmarksPath(), seedBenchmarksIfMissing);
-  await withLock(crawlStatePath(), async () => {
-    await seedCrawlStateIfMissing();
-    await recoverInterruptedRun();
-  });
+  await withLock(crawlStatePath(), seedCrawlStateIfMissing);
   await withLock(agentsPath(), seedAgentsIfMissing);
-  await withLock(agentCrawlStatePath(), async () => {
-    await seedAgentCrawlStateIfMissing();
-    await recoverInterruptedAgentRun();
-  });
+  await withLock(agentCrawlStatePath(), seedAgentCrawlStateIfMissing);
+}
+
+// Run only at process boot — recovers runs left in "running" by a crash or
+// restart. Must NOT be called from request handlers, since it would clobber
+// an actively-running crawl whose state is legitimately "running".
+export async function recoverInterruptedRuns(): Promise<void> {
+  await withLock(crawlStatePath(), recoverInterruptedRun);
+  await withLock(agentCrawlStatePath(), recoverInterruptedAgentRun);
 }

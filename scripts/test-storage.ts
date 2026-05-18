@@ -15,6 +15,7 @@ import {
   ensureSeeded,
   readBenchmarks,
   readCrawlState,
+  recoverInterruptedRuns,
   writeCrawlState,
 } from "../src/lib/storage.ts";
 import type { CrawlState } from "../src/lib/types.ts";
@@ -108,9 +109,9 @@ async function main() {
   console.log(`[smoke] crawl state round-trip OK`);
 
   // ── Interrupted-run recovery ──────────────────────────────────────────
-  // ensureSeeded() should detect last_status === "running" with no live
-  // work and mark it failed. Simulate a fresh boot by calling it again.
-  await ensureSeeded();
+  // recoverInterruptedRuns() should detect last_status === "running" with
+  // no live work and mark it failed. Simulate a fresh boot by calling it.
+  await recoverInterruptedRuns();
   const recovered = await readCrawlState();
   assert(
     recovered.last_status === "failed",
