@@ -1,13 +1,31 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import type {
+  AgentRecord,
+  AgentsFile,
+  AgentSystem,
   BenchmarkRecord,
   BenchmarksFile,
   CrawlState,
 } from "@/lib/types";
 
+// Bundled per-agent source of truth — imported here so Next bundles them into
+// the standalone build. Used as the seed for $DATA_DIR/agents.json on first
+// boot. The crawl writes additions back into the data file, not these.
+// Relative paths (not the `@/` alias) plus an explicit `with { type: "json" }`
+// attribute so this module is also runnable under plain Node for the smoke
+// tests in scripts/.
+import mercorApex from "../data/agents/mercor-apex.json" with { type: "json" };
+import gdpval from "../data/agents/gdpval.json" with { type: "json" };
+import rli from "../data/agents/rli.json" with { type: "json" };
+import upworkHapi from "../data/agents/upwork-hapi.json" with { type: "json" };
+import metrTimeHorizon from "../data/agents/metr-time-horizon.json" with { type: "json" };
+import bigLawBench from "../data/agents/biglaw-bench.json" with { type: "json" };
+
 const BENCHMARKS_FILENAME = "benchmarks.json";
 const CRAWL_STATE_FILENAME = "crawl_state.json";
+const AGENTS_FILENAME = "agents.json";
+const AGENT_CRAWL_STATE_FILENAME = "agent_crawl_state.json";
 
 const DEFAULT_DATA_DIR = "./.data";
 const DEFAULT_STATE: CrawlState = {
@@ -28,6 +46,14 @@ function benchmarksPath(): string {
 
 function crawlStatePath(): string {
   return path.join(dataDir(), CRAWL_STATE_FILENAME);
+}
+
+function agentsPath(): string {
+  return path.join(dataDir(), AGENTS_FILENAME);
+}
+
+function agentCrawlStatePath(): string {
+  return path.join(dataDir(), AGENT_CRAWL_STATE_FILENAME);
 }
 
 // Single-promise queue per file path. Chains async writers so two concurrent
@@ -102,6 +128,55 @@ export async function writeBenchmarks(list: BenchmarkRecord[]): Promise<void> {
   });
 }
 
+// ─── Agents ───────────────────────────────────────────────────────────────────
+
+export async function readAgents(): Promise<AgentRecord[]> {
+  return withLock(agentsPath(), async () => {
+    const file = await readJson<AgentsFile>(agentsPath());
+    return file.agents ?? [];
+  });
+}
+
+export async function readAgentsFile(): Promise<AgentsFile> {
+  return withLock(agentsPath(), () => readJson<AgentsFile>(agentsPath()));
+}
+
+export async function writeAgents(list: AgentRecord[]): Promise<void> {
+  return withLock(agentsPath(), async () => {
+    let meta: AgentsFile["meta"] = { version: "1.0" };
+    if (await fileExists(agentsPath())) {
+      try {
+        const existing = await readJson<AgentsFile>(agentsPath());
+        if (existing?.meta) meta = existing.meta;
+      } catch {
+        // Corrupt — fall through to default meta.
+      }
+    }
+    await atomicWriteJson(agentsPath(), { meta, agents: list });
+  });
+}
+
+export async function updateAgents(
+  transform: (current: AgentRecord[]) => AgentRecord[] | Promise<AgentRecord[]>,
+): Promise<AgentRecord[]> {
+  return withLock(agentsPath(), async () => {
+    let meta: AgentsFile["meta"] = { version: "1.0" };
+    let agents: AgentRecord[] = [];
+    if (await fileExists(agentsPath())) {
+      try {
+        const existing = await readJson<AgentsFile>(agentsPath());
+        if (existing?.meta) meta = existing.meta;
+        agents = existing?.agents ?? [];
+      } catch {
+        // Corrupt — start from empty list but keep default meta.
+      }
+    }
+    const next = await transform(agents);
+    await atomicWriteJson(agentsPath(), { meta, agents: next });
+    return next;
+  });
+}
+
 // ─── Crawl state ──────────────────────────────────────────────────────────────
 
 export async function readCrawlState(): Promise<CrawlState> {
@@ -117,6 +192,41 @@ export async function writeCrawlState(state: CrawlState): Promise<void> {
   return withLock(crawlStatePath(), () =>
     atomicWriteJson(crawlStatePath(), state),
   );
+}
+
+// ─── Agent crawl state ────────────────────────────────────────────────────────
+// Parallel to the benchmark crawl state but in its own file so the two crawls
+// have independent cooldowns and run histories.
+
+export async function readAgentCrawlState(): Promise<CrawlState> {
+  return withLock(agentCrawlStatePath(), async () => {
+    if (!(await fileExists(agentCrawlStatePath()))) {
+      return { ...DEFAULT_STATE, runs: [] };
+    }
+    return readJson<CrawlState>(agentCrawlStatePath());
+  });
+}
+
+export async function writeAgentCrawlState(state: CrawlState): Promise<void> {
+  return withLock(agentCrawlStatePath(), () =>
+    atomicWriteJson(agentCrawlStatePath(), state),
+  );
+}
+
+export async function updateAgentCrawlState(
+  transform: (current: CrawlState) => CrawlState | Promise<CrawlState>,
+): Promise<CrawlState> {
+  return withLock(agentCrawlStatePath(), async () => {
+    let current: CrawlState;
+    if (await fileExists(agentCrawlStatePath())) {
+      current = await readJson<CrawlState>(agentCrawlStatePath());
+    } else {
+      current = { ...DEFAULT_STATE, runs: [] };
+    }
+    const next = await transform(current);
+    await atomicWriteJson(agentCrawlStatePath(), next);
+    return next;
+  });
 }
 
 // Read-modify-write the crawl state inside a single lock acquisition. The
@@ -212,6 +322,81 @@ async function seedCrawlStateIfMissing(): Promise<void> {
   console.log(`[seed] initialized empty crawl_state.json at ${target}`);
 }
 
+// Bundled agents source — written to $DATA_DIR/agents.json on first boot.
+// Cast to AgentRecord[] (a superset of AgentSystem) so the data file's
+// shape matches what readAgents() returns. The static JSON is the source
+// of truth until the agent crawl writes any additions.
+const BUNDLED_AGENTS: AgentRecord[] = [
+  mercorApex,
+  gdpval,
+  rli,
+  upworkHapi,
+  metrTimeHorizon,
+  bigLawBench,
+] as AgentSystem[] as AgentRecord[];
+
+async function seedAgentsIfMissing(): Promise<void> {
+  const target = agentsPath();
+  if (await fileExists(target)) {
+    console.log(`[seed] agents.json already present at ${target} — skipping seed`);
+    return;
+  }
+  const payload: AgentsFile = {
+    meta: {
+      generated: new Date().toISOString().slice(0, 10),
+      description:
+        "Agent evaluation systems. Seeded from src/data/agents/*.json; extended by the agent crawl.",
+      version: "1.0",
+    },
+    agents: BUNDLED_AGENTS,
+  };
+  await fs.mkdir(path.dirname(target), { recursive: true });
+  await atomicWriteJson(target, payload);
+  console.log(
+    `[seed] seeded agents.json from bundled imports -> ${target} (${BUNDLED_AGENTS.length} records)`,
+  );
+}
+
+async function seedAgentCrawlStateIfMissing(): Promise<void> {
+  const target = agentCrawlStatePath();
+  if (await fileExists(target)) {
+    console.log(`[seed] agent_crawl_state.json already present at ${target} — skipping seed`);
+    return;
+  }
+  await atomicWriteJson(target, DEFAULT_STATE);
+  console.log(`[seed] initialized empty agent_crawl_state.json at ${target}`);
+}
+
+async function recoverInterruptedAgentRun(): Promise<void> {
+  const state = await readJson<CrawlState>(agentCrawlStatePath()).catch(
+    () => null,
+  );
+  if (!state) return;
+  if (state.last_status !== "running") return;
+  const now = new Date().toISOString();
+  const runs = state.runs.map((r) =>
+    r.id === state.current_run_id && r.status === "running"
+      ? {
+          ...r,
+          status: "failed" as const,
+          completed_at: now,
+          error: "interrupted: server restart",
+        }
+      : r,
+  );
+  const recovered: CrawlState = {
+    ...state,
+    runs,
+    last_status: "failed",
+    last_completed_at: now,
+    current_run_id: null,
+  };
+  await atomicWriteJson(agentCrawlStatePath(), recovered);
+  console.log(
+    `[seed] recovered interrupted agent run ${state.current_run_id} -> marked failed`,
+  );
+}
+
 // If the process died mid-run, the on-disk state still says "running" with
 // a current_run_id but no live work backs it. Roll forward: mark the run
 // failed so cooldown logic and the status endpoint can proceed.
@@ -252,5 +437,10 @@ export async function ensureSeeded(): Promise<void> {
   await withLock(crawlStatePath(), async () => {
     await seedCrawlStateIfMissing();
     await recoverInterruptedRun();
+  });
+  await withLock(agentsPath(), seedAgentsIfMissing);
+  await withLock(agentCrawlStatePath(), async () => {
+    await seedAgentCrawlStateIfMissing();
+    await recoverInterruptedAgentRun();
   });
 }

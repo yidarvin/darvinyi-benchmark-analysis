@@ -289,3 +289,24 @@ export interface CrawlState {
   current_run_id: string | null;
   runs: CrawlRun[];             // newest first, capped at 20
 }
+
+// ─── Agent Crawl Persistence Types ────────────────────────────────────────────
+// Parallel to BenchmarkRecord / BenchmarksFile / CrawlState, but for the
+// AgentSystem discovery crawl. Stored at $DATA_DIR/agents.json and
+// $DATA_DIR/agent_crawl_state.json. The on-disk record matches the camelCase
+// AgentSystem shape used by the rendered site, plus a `_crawl` provenance
+// envelope on crawl-discovered entries.
+
+export interface AgentRecord extends AgentSystem {
+  _crawl?: CrawlProvenance;
+}
+
+export interface AgentsFile {
+  meta: {
+    generated?: string;
+    description?: string;
+    version?: string;
+    [key: string]: unknown;
+  };
+  agents: AgentRecord[];
+}

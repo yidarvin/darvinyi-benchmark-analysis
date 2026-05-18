@@ -56,11 +56,37 @@ function deriveState(status: StatusResponse): UIState {
 
 interface CrawlUpdateButtonProps {
   onComplete?: () => void;
+  // API base for status/trigger endpoints. Defaults to the benchmark crawl;
+  // the agents page passes "/api/agent-crawl" to drive the parallel crawl.
+  apiBase?: string;
+  // Override the button labels and result subtext. Defaults read as
+  // "Check for new benchmarks" / "Added N new benchmarks." which is wrong
+  // for the agent-crawl mount.
+  labels?: {
+    idle?: string;
+    running?: string;
+    noun?: string;        // singular noun used in the success subtext
+    nounPlural?: string;  // plural noun used in the success subtext
+  };
 }
 
-export function CrawlUpdateButton({ onComplete }: CrawlUpdateButtonProps = {}) {
+const DEFAULT_LABELS = {
+  idle: "Check for new benchmarks",
+  running: "Searching for new benchmarks…",
+  noun: "benchmark",
+  nounPlural: "benchmarks",
+} as const;
+
+export function CrawlUpdateButton({
+  onComplete,
+  apiBase = "/api/crawl",
+  labels: labelOverrides,
+}: CrawlUpdateButtonProps = {}) {
   const router = useRouter();
   const [state, setState] = useState<UIState>({ kind: "loading" });
+  const labels = { ...DEFAULT_LABELS, ...(labelOverrides ?? {}) };
+  const statusUrl = `${apiBase}/status`;
+  const triggerUrl = `${apiBase}/trigger`;
 
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const tickTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -82,13 +108,13 @@ export function CrawlUpdateButton({ onComplete }: CrawlUpdateButtonProps = {}) {
 
   const fetchStatus = useCallback(async (): Promise<StatusResponse | null> => {
     try {
-      const res = await fetch("/api/crawl/status", { cache: "no-store" });
+      const res = await fetch(statusUrl, { cache: "no-store" });
       if (!res.ok) return null;
       return (await res.json()) as StatusResponse;
     } catch {
       return null;
     }
-  }, []);
+  }, [statusUrl]);
 
   const refreshFromServer = useCallback(async () => {
     const status = await fetchStatus();
@@ -195,7 +221,7 @@ export function CrawlUpdateButton({ onComplete }: CrawlUpdateButtonProps = {}) {
   const handleClick = useCallback(async () => {
     setState({ kind: "loading" });
     try {
-      const res = await fetch("/api/crawl/trigger", { method: "POST" });
+      const res = await fetch(triggerUrl, { method: "POST" });
 
       if (res.status === 202) {
         // Re-fetch authoritative state instead of trusting our local guess.
@@ -236,7 +262,7 @@ export function CrawlUpdateButton({ onComplete }: CrawlUpdateButtonProps = {}) {
         message: err instanceof Error ? err.message : "Network error.",
       });
     }
-  }, [fetchStatus, refreshFromServer]);
+  }, [fetchStatus, refreshFromServer, triggerUrl]);
 
   const interactive = state.kind === "idle" || state.kind === "error";
   const isRunning = state.kind === "running";
@@ -258,7 +284,7 @@ export function CrawlUpdateButton({ onComplete }: CrawlUpdateButtonProps = {}) {
         )}
       >
         {isRunning && <Spinner />}
-        <span>{primaryLabel(state)}</span>
+        <span>{primaryLabel(state, labels)}</span>
       </button>
 
       <p
@@ -268,10 +294,17 @@ export function CrawlUpdateButton({ onComplete }: CrawlUpdateButtonProps = {}) {
           "transition-opacity duration-200",
         )}
       >
-        {subtext(state)}
+        {subtext(state, labels)}
       </p>
     </div>
   );
+}
+
+interface ResolvedLabels {
+  idle: string;
+  running: string;
+  noun: string;
+  nounPlural: string;
 }
 
 function Spinner() {
@@ -303,24 +336,24 @@ function Spinner() {
   );
 }
 
-function primaryLabel(state: UIState): string {
+function primaryLabel(state: UIState, labels: ResolvedLabels): string {
   switch (state.kind) {
     case "loading":
       return "Loading…";
     case "idle":
-      return "Check for new benchmarks";
+      return labels.idle;
     case "cooldown":
       return `Available in ${formatCountdown(state.cooldownSeconds)}`;
     case "running":
-      return "Searching for new benchmarks…";
+      return labels.running;
     case "success":
-      return "Check for new benchmarks";
+      return labels.idle;
     case "error":
       return "Retry";
   }
 }
 
-function subtext(state: UIState): React.ReactNode {
+function subtext(state: UIState, labels: ResolvedLabels): React.ReactNode {
   switch (state.kind) {
     case "loading":
       return " ";
@@ -340,8 +373,8 @@ function subtext(state: UIState): React.ReactNode {
       const { added, candidates, skipped } = state;
       const head =
         added === 0
-          ? "No new benchmarks found."
-          : `Added ${added} new benchmark${added === 1 ? "" : "s"}.`;
+          ? `No new ${labels.nounPlural} found.`
+          : `Added ${added} new ${added === 1 ? labels.noun : labels.nounPlural}.`;
       const tail = `Found ${candidates} candidate${
         candidates === 1 ? "" : "s"
       }, skipped ${skipped} duplicate${skipped === 1 ? "" : "s"}.`;

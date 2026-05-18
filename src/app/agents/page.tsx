@@ -1,14 +1,27 @@
 import { ALL_AGENTS } from "@/data";
 import { AgentCard } from "@/components/agents/AgentCard";
-import { PageHeader } from "@/components/ui/SectionHeader";
+import { CrawlUpdateButton } from "@/components/CrawlUpdateButton";
 
 export default function AgentsPage() {
   return (
     <div>
-      <PageHeader
-        title="Agent Evaluations"
-        description="Benchmarks that test AI on real human work — not synthetic tasks. How much economic value can AI agents actually deliver?"
-      />
+      <div className="mb-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+        <div>
+          <h1 className="text-3xl font-bold text-zinc-50 mb-2">Agent Evaluations</h1>
+          <p className="text-base text-zinc-400 max-w-2xl">
+            Benchmarks that test AI on real human work — not synthetic tasks. How much economic value can AI agents actually deliver?
+          </p>
+        </div>
+        <CrawlUpdateButton
+          apiBase="/api/agent-crawl"
+          labels={{
+            idle: "Check for new agent evals",
+            running: "Searching for new agent evals…",
+            noun: "agent eval",
+            nounPlural: "agent evals",
+          }}
+        />
+      </div>
 
       {/* What are real-work benchmarks */}
       <div className="rounded-xl border border-zinc-700 bg-zinc-900 p-6 mb-10">
