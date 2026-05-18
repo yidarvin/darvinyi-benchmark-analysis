@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ALL_AGENTS, AGENT_MAP } from "@/data";
+import { loadAgents, loadAgentMap } from "@/data/loaders";
 import { MODEL_MAP } from "@/data/models";
 import { Badge } from "@/components/ui/Badge";
 import { VendorBadge } from "@/components/ui/Badge";
@@ -12,20 +12,27 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+// generateStaticParams runs at build time and returns the slugs known then.
+// Slugs discovered later by the agent crawl still render — dynamicParams
+// defaults to true in App Router, so unknown slugs fall through to dynamic
+// rendering against the live $DATA_DIR/agents.json.
 export async function generateStaticParams() {
-  return ALL_AGENTS.map((a) => ({ slug: a.slug }));
+  const agents = await loadAgents();
+  return agents.map((a) => ({ slug: a.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const agent = AGENT_MAP[slug];
+  const map = await loadAgentMap();
+  const agent = map[slug];
   if (!agent) return {};
   return { title: agent.name, description: agent.shortDescription };
 }
 
 export default async function AgentDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const agent = AGENT_MAP[slug];
+  const map = await loadAgentMap();
+  const agent = map[slug];
   if (!agent) notFound();
 
   const sortedResults = [...agent.results].sort((a, b) => b.score - a.score);

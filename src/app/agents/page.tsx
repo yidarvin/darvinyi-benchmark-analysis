@@ -1,8 +1,12 @@
-import { ALL_AGENTS } from "@/data";
+import { loadAgents } from "@/data/loaders";
 import { AgentCard } from "@/components/agents/AgentCard";
 import { CrawlUpdateButton } from "@/components/CrawlUpdateButton";
 
-export default function AgentsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AgentsPage() {
+  const agents = await loadAgents();
+
   return (
     <div>
       <div className="mb-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
@@ -40,7 +44,7 @@ export default function AgentsPage() {
       <section>
         <h2 className="text-lg font-bold text-zinc-50 mb-5">All Evaluations</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {ALL_AGENTS.map((agent) => (
+          {agents.map((agent) => (
             <AgentCard key={agent.slug} agent={agent} />
           ))}
         </div>

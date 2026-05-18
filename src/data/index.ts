@@ -1,4 +1,9 @@
 // ─── Benchmarks ───────────────────────────────────────────────────────────────
+// Build-time bundle, still the source of truth for the LLM benchmark pages
+// until the LLM crawl migrates to the camelCase Benchmark shape. Agent pages
+// no longer use a build-time bundle — they read $DATA_DIR/agents.json at
+// request time via `src/data/loaders.ts` so crawl-discovered entries surface
+// without a rebuild.
 import swebench from "./benchmarks/swe-bench.json";
 import humaneval from "./benchmarks/humaneval.json";
 import swelancer from "./benchmarks/swe-lancer.json";
@@ -20,15 +25,7 @@ import theagentcompany from "./benchmarks/the-agent-company.json";
 import chatbotArena from "./benchmarks/chatbot-arena.json";
 import livebench from "./benchmarks/livebench.json";
 
-// ─── Agent Systems ────────────────────────────────────────────────────────────
-import mercorApex from "./agents/mercor-apex.json";
-import gdpval from "./agents/gdpval.json";
-import rli from "./agents/rli.json";
-import upworkHapi from "./agents/upwork-hapi.json";
-import metrTimeHorizon from "./agents/metr-time-horizon.json";
-import bigLawBench from "./agents/biglaw-bench.json";
-
-import type { Benchmark, AgentSystem } from "@/lib/types";
+import type { Benchmark } from "@/lib/types";
 
 export const ALL_BENCHMARKS: Benchmark[] = [
   swebench,
@@ -53,14 +50,4 @@ export const ALL_BENCHMARKS: Benchmark[] = [
   livebench,
 ] as Benchmark[];
 
-export const ALL_AGENTS: AgentSystem[] = [
-  mercorApex,
-  gdpval,
-  rli,
-  upworkHapi,
-  metrTimeHorizon,
-  bigLawBench,
-] as AgentSystem[];
-
 export const BENCHMARK_MAP = Object.fromEntries(ALL_BENCHMARKS.map((b) => [b.slug, b]));
-export const AGENT_MAP = Object.fromEntries(ALL_AGENTS.map((a) => [a.slug, a]));

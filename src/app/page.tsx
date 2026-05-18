@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ALL_BENCHMARKS, ALL_AGENTS } from "@/data";
+import { ALL_BENCHMARKS } from "@/data";
+import { loadAgents } from "@/data/loaders";
 import { CATEGORIES } from "@/data/categories";
 import { MODELS } from "@/data/models";
 import { Badge } from "@/components/ui/Badge";
@@ -7,11 +8,14 @@ import { StatCard } from "@/components/ui/StatCard";
 import { SaturationBadge } from "@/components/benchmarks/SaturationBadge";
 import { categoryColor, categoryLabel, saturationColor } from "@/lib/utils";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const agents = await loadAgents();
   // The Real Work Gap data
   const sweBenchPro = ALL_BENCHMARKS.find((b) => b.slug === "swe-bench");
   const gaia = ALL_BENCHMARKS.find((b) => b.slug === "gaia");
-  const rli = ALL_AGENTS.find((a) => a.slug === "rli");
+  const rli = agents.find((a) => a.slug === "rli");
 
   const sweBenchProTop = sweBenchPro?.results
     .filter((r) => r.setup?.includes("Pro"))
@@ -70,9 +74,9 @@ export default function HomePage() {
       <section>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatCard label="Benchmarks" value={ALL_BENCHMARKS.length} color="#06b6d4" />
-          <StatCard label="Agent Evals" value={ALL_AGENTS.length} color="#10b981" />
+          <StatCard label="Agent Evals" value={agents.length} color="#10b981" />
           <StatCard label="Curated Models" value={MODELS.length} color="#8b5cf6" />
-          <StatCard label="Agentic Benchmarks" value={ALL_AGENTS.length} sub="Real-work evaluations" color="#f59e0b" />
+          <StatCard label="Agentic Benchmarks" value={agents.length} sub="Real-work evaluations" color="#f59e0b" />
         </div>
       </section>
 
@@ -249,7 +253,7 @@ export default function HomePage() {
         <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-6">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-cyan-500/15 flex items-center justify-center shrink-0 text-cyan-400 font-bold text-lg">
-              {ALL_AGENTS.length}
+              {agents.length}
             </div>
             <div>
               <h2 className="text-lg font-bold text-zinc-50 mb-1">
@@ -260,7 +264,7 @@ export default function HomePage() {
                 They represent the most rigorous tests of whether AI can actually replace human labor.
               </p>
               <div className="grid sm:grid-cols-2 gap-2 mb-4">
-                {ALL_AGENTS.map((agent) => (
+                {agents.map((agent) => (
                   <Link
                     key={agent.slug}
                     href={`/agents/${agent.slug}`}
